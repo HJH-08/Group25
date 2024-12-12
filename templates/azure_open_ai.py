@@ -2,7 +2,7 @@ import requests
 import json
 
 # Configuration
-API_KEY = "FYXJqqnHsEJUblXHV5qnZYW43SeUYiY5yy7iQpunOK4HfDQ2CjPGJQQJ99ALACYeBjFXJ3w3AAABACOGbxod"  
+API_KEY = ""  # ENTER THE KEY HERE
 ENDPOINT = "https://team25.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview" 
 
 headers = {
