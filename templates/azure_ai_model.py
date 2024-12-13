@@ -1,9 +1,8 @@
 import requests
-import json
 
 # Configuration
-API_KEY = ""  # ENTER THE KEY HERE
-ENDPOINT = "https://team25.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview" 
+API_KEY = "YOUR_API_KEY"  # Replace with your actual API key
+ENDPOINT = "https://team25.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"  # Replace with your endpoint
 
 headers = {
     "Content-Type": "application/json",
