@@ -1,0 +1,6 @@
+# Ignore Python cache files and directories
+__pycache__/
+*.pyc
+
+# Ignore specific untracked file
+semantic_kernel_test.py
