@@ -1,23 +1,21 @@
 # main.py
 
 import asyncio
-import semantic_kernel as sk
-
 from services import create_kernel
-from memory_store import setup_memory
 from router import choose_skill
 
 def main():
     asyncio.run(run_chatbot())
 
 async def run_chatbot():
-    # 1. Create the kernel and register services
+    # 1. Create the kernel and register services/plugins
     kernel = create_kernel()
 
-    # 2. Setup in-memory vector store
-    kernel = setup_memory(kernel)
+    # Access the memory plugins (short-term and long-term)
+    short_term_memory = kernel.get_plugin("ShortTermMemory")
+    long_term_memory = kernel.get_plugin("LongTermMemory")
 
-    # 3. Import the Azure GPT skill and the local skill
+    # 2. Import the Azure GPT skill and the local skill
     azure_chat_skill = kernel.import_semantic_skill_from_directory(
         skill_directory="skills",
         skill_name="azure_chat"
@@ -32,21 +30,20 @@ async def run_chatbot():
     print("Type 'exit' to quit.\n")
 
     while True:
-        user_input = input("User: ")
+        user_input = input("User: ").strip()
         if user_input.lower() in ["exit", "quit"]:
             print("Bot: It was nice talking with you. Take care!")
             break
 
-        # ---- 1) Save user message to memory ----
-        await kernel.memory.save_information_async(
+        # ---- 1) Save user message to short-term memory ----
+        await short_term_memory.save_information_async(
             collection="chat_history",
             text=f"User says: {user_input}",
             id=f"user-msg-{hash(user_input)}"
         )
 
-        # ---- 2) Retrieve relevant context from memory ----
-        # We'll search the chat_history collection for content relevant to the current user input
-        relevant_records = await kernel.memory.search_async(
+        # ---- 2) Retrieve relevant context from short-term memory ----
+        relevant_records = await short_term_memory.search_async(
             collection="chat_history",
             query=user_input,
             limit=2
@@ -73,12 +70,22 @@ async def run_chatbot():
         bot_reply = str(response).strip()
         print("Bot:", bot_reply)
 
-        # Store the bot response in memory as well
-        await kernel.memory.save_information_async(
+        # ---- 7) Save bot response to short-term memory ----
+        await short_term_memory.save_information_async(
             collection="chat_history",
             text=f"Bot says: {bot_reply}",
             id=f"bot-msg-{hash(bot_reply)}"
         )
+
+        # ---- 8) Optionally, move key information to long-term memory ----
+        # Example: If user mentions something important, save to long-term memory
+        if "important" in user_input.lower():
+            await long_term_memory.save_information_async(
+                collection="important_topics",
+                text=f"User mentioned: {user_input}",
+                id=f"important-{hash(user_input)}"
+            )
+
 
 if __name__ == "__main__":
     main()

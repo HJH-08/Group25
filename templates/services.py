@@ -3,6 +3,11 @@
 import semantic_kernel as sk
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 import semantic_kernel.connectors.ai.hugging_face as sk_hf
+from semantic_kernel.memory.semantic_text_memory import SemanticTextMemory
+from semantic_kernel.memory.volatile_memory_store import VolatileMemoryStore
+from semantic_kernel.core_plugins.text_memory_plugin import TextMemoryPlugin
+
+from semantic_kernel.connectors.ai.open_ai.services.open_ai_text_embedding import OpenAITextEmbedding
 
 from config import (
     AZURE_OPENAI_DEPLOYMENT_NAME,
@@ -36,6 +41,26 @@ def create_kernel():
         )
     )
 
+    embedding_gen = OpenAITextEmbedding(
+        service_id="embedding",  # Customize this ID
+        ai_model_id="text-embedding-ada-002",
+        api_key=AZURE_OPENAI_API_KEY,
+    )
+    kernel.add_service(embedding_gen)
+
+    # Short-term memory
+    short_term_memory = SemanticTextMemory(
+        storage=VolatileMemoryStore(),
+        embeddings_generator=embedding_gen
+    )
+    kernel.add_plugin(TextMemoryPlugin(short_term_memory), "ShortTermMemory")
+
+    # Long-term memory
+    long_term_memory = SemanticTextMemory(
+        storage=VolatileMemoryStore(),
+        embeddings_generator=embedding_gen
+    )
+    kernel.add_plugin(TextMemoryPlugin(long_term_memory), "LongTermMemory")
+
     return kernel
 
-create_kernel()

@@ -1,8 +1,8 @@
 
 # --------------- Azure OpenAI Settings ---------------
-AZURE_OPENAI_DEPLOYMENT_NAME = "my-gpt-deployment"
-AZURE_OPENAI_API_KEY = "YOUR_AZURE_OPENAI_API_KEY"
-AZURE_OPENAI_ENDPOINT = "https://team25.openai.azure.com/openai/deployments/gpt-4/chat/completions?api-version=2024-02-15-preview"
+AZURE_OPENAI_API_KEY = "FYXJqqnHsEJUblXHV5qnZYW43SeUYiY5yy7iQpunOK4HfDQ2CjPGJQQJ99ALACYeBjFXJ3w3AAABACOGbxod"
+AZURE_OPENAI_ENDPOINT = "https://team25.openai.azure.com/"
+AZURE_OPENAI_DEPLOYMENT_NAME = "gpt-4"
 
 # --------------- Hugging Face (Local or Remote) ---------------
 HUGGING_FACE_MODEL_ID = "gpt2"
