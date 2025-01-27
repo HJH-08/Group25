@@ -2,13 +2,13 @@
 from semantic_kernel import Kernel
 from semantic_kernel.functions import KernelArguments
 from semantic_kernel.contents import ChatHistory
-from services import get_chat_service
+from services import initialize_ai_service
 from config import SYSTEM_MESSAGE
 
 def setup_kernel():
     """Initialize the kernel and configure the AI service."""
     kernel = Kernel()
-    service_id, model_name = get_chat_service(kernel)
+    service_id, model_name, kernel = initialize_ai_service(kernel)
     
     # Set execution settings
     settings = kernel.get_prompt_execution_settings_from_service_id(service_id)

@@ -12,11 +12,19 @@ OLLAMA_BASE_URL = "http://localhost:11434/v1"
 OLLAMA_MODEL_ID = "phi3:latest"
 
 # Azure OpenAI Settings
-AZURE_API_KEY = os.getenv("AZURE_API_KEY")  # Fetch API key from .env file
-AZURE_ENDPOINT = "https://team25.openai.azure.com/"
-AZURE_DEPLOYMENT_NAME = "gpt-4"
+AZURE_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
+AZURE_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
+AZURE_DEPLOYMENT_NAME = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 
-AZURE_AI_SEARCH_INDEX = "elderly-care-index"
+# Azure AI Search Settings
+AZURE_AI_SEARCH_ENDPOINT = os.getenv("AZURE_AI_SEARCH_ENDPOINT")
+AZURE_AI_SEARCH_KEY = os.getenv("AZURE_AI_SEARCH_KEY")
+AZURE_AI_SEARCH_INDEX = os.getenv("AZURE_AI_SEARCH_INDEX")
+
+# Azure OpenAI Embedding Model for Vector Search
+AZURE_OPENAI_EMBEDDING_API_KEY = os.getenv("AZURE_OPENAI_EMBEDDING_API_KEY")
+AZURE_OPENAI_EMBEDDING_ENDPOINT = os.getenv("AZURE_OPENAI_EMBEDDING_ENDPOINT")
+AZURE_OPENAI_EMBEDDING_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
 
 # System message for chatbot behavior
 SYSTEM_MESSAGE = """
