@@ -1,14 +1,18 @@
-# config.py
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
 USE_OLLAMA = False
 
 # Ollama Settings
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
-OLLAMA_MODEL_ID = "phi3:latest"  
+OLLAMA_MODEL_ID = "phi3:latest"
 
 # Azure OpenAI Settings
-AZURE_API_KEY = ""
+AZURE_API_KEY = os.getenv("AZURE_API_KEY")  # Fetch API key from .env file
 AZURE_ENDPOINT = "https://team25.openai.azure.com/"
 AZURE_DEPLOYMENT_NAME = "gpt-4"
 
