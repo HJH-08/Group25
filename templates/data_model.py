@@ -10,7 +10,7 @@ from semantic_kernel.connectors.ai.open_ai import OpenAIEmbeddingPromptExecution
 
 @vectorstoremodel
 class ElderlyUserMemory(BaseModel):
-    user_id: Annotated[str, VectorStoreRecordKeyField]  # Unique User ID
+    id: Annotated[str, VectorStoreRecordKeyField]  # Unique User ID
     memory_text: Annotated[
         str,
         VectorStoreRecordDataField(

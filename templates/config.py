@@ -16,6 +16,8 @@ AZURE_API_KEY = os.getenv("AZURE_API_KEY")  # Fetch API key from .env file
 AZURE_ENDPOINT = "https://team25.openai.azure.com/"
 AZURE_DEPLOYMENT_NAME = "gpt-4"
 
+AZURE_AI_SEARCH_INDEX = "elderly-care-index"
+
 # System message for chatbot behavior
 SYSTEM_MESSAGE = """
 You are a kind and caring chatbot designed to provide companionship and support for elderly users, including those experiencing memory issues or dementia.
