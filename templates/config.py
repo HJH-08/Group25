@@ -6,6 +6,7 @@ load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
 USE_OLLAMA = False
+USER_ID = "123"
 
 # Ollama Settings
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
