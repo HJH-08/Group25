@@ -2,10 +2,12 @@ from semantic_kernel import Kernel
 from data_model import ElderlyUserMemory
 from semantic_kernel.data import VectorSearchOptions
 from datetime import datetime
+import numpy as np
+import uuid  # For generating unique memory IDs
 
 async def store_memory(kernel: Kernel, user_id, memory_text, category):
-    """Stores a memory in Azure AI Search (if available)."""
-
+    """Stores a memory in Azure AI Search, ensuring uniqueness."""
+    
     if "collection" not in kernel.services:
         print("Azure AI Search is not available in Ollama mode.")
         return
@@ -13,14 +15,20 @@ async def store_memory(kernel: Kernel, user_id, memory_text, category):
     vectorizer = kernel.services["vectorizer"]
     collection = kernel.services["collection"]
 
+    # Create a unique ID using timestamp + user_id + uuid
+    memory_id = f"{user_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex[:8]}"
+
     record = ElderlyUserMemory(
-        id=user_id,
+        id=memory_id,  # ✅ Unique ID per memory
         memory_text=memory_text,
         category=category,
         timestamp=datetime.utcnow().isoformat() + "Z"
     )
 
+    # Generate embedding
     record = await vectorizer.add_vector_to_records(record, ElderlyUserMemory)
+
+    # Store in Azure AI Search
     await collection.upsert(record)
 
 async def search_memory(kernel: Kernel, query):
@@ -43,7 +51,11 @@ async def search_memory(kernel: Kernel, query):
 
         vector_results = await collection.vectorized_search(
             vector=query_vector,
-            options=VectorSearchOptions(vector_field_name="memory_vector")
+            options=VectorSearchOptions(
+                vector_field_name="memory_vector",
+                similarity_threshold=0.75,
+                top_k = 8
+                )
         )
 
     # **Step 3: Merge Results (Avoid Duplicates)**
