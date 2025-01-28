@@ -23,19 +23,20 @@ async def chat():
     if "collection" in kernel.services:
         memory_results = await search_memory(kernel, query=user_input)
 
-    # **Incorporate memory into chatbot response**
+    # **Update the chat history with past memories (if available)**
     if memory_results:
-        memory_context = "\nPrevious Memories:\n" + "\n".join(memory_results) + "\n\n"
+        past_memory = "\n\n[Past Memories that MAY be useful]:\n" + "\n".join(memory_results) + "\n"
+        chat_history.add_system_message(past_memory)  # ✅ Store it in chat history
     else:
-        memory_context = ""
+        past_memory = ""
 
-    # Invoke the chatbot function with memory context
+    # **Invoke the chatbot function**
     try:
         answer = await kernel.invoke(
             chat_function,
             KernelArguments(
-                chat_history=chat_history,
-                user_input=memory_context + user_input,  # **Inject memory context**
+                chat_history=chat_history,  # ✅ Memory is already in chat history
+                user_input=user_input,  # ✅ Keep user input separate
             ),
         )
 
