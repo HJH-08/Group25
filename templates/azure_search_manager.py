@@ -1,6 +1,7 @@
 from semantic_kernel import Kernel
 from data_model import ElderlyUserMemory
 from semantic_kernel.data import VectorSearchOptions
+from datetime import datetime
 
 async def store_memory(kernel: Kernel, user_id, memory_text, category):
     """Stores a memory in Azure AI Search (if available)."""
@@ -16,7 +17,7 @@ async def store_memory(kernel: Kernel, user_id, memory_text, category):
         id=user_id,
         memory_text=memory_text,
         category=category,
-        timestamp="2024-01-27T10:00:00Z"
+        timestamp=datetime.utcnow().isoformat() + "Z"
     )
 
     record = await vectorizer.add_vector_to_records(record, ElderlyUserMemory)

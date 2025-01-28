@@ -48,7 +48,7 @@ async def chat():
         chat_history.add_user_message(user_input)
         chat_history.add_assistant_message(str(answer))
 
-        print(f"Sunny:> {answer}")
+        print(f"Companio:> {answer}")
         return True
     except Exception as e:
         print(f"Error: {e}")
