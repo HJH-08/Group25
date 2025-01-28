@@ -4,4 +4,4 @@ __pycache__/
 *.env
 
 # Ignore specific untracked file
-test.py
+test*
