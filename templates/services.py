@@ -31,7 +31,6 @@ def initialize_ai_service(kernel: Kernel):
             )
         )
         model_name = f"Ollama Model: {OLLAMA_MODEL_ID}"
-        service_id = "local-gpt"
 
     else:
         # Add Azure OpenAI
