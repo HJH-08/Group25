@@ -14,7 +14,7 @@ def setup_kernel():
     
     # Set execution settings
     settings = kernel.get_prompt_execution_settings_from_service_id(service_id)
-    settings.max_tokens = 150
+    settings.max_tokens = 250
     settings.temperature = 0.7
     settings.top_p = 0.8
     settings.frequency_penalty = 0.5
