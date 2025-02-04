@@ -5,12 +5,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
-USE_OLLAMA = False
+USE_OLLAMA = True
 USER_ID = "123"
 
-# Ollama Settings
+# Ollama Settings - Allowing Selection Between Phi3 and IBM Granite
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
-OLLAMA_MODEL_ID = "phi3:latest"
+OLLAMA_MODEL_ID = os.getenv("OLLAMA_MODEL_ID", "phi3:latest")  # Default to Phi3
+
+AVAILABLE_OLLAMA_MODELS = {
+    "1": "phi3:latest",
+    "2": "granite3-dense:latest"
+}
 
 # Azure OpenAI Settings
 AZURE_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")

@@ -2,10 +2,25 @@ import asyncio
 from semantic_kernel.functions import KernelArguments
 from kernel_manager import setup_kernel
 from azure_search_manager import search_memory, store_memory
-from config import USER_ID
+from config import USER_ID, USE_OLLAMA
+from offline_memory import load_chat_history, save_chat_history
+from semantic_kernel.contents import AuthorRole
+from semantic_kernel.contents.chat_message_content import ChatMessageContent
 
-# Initialize kernel and chatbot
-kernel, chat_function, chat_history, model_name = setup_kernel()
+# Don't run setup_kernel() immediately
+kernel = None
+chat_function = None
+chat_history = None
+model_name = None
+
+def initialize_chatbot():
+    """Initialize the chatbot lazily when needed."""
+    global kernel, chat_function, chat_history, model_name
+    if kernel is None:
+        kernel, chat_function, chat_history, model_name = setup_kernel()
+        print("Welcome to your Companion Chatbot!")
+        print(f"Currently using {model_name}.")
+        print("Type 'exit' or 'quit' to stop.\n")
 
 def categorize_input(user_input):
     """Classify the type of input dynamically."""
@@ -24,6 +39,8 @@ def categorize_input(user_input):
 
 async def chat():
     """Handles the chatbot conversation loop."""
+
+    initialize_chatbot() 
     try:
         user_input = input("User:> ").strip()
     except (KeyboardInterrupt, EOFError):
@@ -51,7 +68,7 @@ async def chat():
         answer = await kernel.invoke(
             chat_function,
             KernelArguments(
-                chat_history=chat_history,  # ✅ Memory is already in chat history
+                chat_history=chat_history, 
                 user_input=user_input,  # ✅ Keep user input separate
             ),
         )
@@ -62,10 +79,11 @@ async def chat():
         if "collection" in kernel.services:
             await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
 
-        # Update chat history
-        chat_history.add_user_message(user_input)
-        chat_history.add_assistant_message(str(answer))
-
+        # ✅ Save new chat history **only for Ollama**
+        if USE_OLLAMA:
+            chat_history.add_user_message(user_input)
+            chat_history.add_assistant_message(str(answer))
+            save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
         print(f"Companio:> {answer}")
         return True
     except Exception as e:

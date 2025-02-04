@@ -12,6 +12,7 @@ from config import (
     AZURE_AI_SEARCH_INDEX, AZURE_AI_SEARCH_ENDPOINT, AZURE_AI_SEARCH_KEY,
     AZURE_OPENAI_EMBEDDING_API_KEY, AZURE_OPENAI_EMBEDDING_ENDPOINT, AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
 )
+import config
 
 def initialize_ai_service(kernel: Kernel):
     """Initializes AI services in the Kernel dynamically."""
@@ -26,12 +27,11 @@ def initialize_ai_service(kernel: Kernel):
         kernel.add_service(
             OpenAIChatCompletion(
                 service_id=service_id,
-                ai_model_id=OLLAMA_MODEL_ID,
+                ai_model_id=config.OLLAMA_MODEL_ID,
                 async_client=openAIClient,
             )
         )
-        model_name = f"Ollama Model: {OLLAMA_MODEL_ID}"
-        service_id = "local-gpt"
+        model_name = f"Ollama Model: {config.OLLAMA_MODEL_ID}"
 
     else:
         # Add Azure OpenAI
