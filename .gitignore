@@ -1,2 +1,4 @@
 *.json
 *.venv
+qdrant_storage/
+.DS_Store
