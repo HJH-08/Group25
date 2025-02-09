@@ -1,13 +1,13 @@
 import asyncio
 
 from semantic_kernel.functions import KernelArguments
-from kernel_manager import setup_kernel
-from azure_search_manager import search_memory, store_memory
-from config import USER_ID, USE_OLLAMA
-from offline_memory import load_chat_history, save_chat_history
 from semantic_kernel.contents import AuthorRole
 from semantic_kernel.contents.chat_message_content import ChatMessageContent
+from kernel_manager import setup_kernel
+from azure_search_manager import search_memory, store_memory
 from qdrant_search_manager import search_memory_local, store_memory_local
+from config import USER_ID, USE_OLLAMA
+from offline_memory import load_chat_history, save_chat_history
 
 # Don't run setup_kernel() immediately
 kernel = None
@@ -68,13 +68,30 @@ async def chat():
 
     # **Invoke the chatbot function**
     try:
-        answer = await kernel.invoke(
-            chat_function,
+        answer = ""
+        async for chunk in kernel.invoke_stream(
+            chat_function, 
             KernelArguments(
-                chat_history=chat_history,
-                user_input=user_input,
-            ),
-        )
+                chat_history=chat_history, user_input=user_input
+                )
+        ):
+            if not isinstance(chunk, list):
+                continue
+
+            for msg in chunk:
+                if not (hasattr(msg, "items") and msg.items):
+                    continue
+
+                new_text = msg.items[0].text
+                if answer == "":
+                    print("Companio:> ", end="", flush=True)
+                print(new_text, end="", flush=True)
+                answer += new_text
+
+                """ To artificially slow down streaming (optional), comment/uncomment the following line: """
+                # await asyncio.sleep(0.1)
+
+        print()
 
         category = categorize_input(user_input)
         
@@ -90,8 +107,8 @@ async def chat():
             chat_history.add_assistant_message(str(answer))
             save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
 
-        print(f"Companio:> {answer}")
-        return True
     except Exception as e:
         print(f"Error: {e}")
         return False
+
+    return True
