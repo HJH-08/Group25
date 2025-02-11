@@ -7,14 +7,14 @@ from config import SYSTEM_MESSAGE, USER_ID, USE_OLLAMA
 from semantic_kernel.contents import AuthorRole
 from offline_memory import load_chat_history
 
-def setup_kernel():
+async def setup_kernel():
     """Initialize the kernel and configure the AI service."""
     kernel = Kernel()
-    service_id, model_name, kernel = initialize_ai_service(kernel)
+    service_id, model_name, kernel = await initialize_ai_service(kernel)
     
     # Set execution settings
     settings = kernel.get_prompt_execution_settings_from_service_id(service_id)
-    settings.max_tokens = 250
+    settings.max_tokens = 256
     settings.temperature = 0.7
     settings.top_p = 0.8
     settings.frequency_penalty = 0.5

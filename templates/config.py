@@ -12,12 +12,18 @@ USER_ID = "123"
 
 # Ollama Settings - Allowing Selection Between Phi3 and IBM Granite
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
-OLLAMA_MODEL_ID = os.getenv("OLLAMA_MODEL_ID", "phi3:latest")  # Default to Phi3
+OLLAMA_MODEL_ID = os.getenv("OLLAMA_MODEL_ID", "phi3.5:latest")  # Default to Phi3
 
 AVAILABLE_OLLAMA_MODELS = {
-    "1": "phi3:latest",
-    "2": "granite3-dense:latest"
+    "1": "phi3.5:latest",
+    "2": "granite3.1-dense:2b"
 }
+
+# Qdrant Settings
+QDRANT_HOST = "http://localhost"
+QDRANT_PORT = 6333
+QDRANT_COLLECTION = "chat_history"
+VECTOR_SIZE = 384
 
 # Azure OpenAI Settings
 AZURE_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")

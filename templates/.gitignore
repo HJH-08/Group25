@@ -5,3 +5,4 @@ __pycache__/
 .json
 # Ignore specific untracked file
 test*
+./qdrant_storage/*

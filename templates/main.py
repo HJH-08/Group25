@@ -18,7 +18,7 @@ def select_ollama_model():
             config.OLLAMA_MODEL_ID = AVAILABLE_OLLAMA_MODELS[choice]
         else:
             print("Invalid choice. Defaulting to Phi3.")
-            config.OLLAMA_MODEL_ID = "phi3:latest"
+            config.OLLAMA_MODEL_ID = "phi3.5:latest"
 
 
 
