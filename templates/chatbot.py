@@ -6,9 +6,15 @@ from semantic_kernel.contents.chat_message_content import ChatMessageContent
 from kernel_manager import setup_kernel
 from azure_search_manager import search_memory, store_memory
 from qdrant_search_manager import search_memory_local, store_memory_local
-from config import USER_ID, USE_OLLAMA
+from config import USER_ID, USE_OLLAMA, USE_SPEECH_INPUT, USE_SPEECH_OUTPUT
 from offline_memory import load_chat_history, save_chat_history
 
+# Import speech-to-text only if Azure is used
+if not USE_OLLAMA and USE_SPEECH_INPUT:
+    from azure_speech_to_text import speech_to_text
+if not USE_OLLAMA and USE_SPEECH_OUTPUT:
+    from azure_text_to_speech import text_to_speech
+    
 # Don't run setup_kernel() immediately
 kernel = None
 chat_function = None
@@ -22,7 +28,8 @@ async def initialize_chatbot():
         kernel, chat_function, chat_history, model_name = await setup_kernel()
         print("Welcome to your Companion Chatbot!")
         print(f"Currently using {model_name}.")
-        print("Type 'exit' or 'quit' to stop.\n")
+        if not USE_SPEECH_INPUT:
+            print("Type 'exit' or 'quit' to stop.\n")
 
 def categorize_input(user_input):
     """Classify the type of input dynamically."""
@@ -43,7 +50,18 @@ async def chat():
     """Handles the chatbot conversation loop."""
     await initialize_chatbot()
     try:
-        user_input = input("User:> ").strip()
+        if not USE_OLLAMA and USE_SPEECH_INPUT:
+            user_input, exit_program = speech_to_text()
+            if exit_program:
+                print("\n👋 Exiting the chatbot. Goodbye!")
+                return False  # Exit the chatbot loop
+        else:
+            user_input = input("User:> ").strip()
+
+        if not user_input:
+            print("No input detected. Please try again.")
+            return True
+        
     except (KeyboardInterrupt, EOFError):
         print("\n\nExiting chat...")
         return False
@@ -87,6 +105,9 @@ async def chat():
                     print("Companio:> ", end="", flush=True)
                 print(new_text, end="", flush=True)
                 answer += new_text
+                if not USE_OLLAMA and USE_SPEECH_OUTPUT:
+                  text_to_speech(str(answer))
+                return True
 
                 """ To artificially slow down streaming (optional), comment/uncomment the following line: """
                 # await asyncio.sleep(0.1)
@@ -106,7 +127,7 @@ async def chat():
             chat_history.add_user_message(user_input)
             chat_history.add_assistant_message(str(answer))
             save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
-
+            
     except Exception as e:
         print(f"Error: {e}")
         return False
