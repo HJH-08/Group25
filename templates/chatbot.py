@@ -105,12 +105,12 @@ async def chat():
                     print("Companio:> ", end="", flush=True)
                 print(new_text, end="", flush=True)
                 answer += new_text
-                if not USE_OLLAMA and USE_SPEECH_OUTPUT:
-                  text_to_speech(str(answer))
-                return True
+            
+        if not USE_OLLAMA and USE_SPEECH_OUTPUT:
+            text_to_speech(answer)  # Process full response at once
 
-                """ To artificially slow down streaming (optional), comment/uncomment the following line: """
-                # await asyncio.sleep(0.1)
+        """ To artificially slow down streaming (optional), comment/uncomment the following line: """
+        # await asyncio.sleep(0.1)
 
         print()
 
@@ -122,11 +122,11 @@ async def chat():
         elif "collection_local" in kernel.services:
             await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
 
-        # ✅ Save new chat history **only for Ollama**
-        if USE_OLLAMA:
-            chat_history.add_user_message(user_input)
-            chat_history.add_assistant_message(str(answer))
-            save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
+        # # ✅ Save new chat history **only for Ollama**
+        # if USE_OLLAMA:
+        #     chat_history.add_user_message(user_input)
+        #     chat_history.add_assistant_message(str(answer))
+        #     save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
             
     except Exception as e:
         print(f"Error: {e}")

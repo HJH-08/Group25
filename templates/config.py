@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
-USE_OLLAMA = False
+USE_OLLAMA = True
 USE_SPEECH_INPUT = False
 USE_SPEECH_OUTPUT = False
 USER_ID = "123"
