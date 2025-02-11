@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
-USE_OLLAMA = True
+USE_OLLAMA = False
+USE_SPEECH_INPUT = False
+USE_SPEECH_OUTPUT = False
 USER_ID = "123"
 
 # Ollama Settings - Allowing Selection Between Phi3 and IBM Granite
@@ -31,6 +33,10 @@ AZURE_AI_SEARCH_INDEX = os.getenv("AZURE_AI_SEARCH_INDEX")
 AZURE_OPENAI_EMBEDDING_API_KEY = os.getenv("AZURE_OPENAI_EMBEDDING_API_KEY")
 AZURE_OPENAI_EMBEDDING_ENDPOINT = os.getenv("AZURE_OPENAI_EMBEDDING_ENDPOINT")
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+
+# Azure Speech Service credentials
+AZURE_SPEECH_KEY = os.getenv("AZURE_SPEECH_KEY")
+AZURE_SPEECH_REGION = os.getenv("AZURE_SPEECH_REGION")
 
 # System message for chatbot behavior
 SYSTEM_MESSAGE = """

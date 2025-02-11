@@ -53,8 +53,8 @@ async def search_memory(kernel: Kernel, query):
             vector=query_vector,
             options=VectorSearchOptions(
                 vector_field_name="memory_vector",
-                similarity_threshold=0.75,
-                top_k = 8
+                similarity_threshold=0.7,
+                top_k = 1000
                 )
         )
 
