@@ -50,7 +50,7 @@ async def search_memory_local(kernel: Kernel, query: str):
     Searches the Qdrant vector store for memories that match the query.
     
     This function:
-      2. Generates an embedding for the query and performs a vector search.
+    Generates an embedding for the query and performs a vector search.
     """
     if "collection_local" not in kernel.services:
         print("Qdrant vector store is not available.")

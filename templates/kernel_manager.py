@@ -45,16 +45,16 @@ async def setup_kernel():
 
     # **Load past chat history only for Ollama**
 
-    if USE_OLLAMA:
-        # Load previous chat history from JSON
-        past_chat = load_chat_history(USER_ID)
-        for msg in past_chat.messages:
-            if msg.role == AuthorRole.USER:
-                chat_history.add_user_message(msg.content)
-            elif msg.role == AuthorRole.ASSISTANT:
-                chat_history.add_assistant_message(msg.content)
-            elif msg.role == AuthorRole.SYSTEM:
-                chat_history.add_system_message(msg.content)
+    # if USE_OLLAMA:
+    #     # Load previous chat history from JSON
+    #     past_chat = load_chat_history(USER_ID)
+    #     for msg in past_chat.messages:
+    #         if msg.role == AuthorRole.USER:
+    #             chat_history.add_user_message(msg.content)
+    #         elif msg.role == AuthorRole.ASSISTANT:
+    #             chat_history.add_assistant_message(msg.content)
+    #         elif msg.role == AuthorRole.SYSTEM:
+    #             chat_history.add_system_message(msg.content)
 
 
     return kernel, chat_function, chat_history, model_name
