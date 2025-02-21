@@ -108,5 +108,4 @@ async def search_memory_local(kernel: Kernel, query: str):
     for result in vector_results.points:
         memory_results.add(result.payload.get("memory_text"))
 
-    print(f"relevant memories: {memory_results}")
     return memory_results
