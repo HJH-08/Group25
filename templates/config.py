@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Toggle between Ollama and Azure OpenAI
-USE_OLLAMA = False
+USE_OLLAMA = True
 USE_SPEECH_INPUT = False
 USE_SPEECH_OUTPUT = False
 USER_ID = "123"
@@ -23,7 +23,12 @@ AVAILABLE_OLLAMA_MODELS = {
 QDRANT_HOST = "http://localhost"
 QDRANT_PORT = 6333
 QDRANT_COLLECTION = "chat_history"
-VECTOR_SIZE = 384
+DENSE_VECTOR_SIZE = 768
+LATE_INTERACTION_VECTOR_SIZE = 128
+
+# FastEmbed Settings
+SPARSE_EMBEDDING_MODEL_NAME = "qdrant/bm25"
+LATE_INTERACTION_EMBEDDING_MODEL_NAME = "colbert-ir/colbertv2.0"
 
 # Azure OpenAI Settings
 AZURE_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")

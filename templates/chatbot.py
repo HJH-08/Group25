@@ -74,7 +74,7 @@ async def chat():
     memory_results = []
     if "collection" in kernel.services:
         memory_results = await search_memory(kernel, query=user_input)
-    elif "collection_local" in kernel.services:
+    elif "qdrant_client" in kernel.services:
         memory_results = await search_memory_local(kernel, query=user_input)
 
     # **Update the chat history with past memories (if available)**
@@ -87,11 +87,12 @@ async def chat():
     # **Invoke the chatbot function**
     try:
         answer = ""
+        first_chunk = True  # Track whether it's the first chunk
         async for chunk in kernel.invoke_stream(
             chat_function, 
             KernelArguments(
                 chat_history=chat_history, user_input=user_input
-                )
+            )
         ):
             if not isinstance(chunk, list):
                 continue
@@ -101,35 +102,29 @@ async def chat():
                     continue
 
                 new_text = msg.items[0].text
-                if answer == "":
+                
+                if first_chunk:
                     print("Companio:> ", end="", flush=True)
+                    first_chunk = False  # Prints prefix once
+                
                 print(new_text, end="", flush=True)
                 answer += new_text
+
                 if not USE_OLLAMA and USE_SPEECH_OUTPUT:
-                  text_to_speech(str(answer))
-                return True
+                    text_to_speech(str(answer))  # Convert the complete response to speech
+        
+        print()  # Ensure proper new line after response completion
 
-                """ To artificially slow down streaming (optional), comment/uncomment the following line: """
-                # await asyncio.sleep(0.1)
-
-        print()
-
+        # Store chat memory after full response is streamed
         category = categorize_input(user_input)
         
-        # Store the memory for future use
         if "collection" in kernel.services:
             await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
-        elif "collection_local" in kernel.services:
+        elif "qdrant_client" in kernel.services:
             await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
 
-        # ✅ Save new chat history **only for Ollama**
-        if USE_OLLAMA:
-            chat_history.add_user_message(user_input)
-            chat_history.add_assistant_message(str(answer))
-            save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
-            
     except Exception as e:
         print(f"Error: {e}")
         return False
 
-    return True
+    return True  # Return after processing the entire message
