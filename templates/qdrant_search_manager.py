@@ -5,8 +5,6 @@ from qdrant_client.models import PointStruct
 from qdrant_client import AsyncQdrantClient
 from semantic_kernel import Kernel
 from semantic_kernel.data import VectorSearchOptions
-
-from data_model_local import serialize_sparse_vector
 from config import QDRANT_COLLECTION
 from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import models
