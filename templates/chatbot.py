@@ -8,12 +8,16 @@ from azure_search_manager import search_memory, store_memory
 from qdrant_search_manager import search_memory_local, store_memory_local
 from config import USER_ID, USE_OLLAMA, USE_SPEECH_INPUT, USE_SPEECH_OUTPUT
 from offline_memory import load_chat_history, save_chat_history
+#from offline_speech_to_text import offline_speech_to_text
+
 
 # Import speech-to-text only if Azure is used
 if not USE_OLLAMA and USE_SPEECH_INPUT:
     from azure_speech_to_text import speech_to_text
 if not USE_OLLAMA and USE_SPEECH_OUTPUT:
     from azure_text_to_speech import text_to_speech
+if USE_OLLAMA and USE_SPEECH_OUTPUT:
+    from offline_text_to_speech import speak_text
     
 # Don't run setup_kernel() immediately
 kernel = None
@@ -52,6 +56,11 @@ async def chat():
     try:
         if not USE_OLLAMA and USE_SPEECH_INPUT:
             user_input, exit_program = speech_to_text()
+            if exit_program:
+                print("\n👋 Exiting the chatbot. Goodbye!")
+                return False  # Exit the chatbot loop
+        elif USE_OLLAMA and USE_SPEECH_INPUT:
+            user_input, exit_program = offline_speech_to_text()
             if exit_program:
                 print("\n👋 Exiting the chatbot. Goodbye!")
                 return False  # Exit the chatbot loop
@@ -103,11 +112,17 @@ async def chat():
                 new_text = msg.items[0].text
                 if answer == "":
                     print("Companio:> ", end="", flush=True)
-                print(new_text, end="", flush=True)
+                if not (USE_OLLAMA and USE_SPEECH_OUTPUT):
+                    print(new_text, end="", flush=True)
                 answer += new_text
             
         if not USE_OLLAMA and USE_SPEECH_OUTPUT:
-            text_to_speech(answer)  # Process full response at once
+            speech_to_text(answer)  # Process full response at once
+            
+
+        if USE_OLLAMA and USE_SPEECH_OUTPUT:
+            speak_text(text=answer)
+            print("Companio:> " + answer)
 
         """ To artificially slow down streaming (optional), comment/uncomment the following line: """
         # await asyncio.sleep(0.1)
@@ -123,10 +138,10 @@ async def chat():
             await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
 
         # # ✅ Save new chat history **only for Ollama**
-        # if USE_OLLAMA:
-        #     chat_history.add_user_message(user_input)
-        #     chat_history.add_assistant_message(str(answer))
-        #     save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
+        if USE_OLLAMA:
+            chat_history.add_user_message(user_input)
+            chat_history.add_assistant_message(str(answer))
+            save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
             
     except Exception as e:
         print(f"Error: {e}")
