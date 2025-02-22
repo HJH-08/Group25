@@ -18,6 +18,8 @@ if not USE_OLLAMA and USE_SPEECH_OUTPUT:
     from azure_text_to_speech import text_to_speech
 if USE_OLLAMA and USE_SPEECH_OUTPUT:
     from offline_text_to_speech import speak_text
+if USE_OLLAMA and USE_SPEECH_INPUT:
+    from offline_speech_to_text import offline_speech_to_text
     
 # Don't run setup_kernel() immediately
 kernel = None
@@ -117,7 +119,7 @@ async def chat():
                 answer += new_text
             
         if not USE_OLLAMA and USE_SPEECH_OUTPUT:
-            speech_to_text(answer)  # Process full response at once
+            text_to_speech(answer)  # Process full response at once
             
 
         if USE_OLLAMA and USE_SPEECH_OUTPUT:
