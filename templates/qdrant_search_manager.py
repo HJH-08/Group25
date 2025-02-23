@@ -64,7 +64,7 @@ async def search_memory_local(kernel: Kernel, query: str):
      1. Generates dense, sparse, and late-interaction embeddings for the query.
      2. Does vector search on Qdrant collection using all three embeddings.
      3. Reranks results to find best matches.
-        4. Returns the memory texts from the top results.
+     4. Returns the memory texts from the top results.
     """
     
     vectorizer = kernel.services.get("vectorizer_local")

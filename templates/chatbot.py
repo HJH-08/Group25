@@ -15,6 +15,10 @@ if not USE_OLLAMA and USE_SPEECH_INPUT:
     from azure_speech_to_text import speech_to_text
 if not USE_OLLAMA and USE_SPEECH_OUTPUT:
     from azure_text_to_speech import text_to_speech
+if USE_OLLAMA and USE_SPEECH_OUTPUT:
+    from offline_text_to_speech import speak_text
+if USE_OLLAMA and USE_SPEECH_INPUT:
+    from offline_speech_to_text import offline_speech_to_text
     
 # Don't run setup_kernel() immediately
 kernel = None
@@ -56,6 +60,11 @@ async def chat():
     try:
         if not USE_OLLAMA and USE_SPEECH_INPUT:
             user_input, exit_program = speech_to_text()
+            if exit_program:
+                print("\n👋 Exiting the chatbot. Goodbye!")
+                return False  # Exit the chatbot loop
+        elif USE_OLLAMA and USE_SPEECH_INPUT:
+            user_input, exit_program = offline_speech_to_text()
             if exit_program:
                 print("\n👋 Exiting the chatbot. Goodbye!")
                 return False  # Exit the chatbot loop
@@ -110,18 +119,25 @@ async def chat():
             for msg in chunk:
                 if not (hasattr(msg, "items") and msg.items):
                     continue
-
+                    
                 new_text = msg.items[0].text
-                
-                if first_chunk:
+                if answer == "":
                     print("Companio:> ", end="", flush=True)
-                    first_chunk = False  # Prints prefix once
-                
-                print(new_text, end="", flush=True)
+                if not (USE_OLLAMA and USE_SPEECH_OUTPUT):
+                    print(new_text, end="", flush=True)
                 answer += new_text
+                
+            
+        if not USE_OLLAMA and USE_SPEECH_OUTPUT:
+            text_to_speech(answer)  # Process full response at once
+            
 
-                if not USE_OLLAMA and USE_SPEECH_OUTPUT:
-                    text_to_speech(str(answer))  # Convert the complete response to speech
+        if USE_OLLAMA and USE_SPEECH_OUTPUT:
+            speak_text(text=answer)
+            print("Companio:> " + answer)
+
+        """ To artificially slow down streaming (optional), comment/uncomment the following line: """
+        # await asyncio.sleep(0.1)
         
         print()
 
@@ -137,6 +153,12 @@ async def chat():
                 await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
             elif "qdrant_client" in kernel.services:
                 await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
+
+        # ✅ Save new chat history **only for Ollama**
+#         if USE_OLLAMA:
+#             chat_history.add_user_message(user_input)
+#             chat_history.add_assistant_message(str(answer))
+#             save_chat_history(USER_ID, [chat_history.messages[-2], chat_history.messages[-1]])
 
     except Exception as e:
         print(f"Error: {e}")
