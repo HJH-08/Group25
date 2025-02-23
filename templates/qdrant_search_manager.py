@@ -46,10 +46,11 @@ async def store_memory_local(kernel: Kernel, user_id: str, memory_text: str, cat
             "category": category,
             "timestamp": datetime.utcnow().isoformat() + "Z",
         },
-        vector={"dense_embedding": dense_embedding,
-                "bm25_embedding": bm25_embedding.as_object(),
-                "late_interaction_embedding": late_interaction_embedding.tolist(),
-                },
+        vector={
+            "dense_embedding": dense_embedding,
+            "bm25_embedding": bm25_embedding.as_object(),
+            "late_interaction_embedding": late_interaction_embedding.tolist(),
+        },
     )
 
     await qdrant_client.upsert(collection_name=QDRANT_COLLECTION, points=[record])
@@ -100,7 +101,7 @@ async def search_memory_local(kernel: Kernel, query: str):
         using="late_interaction_embedding",
         with_payload=True,
         limit=5,
-)
+    )
 
     memory_results = set()
 

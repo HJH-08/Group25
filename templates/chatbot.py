@@ -6,8 +6,9 @@ from semantic_kernel.contents.chat_message_content import ChatMessageContent
 from kernel_manager import setup_kernel
 from azure_search_manager import search_memory, store_memory
 from qdrant_search_manager import search_memory_local, store_memory_local
-from config import USER_ID, USE_OLLAMA, USE_SPEECH_INPUT, USE_SPEECH_OUTPUT
+from config import USER_ID, USE_OLLAMA, USE_SPEECH_INPUT, USE_SPEECH_OUTPUT, SYSTEM_MESSAGE
 from offline_memory import load_chat_history, save_chat_history
+from semantic_kernel.contents import ChatHistoryTruncationReducer
 
 # Import speech-to-text only if Azure is used
 if not USE_OLLAMA and USE_SPEECH_INPUT:
@@ -21,11 +22,14 @@ chat_function = None
 chat_history = None
 model_name = None
 
+# Initialize the chat history as truncation reducer
+truncation_reducer = ChatHistoryTruncationReducer(target_count=10)
+
 async def initialize_chatbot():
     """Initialize the chatbot lazily when needed."""
-    global kernel, chat_function, chat_history, model_name
+    global kernel, chat_function, model_name
     if kernel is None:
-        kernel, chat_function, chat_history, model_name = await setup_kernel()
+        kernel, chat_function, model_name = await setup_kernel()
         print("Welcome to your Companion Chatbot!")
         print(f"Currently using {model_name}.")
         if not USE_SPEECH_INPUT:
@@ -70,6 +74,10 @@ async def chat():
         print("\n\nExiting chat...")
         return False
 
+    # Add the user message to the truncation reducer and reduce the chat history if needed
+    truncation_reducer.add_user_message(user_input)
+    await truncation_reducer.reduce()
+
     # **Retrieve previous memories if available**
     memory_results = []
     if "collection" in kernel.services:
@@ -80,7 +88,6 @@ async def chat():
     # **Update the chat history with past memories (if available)**
     if memory_results:
         past_memory = "\n\n[Past Memories that MAY be useful]:\n" + "\n".join(memory_results) + "\n"
-        chat_history.add_system_message(past_memory)
     else:
         past_memory = ""
 
@@ -91,7 +98,10 @@ async def chat():
         async for chunk in kernel.invoke_stream(
             chat_function, 
             KernelArguments(
-                chat_history=chat_history, user_input=user_input
+                truncation_reducer=truncation_reducer,
+                user_input=user_input,
+                past_memory=past_memory,
+                system_message = SYSTEM_MESSAGE
             )
         ):
             if not isinstance(chunk, list):
@@ -113,9 +123,12 @@ async def chat():
                 if not USE_OLLAMA and USE_SPEECH_OUTPUT:
                     text_to_speech(str(answer))  # Convert the complete response to speech
         
-        print()  # Ensure proper new line after response completion
+        print()
 
-        # Store chat memory after full response is streamed
+        # Add the assistant message to the truncation reducer
+        truncation_reducer.add_assistant_message(answer)
+
+        # Categorise the input 
         category = categorize_input(user_input)
         
         if "collection" in kernel.services:
