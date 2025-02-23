@@ -25,6 +25,7 @@ async def setup_kernel():
         plugin_name="ChatBot",
         function_name="Chat",
         prompt="""
+        <<INSTRUCTIONS>>
         This is a conversation between you, a kind AI companion, and a user.
         A description of who you are and how you should behave:
         {{ $system_message }}
@@ -39,12 +40,14 @@ async def setup_kernel():
         - **DO NOT assume relationships between unrelated topics unless the user explicitly requests a connection.**  
         - **DO NOT blend or mix topics from past memory or chat history unless directly relevant.**  
         - **If the user switches topics, treat it as a new, separate conversation.**  
-        - **Only respond to the user message and nothing else. DO NOT create information unless from past memory or chat history.**  
+        - **Only respond to the user message and nothing else. DO NOT create information unless from past memory or chat history.**
+        - **Keep responses 2-3 sentences max unless asked for more.**
+        <<END INSTUCTIONS>>
 
         Current user message:
         {{ $user_input }}
 
-        Keep responses 2-3 sentences max unless asked for more.
+        **Your Response:**  
         """,
         template_format="semantic-kernel",
         prompt_execution_settings=settings,
