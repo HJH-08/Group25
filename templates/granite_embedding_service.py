@@ -16,7 +16,7 @@ class GraniteEmbeddingService(EmbeddingGeneratorBase):
     def __init__(
         self,
         service_id: str,
-        ai_model_id: str = "ibm-granite/granite-embedding-30m-english",
+        ai_model_id: str = "ibm-granite/granite-embedding-125m-english",
         device: str = "cpu",
     ):
         """Initialize the Granite embedding service with service_id and ai_model_id."""

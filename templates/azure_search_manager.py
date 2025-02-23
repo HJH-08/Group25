@@ -4,6 +4,7 @@ from semantic_kernel.data import VectorSearchOptions
 from datetime import datetime
 import numpy as np
 import uuid  # For generating unique memory IDs
+from collections import defaultdict
 
 async def store_memory(kernel: Kernel, user_id, memory_text, category):
     """Stores a memory in Azure AI Search, ensuring uniqueness."""
@@ -31,7 +32,37 @@ async def store_memory(kernel: Kernel, user_id, memory_text, category):
     # Store in Azure AI Search
     await collection.upsert(record)
 
-async def search_memory(kernel: Kernel, query):
+async def apply_rrf(text_results, vector_results, k=60, final_top_k=5):
+    """Helper function for RRF (Rank Reciprocal Fusion) algorithm."""
+    fusion_scores = defaultdict(float)
+    doc_map = {}
+
+    async def add_to_fusion(results, weight=1):
+        rank = 0
+        async for result in results.results:  # ✅ Fixed: Use async iteration
+            doc_id = result.record.id
+            memory_text = result.record.memory_text  # Extract memory text
+
+            # Store the document mapping
+            if doc_id not in doc_map:
+                doc_map[doc_id] = memory_text
+
+            # Apply RRF formula
+            fusion_scores[doc_id] += weight / (k + rank + 1)
+            rank += 1
+
+    await add_to_fusion(text_results, weight=1)
+    await add_to_fusion(vector_results, weight=1)
+
+    # **Step 4: Sort by RRF Score**
+    sorted_doc_ids = sorted(fusion_scores.keys(), key=lambda doc_id: fusion_scores[doc_id], reverse=True)
+
+    # **Step 5: Retrieve memory_text values in ranked order**
+    final_results = [doc_map[doc_id] for doc_id in sorted_doc_ids[:final_top_k]]
+
+    return final_results
+
+async def search_memory(kernel: Kernel, query, top_k=10):
     """Searches for a memory using both text search and vector search."""
 
     if "collection" not in kernel.services:
@@ -41,7 +72,7 @@ async def search_memory(kernel: Kernel, query):
     collection = kernel.services["collection"]
 
     # **Step 1: Perform Text Search**
-    text_results = await collection.text_search(search_text=query)
+    text_results = await collection.text_search(search_text=query, top_k=top_k)
 
     # **Step 2: Perform Vector Search (if embeddings are available)**
     vector_results = []
@@ -54,17 +85,13 @@ async def search_memory(kernel: Kernel, query):
             options=VectorSearchOptions(
                 vector_field_name="memory_vector",
                 similarity_threshold=0.7,
-                top_k = 1000
+                top_k = top_k
                 )
         )
 
     # **Step 3: Merge Results (Avoid Duplicates)**
     memory_results = set()
     
-    async for result in text_results.results:
-        memory_results.add(result.record.memory_text)
-    
-    async for result in vector_results.results:
-        memory_results.add(result.record.memory_text)
+    memory_results = await apply_rrf(text_results, vector_results, k=60)
 
     return list(memory_results)
