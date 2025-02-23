@@ -131,10 +131,12 @@ async def chat():
         # Categorise the input 
         category = categorize_input(user_input)
         
-        if "collection" in kernel.services:
-            await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
-        elif "qdrant_client" in kernel.services:
-            await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
+        # Only store past memories if the input is not a question
+        if category != "question":
+            if "collection" in kernel.services:
+                await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
+            elif "qdrant_client" in kernel.services:
+                await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
 
     except Exception as e:
         print(f"Error: {e}")
