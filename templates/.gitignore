@@ -6,3 +6,4 @@ __pycache__/
 # Ignore specific untracked file
 test*
 ./qdrant_storage/*
+models
