@@ -1,0 +1,79 @@
+.chatbox-container {
+    width: 80%;  /* Ensures chatbox width aligns with the image */
+    max-width: 600px;  /* Prevents the chatbox from becoming too wide */
+    margin: 0 auto;  /* Centers the chatbox */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.message {
+    max-width: 75%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    word-wrap: break-word;
+    display: inline-block;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: #d1e7dd;
+    text-align: right;
+}
+
+.ai-message {
+    align-self: flex-start;
+    background-color: #e9ecef;
+    text-align: left;
+}
+
+.input-container {
+    display: flex;
+    width: 100%;  /* Matches width of the chatbox */
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    width: 100%;  /* Makes input take full width */
+    padding: 12px;  /* Improves user experience */
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-input:focus {
+    border-color: #007bff;
+}
+
+.send-button {
+    padding: 12px 18px;  /* Matches height of the input field */
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.send-button:hover {
+    background-color: #0056b3;
+}
