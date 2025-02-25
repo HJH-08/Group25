@@ -72,12 +72,14 @@ const AIInteractionPage = () => {
             </div>
 
             {/* Chatbox Component */}
-            <ChatBox
-                messages={messages}
-                userInput={userInput}
-                setUserInput={setUserInput}
-                handleSendMessage={handleSendMessage}
-            />
+            <div className="chatbox-wrapper">
+                <ChatBox
+                    messages={messages}
+                    userInput={userInput}
+                    setUserInput={setUserInput}
+                    handleSendMessage={handleSendMessage}
+                />
+            </div>
         </div>
     );
 };

@@ -42,3 +42,21 @@
 .switch-mode-btn:hover {
     background-color: #0056b3;
 }
+
+/* Ensures proper layout */
+.interaction-container,
+.healthcheck-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+/* Ensures chatbox fits correctly */
+.chatbox-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
