@@ -1,54 +1,41 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAvatar } from "../context/AvatarContext";
-import ChatBox from "../components/ChatBox";  // Import ChatBox component
-import { useNavigate } from "react-router-dom";  // Import navigation
-import "../styles/AIInteractionPage.css";    // Import external styles
+import ChatBox from "../components/ChatBox";
+import { useNavigate } from "react-router-dom";
+import "../styles/HealthCheckPage.css";
 
-const AIInteractionPage = () => {
+const HealthCheckPage = () => {
     const { avatar } = useAvatar();  // Avatar remains the same
     const [messages, setMessages] = useState([]);
     const [userInput, setUserInput] = useState("");
     const videoRef = useRef(null);
-    const navigate = useNavigate();  // Enable page navigation
+    const navigate = useNavigate();
 
-    console.log("AIInteractionPage Avatar:", avatar);
-    console.log("AIInteractionPage Mode: Interaction");  // Logs the current mode
-
-    // Play the avatar video (if available) when the component loads
     useEffect(() => {
         if (avatar?.video) {
             videoRef.current?.play();
         }
     }, [avatar]);
 
-    // Function to handle sending messages
     const handleSendMessage = () => {
         if (!userInput.trim()) return;
 
-        // Add user message to chat
         setMessages((prev) => [...prev, { sender: "user", text: userInput }]);
-
-        // Simulate AI response
         setTimeout(() => {
-            setMessages((prev) => [...prev, { sender: "ai", text: "Hello! How can I assist you today?" }]);
+            setMessages((prev) => [...prev, { sender: "ai", text: "Please describe your health status today." }]);
         }, 1000);
 
-        setUserInput(""); // Clear input field
-    };
-
-    // 🆕 Navigate to Health Check-In page
-    const goToHealthCheck = () => {
-        navigate("/health-check");  // Moves to the separate Health Check-In page
+        setUserInput("");
     };
 
     return (
         <div className="container">
-            {/* 🆕 Button moved to top right */}
-            <button className="switch-health-btn" onClick={goToHealthCheck}>
-                Go to Health Check-In
+            {/* 🆕 Button to go back to Interaction Mode */}
+            <button className="switch-mode-btn" onClick={() => navigate("/ai-interaction")}>
+                Go to Interaction Mode
             </button>
 
-            <h1 className="title">Interaction Mode</h1>
+            <h1 className="title">Health Check-In</h1>
 
             {/* Avatar Display */}
             <div className="video-container">
@@ -74,4 +61,4 @@ const AIInteractionPage = () => {
     );
 };
 
-export default AIInteractionPage;
+export default HealthCheckPage;
