@@ -74,6 +74,8 @@ async def chat():
         if not user_input:
             print("No input detected. Please try again.")
             return True
+
+        user_input = user_input.replace("stop listening", "").strip()
         
     except (KeyboardInterrupt, EOFError):
         print("\n\nExiting chat...")
@@ -133,8 +135,9 @@ async def chat():
             
 
         if USE_OLLAMA and USE_SPEECH_OUTPUT:
+            print(answer)
             speak_text(text=answer)
-            print("Companio:> " + answer)
+            
 
         """ To artificially slow down streaming (optional), comment/uncomment the following line: """
         # await asyncio.sleep(0.1)
