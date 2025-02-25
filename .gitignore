@@ -2,3 +2,6 @@
 *.venv
 qdrant_storage/
 .DS_Store
+node_modules
+frontend/public/videos/
+*.mp4
