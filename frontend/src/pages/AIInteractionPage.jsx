@@ -1,29 +1,30 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useAvatar } from "../context/AvatarContext";  // Import Avatar Context
 
 const AIInteractionPage = () => {
-    const location = useLocation();
-    const { avatar, mode } = location.state || { avatar: null, mode: "interaction" };
-
-    // State for chatbot conversation
+    const { avatar, mode } = useAvatar();  // Use global state from AvatarContext
     const [messages, setMessages] = useState([]);
     const [userInput, setUserInput] = useState("");
-
-    // Ref to control the video element
     const videoRef = useRef(null);
+
+    // Debugging: Check if avatar is available
+    console.log("AIInteractionPage Avatar:", avatar);
+    console.log("AIInteractionPage Mode:", mode);
 
     // Function to play the video once
     const playVideo = () => {
         if (videoRef.current) {
-            videoRef.current.currentTime = 0; // Restart video
-            videoRef.current.play(); // Play video
+            videoRef.current.currentTime = 0;
+            videoRef.current.play();
         }
     };
 
     // Play video on initial load
     useEffect(() => {
-        playVideo();
-    }, []);
+        if (avatar?.video) {
+            playVideo();
+        }
+    }, [avatar]);
 
     // Function to handle message submission
     const handleSendMessage = () => {
@@ -35,9 +36,6 @@ const AIInteractionPage = () => {
         // Simulate AI response
         setTimeout(() => {
             setMessages((prev) => [...prev, { sender: "ai", text: "Hello! How can I assist you today?" }]);
-
-            // Play video again after AI response
-            playVideo();
         }, 1000);
 
         setUserInput(""); // Clear input field
@@ -62,28 +60,34 @@ const AIInteractionPage = () => {
 
             {/* Avatar Display */}
             <div style={{ flex: "0 0 auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                {avatar && avatar.video ? (
-                    <video
-                        ref={videoRef}
-                        src={avatar.video}
-                        muted
-                        style={{
-                            maxHeight: "70vh",
-                            maxWidth: "70vw",
-                            borderRadius: "15px",
-                        }}
-                    />
+                {avatar ? (
+                    avatar.video ? (
+                        <video
+                            ref={videoRef}
+                            src={avatar.video}
+                            muted
+                            autoPlay
+                            loop
+                            style={{
+                                maxHeight: "70vh",
+                                maxWidth: "70vw",
+                                borderRadius: "15px",
+                            }}
+                        />
+                    ) : (
+                        <img
+                            src={avatar.image}
+                            alt={avatar.name}
+                            style={{
+                                maxHeight: "70vh",
+                                maxWidth: "70vw",
+                                objectFit: "contain",
+                                borderRadius: "15px",
+                            }}
+                        />
+                    )
                 ) : (
-                    <img
-                        src={avatar?.image}
-                        alt={avatar?.name}
-                        style={{
-                            maxHeight: "70vh",
-                            maxWidth: "70vw",
-                            objectFit: "contain",
-                            borderRadius: "15px",
-                        }}
-                    />
+                    <h2>No Avatar Selected</h2>
                 )}
             </div>
 

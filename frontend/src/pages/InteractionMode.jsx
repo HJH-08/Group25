@@ -1,50 +1,34 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAvatar } from "../context/AvatarContext";  // Import Global State
 
 const InteractionMode = () => {
     const navigate = useNavigate();
-    const location = useLocation();
+    const { avatar, setMode } = useAvatar();  // Use global state
 
-    // Retrieve the selected avatar passed via state
-    const { avatar } = location.state || { avatar: null };
+    console.log("Avatar in InteractionMode:", avatar); // Debugging
 
-    // Debugging: Log the selected avatar and video source
-    console.log("Avatar passed to Interaction Mode:", avatar);
-
-    // Map videos for each avatar
-    const avatarVideos = {
-        goldfish: "/videos/goldfish-video.mp4",
-        parrot: "/videos/parrot-video.mp4",
-        cat: "/videos/cat-video.mp4",
-        dog: "/videos/dog-video.mp4",
-    };
-
-    // Normalize avatar name to find the corresponding video
-    const videoKey = avatar?.name?.toLowerCase().trim();
-    const videoSrc = avatarVideos[videoKey];
-
-    // Debugging: Log the generated video source
-    console.log("Generated Video Source:", videoSrc);
+    if (!avatar) {
+        return <h1>Error: No avatar selected. Go back to the avatar selection page.</h1>;
+    }
 
     return (
         <div style={{ textAlign: "center", padding: "50px" }}>
             <h1>Choose your mode of interaction</h1>
             <div style={{ display: "flex", justifyContent: "center", gap: "30px", marginTop: "30px" }}>
-                {/* Interaction */}
                 <div
-                    onClick={() => navigate("/ai-interaction", { state: { avatar, mode: "interaction" } })}
+                    onClick={() => { setMode("interaction"); navigate("/ai-interaction"); }}
                     style={{
                         cursor: "pointer",
-                        textAlign: "center",
                         border: "1px solid #ccc",
                         borderRadius: "10px",
                         padding: "20px",
                         width: "200px",
                     }}
                 >
-                    {videoSrc ? (
+                    {avatar.video ? (
                         <video
-                            src={videoSrc}
+                            src={avatar.video}
                             autoPlay
                             loop
                             muted
@@ -56,62 +40,34 @@ const InteractionMode = () => {
                             }}
                         />
                     ) : (
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "150px",
-                                backgroundColor: "#dfe7fd",
-                                borderRadius: "8px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <p style={{ fontSize: "18px", fontWeight: "bold" }}>No Video Available</p>
+                        <div style={{ backgroundColor: "#dfe7fd", padding: "20px", borderRadius: "8px" }}>
+                            No Video Available
                         </div>
                     )}
-                    <p style={{ marginTop: "10px" }}>Interaction</p>
+                    <p>Interaction</p>
                 </div>
 
-                {/* Health Check-In */}
                 <div
-                    onClick={() => navigate("/ai-interaction", { state: { avatar, mode: "health-check" } })}
+                    onClick={() => { setMode("health-check"); navigate("/ai-interaction"); }}
                     style={{
                         cursor: "pointer",
-                        textAlign: "center",
                         border: "1px solid #ccc",
                         borderRadius: "10px",
                         padding: "20px",
                         width: "200px",
                     }}
                 >
-                    {avatar ? (
-                        <img
-                            src={avatar.image}
-                            alt={avatar.name}
-                            style={{
-                                width: "100%",
-                                height: "200px",
-                                objectFit: "contain",
-                                borderRadius: "10px",
-                            }}
-                        />
-                    ) : (
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "150px",
-                                backgroundColor: "#fdebd0",
-                                borderRadius: "8px",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <p style={{ fontSize: "18px", fontWeight: "bold" }}>No Avatar Selected</p>
-                        </div>
-                    )}
-                    <p style={{ marginTop: "10px" }}>Health Check-In</p>
+                    <img
+                        src={avatar.image}
+                        alt={avatar.name}
+                        style={{
+                            width: "100%",
+                            height: "200px",
+                            objectFit: "contain",
+                            borderRadius: "10px",
+                        }}
+                    />
+                    <p>Health Check-In</p>
                 </div>
             </div>
         </div>
