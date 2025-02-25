@@ -1,16 +1,31 @@
-import React from "react";
-import "../styles/ChatBox.css"; // Import external CSS file
+import React, { useEffect, useRef } from "react";
+import "../styles/ChatBox.css"; // Import styles
 
 const ChatBox = ({ messages, userInput, setUserInput, handleSendMessage }) => {
+    const chatMessagesRef = useRef(null);
+
+    // Automatically scroll to the latest message
+    useEffect(() => {
+        if (chatMessagesRef.current) {
+            chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+        }
+    }, [messages]);
+
     return (
         <div className="chatbox-container">
-            <div className="chat-messages">
+            {/* Scrollable Chat Messages */}
+            <div className="chat-messages" ref={chatMessagesRef}>
                 {messages.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sender === "user" ? "user-message" : "ai-message"}`}>
+                    <div
+                        key={index}
+                        className={`message ${msg.sender === "user" ? "user-message" : "ai-message"}`}
+                    >
                         {msg.text}
                     </div>
                 ))}
             </div>
+
+            {/* Input Field */}
             <div className="input-container">
                 <input
                     type="text"
