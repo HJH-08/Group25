@@ -1,49 +1,57 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useAvatar } from "../context/AvatarContext";
-import ChatBox from "../components/ChatBox";  // Import ChatBox component
-import { useNavigate } from "react-router-dom";  // Import navigation
-import "../styles/AIInteractionPage.css";    // Import external styles
+import ChatBox from "../components/ChatBox";  
+import { useNavigate } from "react-router-dom";  
+import "../styles/AIInteractionPage.css";    
 
 const AIInteractionPage = () => {
-    const { avatar } = useAvatar();  // Avatar remains the same
+    const { avatar } = useAvatar();  
     const [messages, setMessages] = useState([]);
     const [userInput, setUserInput] = useState("");
     const videoRef = useRef(null);
-    const navigate = useNavigate();  // Enable page navigation
+    const navigate = useNavigate();  
 
     console.log("AIInteractionPage Avatar:", avatar);
-    console.log("AIInteractionPage Mode: Interaction");  // Logs the current mode
+    console.log("AIInteractionPage Mode: Interaction");  
 
-    // Play the avatar video (if available) when the component loads
+    // Play avatar video **once on page load**
     useEffect(() => {
         if (avatar?.video) {
             videoRef.current?.play();
         }
     }, [avatar]);
 
-    // Function to handle sending messages
+    // Function to replay video when a message is sent
+    const playVideo = () => {
+        if (videoRef.current) {
+            videoRef.current.currentTime = 0;
+            videoRef.current.play();
+        }
+    };
+
+    // Function to handle message submission
     const handleSendMessage = () => {
         if (!userInput.trim()) return;
 
-        // Add user message to chat
         setMessages((prev) => [...prev, { sender: "user", text: userInput }]);
 
-        // Simulate AI response
+        // Simulated AI response + replay video
         setTimeout(() => {
             setMessages((prev) => [...prev, { sender: "ai", text: "Hello! How can I assist you today?" }]);
+            playVideo();  // 🔥 Video plays only after AI response
         }, 1000);
 
-        setUserInput(""); // Clear input field
+        setUserInput("");  
     };
 
-    // 🆕 Navigate to Health Check-In page
+    // Navigate to Health Check-In page
     const goToHealthCheck = () => {
-        navigate("/health-check");  // Moves to the separate Health Check-In page
+        navigate("/health-check");  
     };
 
     return (
         <div className="container">
-            {/* 🆕 Button moved to top right */}
+            {/* Button at top-right */}
             <button className="switch-health-btn" onClick={goToHealthCheck}>
                 Go to Health Check-In
             </button>
@@ -54,7 +62,7 @@ const AIInteractionPage = () => {
             <div className="video-container">
                 {avatar ? (
                     avatar.video ? (
-                        <video ref={videoRef} src={avatar.video} muted autoPlay loop />
+                        <video ref={videoRef} src={avatar.video} muted />  
                     ) : (
                         <img src={avatar.image} alt={avatar.name} />
                     )
@@ -64,12 +72,14 @@ const AIInteractionPage = () => {
             </div>
 
             {/* Chatbox Component */}
-            <ChatBox
-                messages={messages}
-                userInput={userInput}
-                setUserInput={setUserInput}
-                handleSendMessage={handleSendMessage}
-            />
+            <div className="chatbox-wrapper">
+                <ChatBox
+                    messages={messages}
+                    userInput={userInput}
+                    setUserInput={setUserInput}
+                    handleSendMessage={handleSendMessage}
+                />
+            </div>
         </div>
     );
 };
