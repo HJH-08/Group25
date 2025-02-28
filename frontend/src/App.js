@@ -7,6 +7,7 @@ import InteractionMode from "./pages/InteractionMode";
 import AIInteractionPage from "./pages/AIInteractionPage";
 import HealthCheckPage from "./pages/HealthCheckPage";  // ✅ Ensure HealthCheckPage is imported
 import ThreeDPage from "./pages/3DUI"; 
+import MatchPairs from "./pages/MatchPairs";
 
 const App = () => {
     return (
@@ -21,6 +22,7 @@ const App = () => {
                     <Route path="/health-check" element={<HealthCheckPage />} />  {/* ✅ FIXED */}
                     <Route path="/3d-avatar" element={<HealthCheckPage />} /> 
                     <Route path="/3DUI" element={<ThreeDPage />} />
+                    <Route path="/match-pairs" element={<MatchPairs />} />
                 </Routes>
             </Router>
         </AvatarProvider>

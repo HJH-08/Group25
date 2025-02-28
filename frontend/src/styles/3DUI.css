@@ -357,3 +357,138 @@ canvas {
   background-size: 10px 10px;
   opacity: 0.5;
 }
+
+/* Game selector styles */
+.game-selector {
+  position: absolute;
+  left: 80px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.8);
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 99;
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  width: 280px;
+}
+
+.game-selector.show {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.game-selector h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #2c3e50;
+  font-size: 18px;
+  text-align: center;
+  border-bottom: 2px solid #eaeaea;
+  padding-bottom: 10px;
+}
+
+.games-wheel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.game-option {
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 10px;
+}
+
+.game-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  border-color: #3498db;
+}
+
+.game-preview {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.game-preview span {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  z-index: 2;
+}
+
+.game-description {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #555;
+  text-align: center;
+}
+
+/* Game preview backgrounds */
+.memory-match-bg {
+  background: linear-gradient(135deg, #5170FF, #FF66C4);
+  position: relative;
+}
+
+.memory-match-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255, 255, 255, 0.1) 20px, rgba(255, 255, 255, 0.1) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(255, 255, 255, 0.1) 20px, rgba(255, 255, 255, 0.1) 40px);
+  opacity: 0.3;
+}
+
+/* Games controller button on the left side */
+.games-button {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.games-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.games-button svg {
+  width: 26px;
+  height: 26px;
+  color: #3498db;
+}
