@@ -168,3 +168,67 @@ async def chat():
         return False
 
     return True  # Return after processing the entire message
+
+async def process_message(user_input: str) -> str:
+    """Process a single message and return the response as a string.
+    This function is designed for API integration."""
+    
+    await initialize_chatbot()
+    
+    if not user_input:
+        return "No input detected. Please try again."
+    
+    # Add the user message to the truncation reducer
+    truncation_reducer.add_user_message(user_input)
+    await truncation_reducer.reduce()
+
+    # Retrieve previous memories if available
+    memory_results = []
+    if "collection" in kernel.services:
+        memory_results = await search_memory(kernel, query=user_input)
+    elif "qdrant_client" in kernel.services:
+        memory_results = await search_memory_local(kernel, query=user_input)
+
+    # Update with past memories (if available)
+    if memory_results:
+        past_memory = "\n\n[Past Memories that MAY be useful]:\n" + "\n".join(memory_results) + "\n"
+    else:
+        past_memory = ""
+
+    # Process the message
+    try:
+        answer = ""
+        async for chunk in kernel.invoke_stream(
+            chat_function, 
+            KernelArguments(
+                truncation_reducer=truncation_reducer,
+                user_input=user_input,
+                past_memory=past_memory,
+                system_message=SYSTEM_MESSAGE
+            )
+        ):
+            if not isinstance(chunk, list):
+                continue
+
+            for msg in chunk:
+                if not (hasattr(msg, "items") and msg.items):
+                    continue
+                    
+                new_text = msg.items[0].text
+                answer += new_text
+
+        # Add the assistant message to the truncation reducer
+        truncation_reducer.add_assistant_message(answer)
+
+        # Categorize and store memories if needed
+        category = categorize_input(user_input)
+        if category != "question":
+            if "collection" in kernel.services:
+                await store_memory(kernel, user_id=USER_ID, memory_text=user_input, category=category)
+            elif "qdrant_client" in kernel.services:
+                await store_memory_local(kernel, user_id=USER_ID, memory_text=user_input, category=category)
+
+        return answer
+
+    except Exception as e:
+        return f"Error processing message: {str(e)}"

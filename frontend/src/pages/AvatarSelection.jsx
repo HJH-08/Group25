@@ -19,6 +19,10 @@ const AvatarSelection = () => {
         navigate("/interaction-mode");
     };
 
+    const handle3DTest = () => {
+        navigate("/3DUI");
+    };
+
     return (
         <div style={{ textAlign: "center", padding: "20px" }}>
             <h1>Please choose your avatar for today!</h1>
@@ -45,6 +49,12 @@ const AvatarSelection = () => {
                     </div>
                 ))}
             </div>
+            <button 
+                onClick={handle3DTest} 
+                style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+            >
+                3D Avatar Test
+            </button>
         </div>
     );
 };
