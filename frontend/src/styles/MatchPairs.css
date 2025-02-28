@@ -243,15 +243,15 @@ html, body {
   }
   
   /* Add special styling for the end game button */
-  .control-button.end-game {
+  .match-control-button.end-game {
     background-color: rgba(208, 2, 27, 0.1);
   }
   
-  .control-button.end-game:hover {
+  .match-control-button.end-game:hover {
     background-color: rgba(208, 2, 27, 0.2);
   }
   
-  .control-button.end-game svg {
+  .match-control-button.end-game svg {
     color: #D0021B;
   }
 
@@ -349,7 +349,7 @@ html, body {
   }
   
   /* Controls */
-  .controls {
+  .match-controls {
     margin-top: 1.5rem;
     margin-bottom: 2rem;
     display: flex;
@@ -368,7 +368,7 @@ html, body {
     margin-right: auto;
   }
   
-  .control-button {
+  .match-control-button {
     background-color: rgba(255, 255, 255, 0.8);
     border: none;
     border-radius: 50%;
@@ -382,13 +382,13 @@ html, body {
     transition: all 0.3s ease;
   }
   
-  .control-button:hover {
+  .match-control-button:hover {
     background-color: white;
     transform: translateY(-3px);
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   }
   
-  .control-button svg {
+  .match-control-button svg {
     width: 1.5rem;
     height: 1.5rem;
     color: #4A90E2;
@@ -602,7 +602,7 @@ html, body {
   }
   
   @media (max-width: 576px) {
-    .controls {
+    .match-controls {
       flex-wrap: wrap; /* Allow controls to wrap on very small screens */
       gap: 1rem;
     }

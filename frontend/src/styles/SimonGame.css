@@ -283,7 +283,7 @@ html, body {
 }
 
 /* Controls */
-.controls {
+.simon-controls {
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
@@ -301,7 +301,7 @@ html, body {
   margin-right: auto;
 }
 
-.control-button {
+.simon-control-button {
   background-color: #4A90E2;
   color: white;
   border: none;
@@ -314,25 +314,25 @@ html, body {
   box-shadow: 0 3px 6px rgba(74, 144, 226, 0.2);
 }
 
-.control-button:hover {
+.simon-control-button:hover {
   background-color: #357ABD;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
 }
 
-.control-button:disabled {
+.simon-control-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.control-button.end-game {
+.simon-control-button.end-game {
   background-color: #f0f0f0;
   color: #333;
 }
 
-.control-button.end-game:hover {
+.simon-control-button.end-game:hover {
   background-color: #e0e0e0;
 }
 
@@ -520,7 +520,7 @@ html, body {
 }
 
 @media (max-width: 576px) {
-  .controls {
+  .simon-controls {
     flex-direction: column;
     align-items: center;
     gap: 1rem;

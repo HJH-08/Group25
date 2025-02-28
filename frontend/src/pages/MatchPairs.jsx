@@ -407,9 +407,9 @@ const MatchPairs = () => {
             )}
           </div>
 
-          <div className="controls">
+          <div className="match-controls">
             <button 
-              className="control-button end-game"
+              className="match-control-button end-game"
               onClick={resetGame}
               aria-label="End game"
               title="End game and return to menu"
@@ -419,7 +419,7 @@ const MatchPairs = () => {
               </svg>
             </button>
             <button 
-              className="control-button"
+              className="match-control-button"
               onClick={resetGame}
               aria-label="Back to menu"
             >
@@ -428,7 +428,7 @@ const MatchPairs = () => {
               </svg>
             </button>
             <button 
-              className="control-button"
+              className="match-control-button"
               onClick={initializeGame}
               aria-label="Restart game"
             >

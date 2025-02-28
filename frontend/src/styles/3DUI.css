@@ -84,7 +84,7 @@ canvas {
 .control-button svg {
   width: 24px;
   height: 24px;
-  color: #333;
+  color: #3498db; /* Change from #333 to #3498db to match other buttons */
 }
 
 /* Enhanced Welcome Banner */

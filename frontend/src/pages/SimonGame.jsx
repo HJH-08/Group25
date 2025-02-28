@@ -380,9 +380,9 @@ function SimonGame() {
                     </div>
 
                     {/* Game controls */}
-                    <div className="controls">
+                    <div className="simon-controls">
                         <button 
-                            className="control-button"
+                            className="simon-control-button"
                             onClick={startGame}
                             disabled={isPlayingPattern && !gameOver}
                         >
@@ -390,7 +390,7 @@ function SimonGame() {
                         </button>
 
                         <button 
-                            className="control-button end-game"
+                            className="simon-control-button end-game"
                             onClick={goToMenu}
                         >
                             Menu
@@ -407,22 +407,22 @@ function SimonGame() {
                     {/* Hidden audio elements for game sounds */}
                     <audio 
                         ref={clip1Ref} 
-                        src="https://s3.amazonaws.com/freecodecamp/simonSound1.mp3" 
+                        src="/beeps/beep1.mp3" 
                         preload="auto"
                     ></audio>
                     <audio 
                         ref={clip2Ref} 
-                        src="https://s3.amazonaws.com/freecodecamp/simonSound2.mp3" 
+                        src="/beeps/beep2.mp3" 
                         preload="auto"
                     ></audio>
                     <audio 
                         ref={clip3Ref} 
-                        src="https://s3.amazonaws.com/freecodecamp/simonSound3.mp3" 
+                        src="/beeps/beep3.mp3" 
                         preload="auto"
                     ></audio>
                     <audio 
                         ref={clip4Ref} 
-                        src="https://s3.amazonaws.com/freecodecamp/simonSound4.mp3" 
+                        src="/beeps/beep4.mp3" 
                         preload="auto"
                     ></audio>
                 </>
