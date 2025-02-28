@@ -60,7 +60,58 @@ const EnhancedFloor = () => {
   );
 };
 
-export const Experience = ({ cameraZoomed }) => {
+const backgroundConfigs = {
+  default: {
+    skyColor: "#f5f9ff",
+    sunPosition: [10, 5, 10],
+    turbidity: 0.1,
+    rayleigh: 0.5,
+    mieCoefficient: 0.01,
+    starsFactor: 3,
+    ambientLightIntensity: 0.6,
+    directionalLightIntensity: 1.5,
+    directionalLightColor: "#ffffff",
+    pointLightColor: "#ffeecc",
+  },
+  sunset: {
+    skyColor: "#ff7e5f",
+    sunPosition: [0, 0.25, 5],
+    turbidity: 0.2,
+    rayleigh: 3,
+    mieCoefficient: 0.05,
+    starsFactor: 2,
+    ambientLightIntensity: 0.55,
+    directionalLightIntensity: 1.2,
+    directionalLightColor: "#ff8c47",
+    pointLightColor: "#ff6b35",
+  },
+  night: {
+    skyColor: "#0c1445",
+    sunPosition: [0, -5, 0],
+    turbidity: 0.05,
+    rayleigh: 0.1,
+    mieCoefficient: 0.001,
+    starsFactor: 8,
+    ambientLightIntensity: 0.25,
+    directionalLightIntensity: 0.1,
+    directionalLightColor: "#3b68d9",
+    pointLightColor: "#a0c2ff",
+  },
+  dream: {
+    skyColor: "#ffd6e0",
+    sunPosition: [5, 3, 5],
+    turbidity: 0.15,
+    rayleigh: 1.2,
+    mieCoefficient: 0.03,
+    starsFactor: 5,
+    ambientLightIntensity: 0.7,
+    directionalLightIntensity: 1.4,
+    directionalLightColor: "#ffb6c1",
+    pointLightColor: "#c792ea",
+  }
+};
+
+export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
   const cameraControls = useRef();
   
   useEffect(() => {
@@ -86,39 +137,42 @@ export const Experience = ({ cameraZoomed }) => {
     }
   }, [cameraZoomed]);
 
+  const bgConfig = backgroundConfigs[backgroundType];
+
   return (
     <>
       <CameraControls ref={cameraControls} />
       
       {/* Enhanced dynamic background */}
-      <color attach="background" args={["#f5f9ff"]} />
+      <color attach="background" args={[bgConfig.skyColor]} />
       <Sky 
-        sunPosition={[10, 5, 10]} 
-        turbidity={0.1}
-        rayleigh={0.5}
-        mieCoefficient={0.01}
+        sunPosition={bgConfig.sunPosition} 
+        turbidity={bgConfig.turbidity}
+        rayleigh={bgConfig.rayleigh}
+        mieCoefficient={bgConfig.mieCoefficient}
         distance={450000}
       />
       <Stars 
         radius={100} 
         depth={50} 
         count={5000} 
-        factor={4} 
+        factor={bgConfig.starsFactor} 
         fade 
       />
       
-      {/* Better lighting */}
-      <ambientLight intensity={0.6} />
+      {/* Dynamic lighting based on selected background */}
+      <ambientLight intensity={bgConfig.ambientLightIntensity} />
       <directionalLight 
         position={[10, 10, 5]} 
-        intensity={1.5} 
+        intensity={bgConfig.directionalLightIntensity} 
         castShadow 
         shadow-mapSize={[2048, 2048]} 
+        color={bgConfig.directionalLightColor}
       />
       <pointLight 
         position={[-5, 5, -5]} 
         intensity={0.5} 
-        color="#ffeecc" 
+        color={bgConfig.pointLightColor} 
       />
       
       <Suspense>

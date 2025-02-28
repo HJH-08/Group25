@@ -261,3 +261,99 @@ canvas {
   height: 18px;
   color: white;
 }
+
+/* Background selector styles */
+.background-selector {
+  position: absolute;
+  top: 140px;
+  right: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 99;
+  backdrop-filter: blur(5px);
+  transform-origin: top right;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              opacity 0.3s ease;
+  transform: scale(0.8);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.background-selector.show {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: all;
+}
+
+.background-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.background-option {
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.background-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.background-option.selected {
+  border-color: #3498db;
+}
+
+.background-preview {
+  width: 90px;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+.background-preview span {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Background preview styles */
+.default-bg {
+  background: linear-gradient(to bottom, #f5f9ff 60%, #cccccc);
+}
+
+.sunset-bg {
+  background: linear-gradient(to bottom, #ff7e5f 0%, #feb47b 100%);
+}
+
+.night-bg {
+  background: linear-gradient(to bottom, #0c1445 0%, #283593 100%);
+  box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.15);
+}
+
+.dream-bg {
+  background: linear-gradient(to bottom, #ffd6e0 0%, #c792ea 100%);
+}
+
+/* Add some stars to the night preview */
+.night-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(white 1px, transparent 1px);
+  background-size: 10px 10px;
+  opacity: 0.5;
+}
