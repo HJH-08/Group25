@@ -14,6 +14,7 @@ const MatchPairs = () => {
   const [timer, setTimer] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [showStartScreen, setShowStartScreen] = useState(true);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
   const [difficulty, setDifficulty] = useState('medium'); // easy, medium, hard
   const [lastMatchedPair, setLastMatchedPair] = useState(null);
   const navigate = useNavigate();
@@ -212,6 +213,65 @@ const MatchPairs = () => {
           <span>Back to Companio</span>
         </button>
       </div>
+      {showHowToPlay && (
+            <div className="match-how-to-play-modal"
+            onClick={(e) => {
+                // Close modal when clicking outside the content area
+                if (e.target.className === "match-how-to-play-modal") {
+                  setShowHowToPlay(false);
+                }
+              }}
+            >
+              <div className="match-how-to-play-content">
+                <button 
+                  className="match-close-how-to" 
+                  onClick={() => setShowHowToPlay(false)}
+                  aria-label="Close instructions"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <h2>How to Play Memory Match</h2>
+                <div className="match-instructions">
+                  <h3>Game Objective</h3>
+                  <p>Find all matching pairs of cards in the shortest time using the fewest moves.</p>
+                  
+                  <h3>How to Play</h3>
+                  <ol>
+                    <li>Click on any card to flip it and reveal its pattern.</li>
+                    <li>Click on a second card to try to find its match.</li>
+                    <li>If the two cards match, they stay face up.</li>
+                    <li>If they don't match, they flip back over.</li>
+                    <li>Remember card locations to make fewer moves!</li>
+                    <li>The game ends when all pairs have been matched.</li>
+                  </ol>
+                  
+                  <h3>Controls</h3>
+                  <div className="match-control-guide">
+                    <div className="match-control-item">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      <span>End the current game and return to menu</span>
+                    </div>
+                    <div className="match-control-item">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                      </svg>
+                      <span>Return to the main menu</span>
+                    </div>
+                    <div className="match-control-item">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                      </svg>
+                      <span>Restart the game with new card positions</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
       {showStartScreen ? (
         <div className="start-screen">
           <h1>Memory Match</h1>
@@ -244,6 +304,16 @@ const MatchPairs = () => {
           <button className="start-button" onClick={initializeGame}>
             Start Game
           </button>
+          <button 
+            className="info-button"
+            onClick={() => setShowHowToPlay(true)}
+            aria-label="How to play"
+            title="How to play"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+          </button>
         </div>
       ) : (
         <>
@@ -260,7 +330,6 @@ const MatchPairs = () => {
               </div>
             </div>
           </div>
-          
           {gameCompleted && (
             <div className="win-message">
               <h2>Congratulations! 🎉</h2>
@@ -416,6 +485,16 @@ const MatchPairs = () => {
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <button 
+              className="match-control-button info-button"
+              onClick={() => setShowHowToPlay(true)}
+              aria-label="How to play"
+              title="How to play"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
               </svg>
             </button>
             <button 
