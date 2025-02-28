@@ -92,10 +92,15 @@ const backgroundConfigs = {
     rayleigh: 0.1,
     mieCoefficient: 0.001,
     starsFactor: 8,
-    ambientLightIntensity: 0.25,
-    directionalLightIntensity: 0.1,
+    ambientLightIntensity: 0.4,        // Increased from 0.25
+    directionalLightIntensity: 0.2,    // Increased from 0.1
     directionalLightColor: "#3b68d9",
     pointLightColor: "#a0c2ff",
+    // Adding a specialized face light for night mode
+    faceLight: true,
+    faceLightIntensity: 0.7,
+    faceLightColor: "#e1e9ff",
+    faceLightPosition: [0, 2, 2]       // Position in front of the avatar's face
   },
   dream: {
     skyColor: "#ffd6e0",
@@ -174,6 +179,19 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
         intensity={0.5} 
         color={bgConfig.pointLightColor} 
       />
+      {/* Special face light for night mode */}
+      {bgConfig.faceLight && (
+        <spotLight
+          position={bgConfig.faceLightPosition}
+          intensity={bgConfig.faceLightIntensity}
+          color={bgConfig.faceLightColor}
+          angle={0.5}
+          penumbra={0.5}
+          distance={10}
+          castShadow={false}
+          target-position={[0, 1.5, 0]}
+        />
+      )}
       
       <Suspense>
         <Dots position-y={1.9} position-x={-0.1} />
