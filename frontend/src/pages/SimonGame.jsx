@@ -15,6 +15,7 @@ function SimonGame() {
     const [highScore, setHighScore] = useState(0);
     const [showConfetti, setShowConfetti] = useState(false);
     const [showStartScreen, setShowStartScreen] = useState(true);
+    const [showHowToPlay, setShowHowToPlay] = useState(false);
     
     // Refs for DOM elements
     const topLeftRef = useRef(null);
@@ -300,6 +301,82 @@ function SimonGame() {
                     <span>Back to Companio</span>
                 </button>
             </div>
+            {/* How to Play Modal */}
+            {showHowToPlay && (
+                <div className="simon-how-to-play-modal"
+                    onClick={(e) => {
+                        // Close modal when clicking outside the content area
+                        if (e.target.className === "simon-how-to-play-modal") {
+                            setShowHowToPlay(false);
+                        }
+                    }}
+                >
+                    <div className="simon-how-to-play-content">
+                        <button 
+                            className="simon-close-how-to" 
+                            onClick={() => setShowHowToPlay(false)}
+                            aria-label="Close instructions"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <h2>How to Play Simon</h2>
+                        <div className="simon-instructions">
+                            <h3>Game Objective</h3>
+                            <p>Simon Game is a memory game where you need to remember and repeat a growing sequence of colours and sounds.</p>
+                            
+                            <h3>How to Play</h3>
+                            <ol>
+                                <li>Watch as Simon lights up a sequence of coloured pads.</li>
+                                <li>After the sequence plays, repeat it by clicking the pads in the same order.</li>
+                                <li>Each round, Simon adds one more step to the pattern.</li>
+                                <li>If you make a mistake, the game is over.</li>
+                                <li>Try to beat your high score by remembering longer sequences!</li>
+                            </ol>
+                            
+                            <h3>The Game Board</h3>
+                            <p>The Simon board consists of four colored pads:</p>
+                            <ul>
+                                <li>Green (top-left)</li>
+                                <li>Red (top-right)</li>
+                                <li>Yellow (bottom-left)</li>
+                                <li>Blue (bottom-right)</li>
+                            </ul>
+                            
+                            <h3>Controls</h3>
+                            <div className="simon-control-guide">
+                                <div className="simon-control-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+                                    </svg>
+                                    <span>New Game: Start a fresh game with a new pattern</span>
+                                </div>
+                                <div className="simon-control-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                                    </svg>
+                                    <span>Menu: Return to the main menu</span>
+                                </div>
+                                <div className="simon-control-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                    </svg>
+                                    <span>How to Play: Open this instructions panel</span>
+                                </div>
+                            </div>
+                            
+                            <h3>Tips</h3>
+                            <ul>
+                                <li>Try to associate sounds with colors to remember the sequence better.</li>
+                                <li>Start slow and build confidence with shorter sequences.</li>
+                                <li>Pay close attention during the "Watch" phase.</li>
+                                <li>Every 5 levels, you'll get a special celebration!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {showStartScreen ? (
                 <div className="start-screen">
@@ -308,6 +385,16 @@ function SimonGame() {
                     <p className="high-score">High Score: {highScore}</p>
                     <button className="start-button" onClick={startGame}>
                         Start Game
+                    </button>
+                    <button 
+                        className="simon-info-button"
+                        onClick={() => setShowHowToPlay(true)}
+                        aria-label="How to play"
+                        title="How to play"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                        </svg>
                     </button>
                 </div>
             ) : (
@@ -388,7 +475,16 @@ function SimonGame() {
                         >
                             New Game
                         </button>
-
+                        <button 
+                            className="simon-control-button simon-info-button"
+                            onClick={() => setShowHowToPlay(true)}
+                            aria-label="How to play"
+                            title="How to play"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                            </svg>
+                        </button>
                         <button 
                             className="simon-control-button end-game"
                             onClick={goToMenu}
