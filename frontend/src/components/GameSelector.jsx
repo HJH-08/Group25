@@ -21,6 +21,15 @@ const GameSelector = ({ show, onClose }) => {
           </div>
           <p className="game-description">Train your memory by matching pairs of cards</p>
         </div>
+        <div 
+          className="game-option"
+          onClick={() => handleGameSelect('/simon-game')}
+        >
+          <div className="game-preview simon-game-bg">
+            <span>Simon Game</span>
+          </div>
+          <p className="game-description">Test your memory by repeating color sequences</p>
+        </div>
         
         {/* More games can be added here in the future */}
         

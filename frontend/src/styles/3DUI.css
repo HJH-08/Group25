@@ -461,6 +461,31 @@ canvas {
   opacity: 0.3;
 }
 
+/* Simon Game background */
+.simon-game-bg {
+  background: radial-gradient(circle, #333333 10%, transparent 60%), 
+              conic-gradient(
+                #ff0000 0deg, #ff0000 90deg, 
+                #00ff00 90deg, #00ff00 180deg,
+                #0000ff 180deg, #0000ff 270deg,
+                #ffff00 270deg, #ffff00 360deg
+              );
+  position: relative;
+}
+
+.simon-game-bg::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
 /* Games controller button on the left side */
 .games-button {
   position: fixed;
