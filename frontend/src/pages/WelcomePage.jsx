@@ -10,6 +10,7 @@ const WelcomePage = () => {
             "/videos/dog-video.mp4",
             "/videos/goldfish-video.mp4",
             "/videos/parrot-video.mp4",
+            "/videos/cat-video.mp4",
         ];
         const randomIndex = Math.floor(Math.random() * videoList.length);
         setRandomVideo(videoList[randomIndex]);
