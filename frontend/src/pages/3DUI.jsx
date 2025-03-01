@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 // Third party imports
 import { Canvas } from "@react-three/fiber";
 import { Loader } from "@react-three/drei";
@@ -20,6 +20,13 @@ const ThreeDimensionalContent = () => {
   const [backgroundType, setBackgroundType] = useState("default");
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [showGameSelector, setShowGameSelector] = useState(false);
+
+   // Refs for detecting clicks outside
+   const chatBoxRef = useRef(null);
+   const backgroundSelectorRef = useRef(null);
+   const gameSelectorRef = useRef(null);
+   const backgroundToggleRef = useRef(null);
+   const gameToggleRef = useRef(null);
 
   /**
    * Handles sending a new chat message
@@ -51,6 +58,46 @@ const ThreeDimensionalContent = () => {
     setShowBackgroundSelector(false);
   };
 
+  // Handle clicks outside of menus
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Handle ChatBox
+      if (chatExpanded && 
+        chatBoxRef.current && 
+        !chatBoxRef.current.contains(event.target)) {
+      setChatExpanded(false);
+    }
+      
+      // Handle Background Selector
+      if (showBackgroundSelector && 
+          backgroundSelectorRef.current && 
+          !backgroundSelectorRef.current.contains(event.target) &&
+          backgroundToggleRef.current && 
+          !backgroundToggleRef.current.contains(event.target)) {
+        setShowBackgroundSelector(false);
+      }
+      
+      // Handle Game Selector
+      if (showGameSelector && 
+          gameSelectorRef.current && 
+          !gameSelectorRef.current.contains(event.target) &&
+          gameToggleRef.current && 
+          !gameToggleRef.current.contains(event.target)) {
+        setShowGameSelector(false);
+      }
+    };
+
+    // Add event listener when any menu is open
+    if (chatExpanded || showBackgroundSelector || showGameSelector) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } 
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [chatExpanded, showBackgroundSelector, showGameSelector]);
+
   return (
     <>
       <Loader />
@@ -68,7 +115,8 @@ const ThreeDimensionalContent = () => {
         <Experience cameraZoomed={cameraZoomed} backgroundType={backgroundType} />
       </Canvas>
       
-      <div className={`chatbox-container-wrapper ${chatExpanded ? "expanded" : "collapsed"}`}>
+      <div className={`chatbox-container-wrapper ${chatExpanded ? "expanded" : "collapsed"}`}
+      ref={chatBoxRef}>
         {chatExpanded ? (
           <>
             <div className="chatbox-header">
@@ -92,6 +140,7 @@ const ThreeDimensionalContent = () => {
           </>
         ) : (
           <button 
+
             onClick={() => setChatExpanded(true)}
             className="chat-toggle-button"
             aria-label="Expand chat"
@@ -105,6 +154,7 @@ const ThreeDimensionalContent = () => {
       
       <div className="ui-layer">
       <button
+          ref={gameToggleRef}
           onClick={toggleGameSelector}
           className="games-button"
           aria-label="Open games"
@@ -130,6 +180,7 @@ const ThreeDimensionalContent = () => {
             )}
           </button>
           <button
+            ref={backgroundToggleRef}
             onClick={toggleBackgroundSelector}
             className="control-button background-button"
             aria-label="Change background"
@@ -141,16 +192,20 @@ const ThreeDimensionalContent = () => {
         </div>
       </div>
 
+      <div ref={backgroundSelectorRef}>
       <BackgroundSwitcher 
         show={showBackgroundSelector}
         currentBackground={backgroundType}
         onSelectBackground={handleSelectBackground}
       />
+      </div>
 
+    <div ref={gameSelectorRef}>
       <GameSelector
         show={showGameSelector}
         onClose={() => setShowGameSelector(false)}
       />
+      </div>
     </>
   );
 };

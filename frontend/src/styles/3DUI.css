@@ -211,13 +211,16 @@ canvas {
 .chatbox-container-wrapper.expanded {
   width: 500px;
   max-width: 90vw;
-  height: auto;
-  max-height: 500px;
+  height: auto; /* Set to 50% of viewport height */
+  min-height: 400; /* Minimum height */
+  max-height: 75vh; /* Maximum height */
   border-radius: 12px;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Add this to enforce proper containment */
 }
 
-/* ChatBox header with close button */
 .chatbox-header {
   display: flex;
   justify-content: flex-start;
@@ -227,6 +230,8 @@ canvas {
   border-bottom: none;
   border-radius: 12px 12px 0 0;
   position: relative;
+  flex-shrink: 0; /* Prevent header from shrinking */
+  z-index: 3; /* Ensure header stays above other content */
 }
 
 .chatbox-header::after {
