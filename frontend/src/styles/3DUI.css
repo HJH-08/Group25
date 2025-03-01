@@ -61,6 +61,34 @@ canvas {
   z-index: 100;
 }
 
+/* Common button styling for all control buttons */
+.control-button, .games-button {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.control-button:hover, .games-button:hover {
+  background-color: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.control-button svg, .games-button svg {
+  width: 26px;
+  height: 26px;
+  color: #3498db;
+}
+
 .control-button {
   background-color: rgba(255, 255, 255, 0.9);
   border: none;
@@ -82,8 +110,8 @@ canvas {
 }
 
 .control-button svg {
-  width: 24px;
-  height: 24px;
+  width: 26px !important;
+  height: 26px !important;
   color: #3498db; /* Change from #333 to #3498db to match other buttons */
 }
 
@@ -213,7 +241,7 @@ canvas {
   max-width: 90vw;
   height: auto; /* Set to 50% of viewport height */
   min-height: 400; /* Minimum height */
-  max-height: 75vh; /* Maximum height */
+  max-height: 73vh; /* Maximum height */
   border-radius: 12px;
   background-color: white;
   display: flex;
@@ -270,7 +298,7 @@ canvas {
 /* Background selector styles */
 .background-selector {
   position: absolute;
-  top: 140px;
+  top: 200px;
   right: 20px;
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
