@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { Loader } from "@react-three/drei";
 // Local imports
 import { ChatProvider, useChat } from "../hooks/useChat";
+import { VoiceProvider, useVoice } from "../hooks/useVoice";
 import { Experience } from "../components/Experience";
 import ChatBox from "../components/ChatBox";
 import BackgroundSwitcher from "../components/BackgroundSwitcher";
@@ -16,6 +17,7 @@ import "../styles/3DUI.css";
 const ThreeDimensionalContent = () => { 
   // State management
   const { chat, messages, loading } = useChat();
+  const { speakText, isSpeaking } = useVoice();
   const [userInput, setUserInput] = useState("");
   const [cameraZoomed, setCameraZoomed] = useState(true);
   const [chatExpanded, setChatExpanded] = useState(false);
@@ -24,6 +26,7 @@ const ThreeDimensionalContent = () => {
   const [showGameSelector, setShowGameSelector] = useState(false);
   const [showModelSelector, setShowModelSelector] = useState(false);
   const { refreshConnection } = useChat();
+  const [spokenMessageIds, setSpokenMessageIds] = useState(new Set());
 
    // Refs constants
    const chatBoxRef = useRef(null);
@@ -137,6 +140,32 @@ const ThreeDimensionalContent = () => {
       refreshConnection();
     }, 500);
   };
+
+  // Fix the useEffect that manages speech
+  useEffect(() => {
+    // Only run this effect when messages change or loading stops
+    if (loading || !messages.length) return;
+    
+    // Get the last message
+    const lastMessage = messages[messages.length - 1];
+    
+    // Generate a unique ID for this message
+    const messageId = `${lastMessage.sender}-${messages.length-1}`;
+    
+    // Only speak AI messages that haven't been spoken yet and when not already speaking
+    if (lastMessage.sender === 'ai' && 
+        !spokenMessageIds.has(messageId) && 
+        !isSpeaking) {
+      
+      console.log(`Speaking new message ID: ${messageId}`);
+      
+      // Mark this message as spoken
+      setSpokenMessageIds(prev => new Set([...prev, messageId]));
+      
+      // Speak the message
+      speakText(lastMessage.text);
+    }
+  }, [messages, loading, speakText, isSpeaking, spokenMessageIds]);
 
   return (
     <>
@@ -267,9 +296,11 @@ const ThreeDimensionalContent = () => {
 };
 
 const ThreeDPage = () => (
-  <ChatProvider>
-    <ThreeDimensionalContent />
-  </ChatProvider>
+  <VoiceProvider>
+    <ChatProvider>
+      <ThreeDimensionalContent />
+    </ChatProvider>
+  </VoiceProvider>
 );
 
 export default ThreeDPage;

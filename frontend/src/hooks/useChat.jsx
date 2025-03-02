@@ -6,7 +6,6 @@ export const ChatProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState(null);
-  const [isSpeaking, setIsSpeaking] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("connecting");
   
   // Check connection on mount
@@ -100,7 +99,6 @@ export const ChatProvider = ({ children }) => {
       if (data.response) {
         // Store the response as a simple string
         setMessage(data.response);
-        setIsSpeaking(true);
         
         // Add to messages history
         setMessages(prev => [...prev, 
@@ -112,7 +110,6 @@ export const ChatProvider = ({ children }) => {
       } else {
         const errorMsg = "Connection error. Please try again later.";
         setMessage(errorMsg);
-        setIsSpeaking(true);
         
         setMessages(prev => [...prev, 
           { sender: 'user', text: userInput },
@@ -125,7 +122,6 @@ export const ChatProvider = ({ children }) => {
       console.error("Chat API error:", error);
       const errorMsg = "Connection error. Please try again later.";
       setMessage(errorMsg);
-      setIsSpeaking(true);
       
       setMessages(prev => [...prev, 
         { sender: 'user', text: userInput },
@@ -138,18 +134,11 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  const onMessagePlayed = () => {
-    setMessage(null);
-    setIsSpeaking(false);
-  };
-
   return (
     <ChatContext.Provider
       value={{
         chat,
         message,
-        isSpeaking,
-        onMessagePlayed,
         loading,
         messages,
         connectionStatus,

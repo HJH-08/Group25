@@ -3,12 +3,27 @@ import PropTypes from "prop-types";
 import "../styles/ChatBox.css";
 import { useChat } from "../hooks/useChat";
 import { useModel } from "../hooks/useModel";
+import { useVoice } from "../hooks/useVoice";
 
 const ChatBox = ({ messages, userInput, setUserInput, handleSendMessage, isLoading }) => {
   const messagesEndRef = useRef(null);
   const { connectionStatus } = useChat();
   const { modelConfig } = useModel();
-  
+  const { 
+    isRecording, 
+    isSpeaking, 
+    recognizedText, 
+    startRecording,
+    stopRecording 
+  } = useVoice();
+
+  // Update user input when speech recognition provides text
+  useEffect(() => {
+    if (recognizedText) {
+      setUserInput(recognizedText);
+    }
+  }, [recognizedText, setUserInput]);
+
   // Auto-scroll to bottom whenever new messages are added
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -22,7 +37,15 @@ const ChatBox = ({ messages, userInput, setUserInput, handleSendMessage, isLoadi
     }
   };
 
-  // Add styles for system messages
+  const toggleRecording = () => {
+    if (isRecording) {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
+
+  // Render message helper function
   const renderMessage = (message, index) => {
     if (message.sender === 'system') {
       return (
@@ -78,13 +101,29 @@ const ChatBox = ({ messages, userInput, setUserInput, handleSendMessage, isLoadi
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type your message..."
-          disabled={connectionStatus !== "connected" || isLoading}
+          placeholder={isRecording ? "Listening..." : "Type your message..."}
+          disabled={connectionStatus !== "connected" || isLoading || isSpeaking}
         />
+        
+        {/* Microphone button */}
+        <button 
+          className={`speech-button ${isRecording ? 'recording' : ''}`}
+          onClick={toggleRecording}
+          disabled={connectionStatus !== "connected" || isLoading || isSpeaking}
+          title={isRecording ? "Stop recording" : "Start recording"}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="23"></line>
+            <line x1="8" y1="23" x2="16" y2="23"></line>
+          </svg>
+        </button>
+        
         <button 
           className="send-button"
           onClick={handleSendMessage}
-          disabled={connectionStatus !== "connected" || isLoading}
+          disabled={connectionStatus !== "connected" || isLoading || isSpeaking || !userInput.trim()}
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -101,6 +140,7 @@ const ChatBox = ({ messages, userInput, setUserInput, handleSendMessage, isLoadi
   );
 };
 
+// PropTypes remain the same
 ChatBox.propTypes = {
   messages: PropTypes.arrayOf(
     PropTypes.shape({

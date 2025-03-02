@@ -1,16 +1,58 @@
-from fastapi import FastAPI, Depends, BackgroundTasks
+import config
+
+# Set the server flag to True
+config.RUNNING_AS_SERVER = True
+
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
-import os
-import sys
-import importlib
-import config
+from fastapi import HTTPException
+import aiohttp
+from contextlib import asynccontextmanager
 
 # Import the chatbot functionality
 from chatbot import initialize_chatbot, process_message, reset_chatbot_state
 
-app = FastAPI()
+# Import only text-to-speech functionality
+from offline_text_to_speech import speak_text_to_bytes
+try:
+    from azure_text_to_speech import text_to_speech_to_bytes
+except ImportError:
+    print("Azure speech modules not available. Only offline speech will work.")
+
+# Add session management 
+_http_client = None
+
+def get_http_client():
+    global _http_client
+    if _http_client is None or _http_client.closed:
+        _http_client = aiohttp.ClientSession()
+    return _http_client
+
+@asynccontextmanager
+async def lifespan(app):
+    # Startup: Initialize resources
+    print("Starting up server...")
+    
+    # Create any shared resources here
+    await initialize_chatbot()
+    
+    yield
+    
+    # Shutdown: Clean up resources when server stops
+    print("Shutting down server, cleaning up resources...")
+    
+    # Close the HTTP client if it exists
+    global _http_client
+    if _http_client is not None and not _http_client.closed:
+        await _http_client.close()
+        _http_client = None
+    
+    # Close any other resources
+    print("Resources cleaned up successfully")
+
+# Create the app with lifespan manager
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,12 +68,6 @@ class UserInput(BaseModel):
 class ModelConfig(BaseModel):
     use_ollama: bool
     model_id: str = "phi3.5:latest"  # Default to Phi3
-
-# Initialize the chatbot on startup
-@app.on_event("startup")
-async def startup_event():
-    await initialize_chatbot()
-    print("Chatbot initialized and ready to process messages")
 
 @app.post("/api/chat")
 async def chat(input_data: UserInput):
@@ -99,3 +135,33 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
             "status": "error",
             "message": f"Error updating configuration: {str(e)}"
         }
+
+# For text-to-speech
+@app.post("/api/text-to-speech")
+async def convert_text_to_speech(input_data: UserInput):
+    """Convert text to speech and return audio bytes"""
+    try:
+        # Generate audio from text - use current config value
+        current_use_ollama = config.USE_OLLAMA
+        
+        if current_use_ollama:
+            print("Using OLLAMA for text-to-speech")
+            audio_bytes = speak_text_to_bytes(input_data.message)
+        else:
+            print("Using Azure for text-to-speech")
+            audio_bytes = text_to_speech_to_bytes(input_data.message)
+        
+        if not audio_bytes or len(audio_bytes) < 100:
+            print(f"Warning: Audio output is empty or very small ({len(audio_bytes) if audio_bytes else 0} bytes)")
+            
+        # Return audio as a regular response instead of streaming
+        from fastapi.responses import Response
+        return Response(
+            content=audio_bytes,
+            media_type="audio/wav"
+        )
+    except Exception as e:
+        print(f"Error in text-to-speech endpoint: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))

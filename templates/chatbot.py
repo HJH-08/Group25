@@ -10,15 +10,28 @@ import config
 from offline_memory import load_chat_history, save_chat_history
 from semantic_kernel.contents import ChatHistoryTruncationReducer
 
-# Import speech-to-text only if Azure is used
-if not config.USE_OLLAMA and config.USE_SPEECH_INPUT:
-    from azure_speech_to_text import speech_to_text
+# Import speech-to-text conditionally based on runtime mode
+if not config.RUNNING_AS_SERVER:
+    # CLI mode - import full functionality
+    if not config.USE_OLLAMA and config.USE_SPEECH_INPUT:
+        from azure_speech_to_text import speech_to_text
+    if config.USE_OLLAMA and config.USE_SPEECH_INPUT:
+        from offline_speech_to_text import offline_speech_to_text
+else:
+    # Server mode - import stubs or define dummy functions
+    def speech_to_text():
+        print("Speech-to-text not available in server mode")
+        return None, False
+        
+    def offline_speech_to_text():
+        print("Speech-to-text not available in server mode")
+        return None, False
+
+# Import text-to-speech for all runtimes
 if not config.USE_OLLAMA and config.USE_SPEECH_OUTPUT:
     from azure_text_to_speech import text_to_speech
 if config.USE_OLLAMA and config.USE_SPEECH_OUTPUT:
     from offline_text_to_speech import speak_text
-if config.USE_OLLAMA and config.USE_SPEECH_INPUT:
-    from offline_speech_to_text import offline_speech_to_text
     
 # Don't run setup_kernel() immediately
 kernel = None
