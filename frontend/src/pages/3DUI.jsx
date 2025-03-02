@@ -10,6 +10,7 @@ import ChatBox from "../components/ChatBox";
 import BackgroundSwitcher from "../components/BackgroundSwitcher";
 import GameSelector from "../components/GameSelector";
 import ModelSelector from "../components/ModelSelector";
+import { ModelProvider,useModel } from "../hooks/useModel";
 
 // Styles
 import "../styles/3DUI.css";
@@ -27,6 +28,8 @@ const ThreeDimensionalContent = () => {
   const [showModelSelector, setShowModelSelector] = useState(false);
   const { refreshConnection } = useChat();
   const [spokenMessageIds, setSpokenMessageIds] = useState(new Set());
+  // Add speech config state
+  const { modelConfig } = useModel();
 
    // Refs constants
    const chatBoxRef = useRef(null);
@@ -141,10 +144,17 @@ const ThreeDimensionalContent = () => {
     }, 500);
   };
 
-  // Fix the useEffect that manages speech
+  // Fix the useEffect that manages speech - remove duplicate effect
   useEffect(() => {
     // Only run this effect when messages change or loading stops
     if (loading || !messages.length) return;
+    
+    // Check if modelConfig is loaded and speech is enabled
+    const speechEnabled = modelConfig?.use_speech_output !== false;
+    if (!speechEnabled) {
+      console.log("Speech is disabled in settings, not attempting to speak");
+      return;
+    }
     
     // Get the last message
     const lastMessage = messages[messages.length - 1];
@@ -165,7 +175,7 @@ const ThreeDimensionalContent = () => {
       // Speak the message
       speakText(lastMessage.text);
     }
-  }, [messages, loading, speakText, isSpeaking, spokenMessageIds]);
+  }, [messages, loading, speakText, isSpeaking, spokenMessageIds, modelConfig]);
 
   return (
     <>
@@ -296,11 +306,13 @@ const ThreeDimensionalContent = () => {
 };
 
 const ThreeDPage = () => (
-  <VoiceProvider>
-    <ChatProvider>
-      <ThreeDimensionalContent />
-    </ChatProvider>
-  </VoiceProvider>
+  <ModelProvider>
+    <VoiceProvider>
+      <ChatProvider>
+        <ThreeDimensionalContent />
+      </ChatProvider>
+    </VoiceProvider>
+  </ModelProvider>
 );
 
 export default ThreeDPage;

@@ -1,6 +1,27 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, createContext, useContext } from 'react';
+
+const ModelContext = createContext();
+
+export const ModelProvider = ({ children }) => {
+  const modelHook = useModelHook();
+  
+  return (
+    <ModelContext.Provider value={modelHook}>
+      {children}
+    </ModelContext.Provider>
+  );
+};
 
 export const useModel = () => {
+  const context = useContext(ModelContext);
+  if (!context) {
+    throw new Error("useModel must be used within a ModelProvider");
+  }
+  return context;
+};
+
+// Rename the main hook function (all the existing logic goes here)
+const useModelHook = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modelConfig, setModelConfig] = useState(null);
@@ -62,7 +83,8 @@ export const useModel = () => {
       
       setModelConfig({
         ...data,
-        current_model_name: getFriendlyModelName(data.current_model)
+        current_model_name: getFriendlyModelName(data.current_model),
+        use_speech_output: data.use_speech_output !== undefined ? data.use_speech_output : true
       });
     } catch (err) {
       console.error("Error fetching model config:", err);
@@ -73,19 +95,23 @@ export const useModel = () => {
   }, [getFriendlyModelName]);
 
   // Fetch initial model configuration
-  // Add fetchModelConfig to the dependency array
   useEffect(() => {
     fetchModelConfig();
-  }, [fetchModelConfig]); // Include fetchModelConfig in the dependency array
+  }, [fetchModelConfig]);
   
   // Function to switch models
-  // Function to switch models
-const switchModel = useCallback(async (useOllama, modelId) => {
+  const switchModel = useCallback(async (useOllama, modelId, useSpeech) => {
     try {
-      setSwitchingModel(true); // Here we use setSwitchingModel
+      setSwitchingModel(true);
       setError(null);
       
-      console.log(`Switching to ${useOllama ? 'offline' : 'online'} model: ${modelId}`);
+      console.log(`Switching to ${useOllama ? 'offline' : 'online'} model: ${modelId}, speech: ${useSpeech ? 'on' : 'off'}`);
+      
+      // Update local state immediately for UI responsiveness
+      setModelConfig(prev => prev ? {
+        ...prev,
+        use_speech_output: useSpeech
+      } : null);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for model switching
@@ -97,7 +123,8 @@ const switchModel = useCallback(async (useOllama, modelId) => {
         },
         body: JSON.stringify({
           use_ollama: useOllama,
-          model_id: modelId
+          model_id: modelId,
+          use_speech: useSpeech
         }),
         signal: controller.signal
       });
@@ -107,7 +134,7 @@ const switchModel = useCallback(async (useOllama, modelId) => {
       const result = await response.json();
       
       if (response.ok) {
-        console.log("Model switched:", result);
+        console.log("Model/settings switched:", result);
         
         // Check if there was a business logic error
         if (result.status === 'error') {
@@ -121,13 +148,13 @@ const switchModel = useCallback(async (useOllama, modelId) => {
         throw new Error(`Server error (${response.status}): ${result.message || 'Unknown error'}`);
       }
     } catch (err) {
-      console.error("Error switching model:", err);
+      console.error("Error switching model/settings:", err);
       setError(err.message);
       throw err;
     } finally {
-      setSwitchingModel(false); // Here we use setSwitchingModel again
+      setSwitchingModel(false);
     }
-  }, [fetchModelConfig]); // Add fetchModelConfig as a dependency
+  }, [fetchModelConfig]);
   
   return {
     modelConfig,

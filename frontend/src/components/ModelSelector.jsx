@@ -6,6 +6,7 @@ const ModelSelector = ({ onClose }) => {
   const { modelConfig, loading, error, switchingModel, switchModel } = useModel();
   const [selectedMode, setSelectedMode] = useState(null);
   const [selectedModel, setSelectedModel] = useState('');
+  const [useSpeech, setUseSpeech] = useState(true); // Default to true
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitSuccess, setSubmitSuccess] = useState(null);
@@ -15,6 +16,7 @@ const ModelSelector = ({ onClose }) => {
     if (modelConfig) {
       setSelectedMode(modelConfig.use_ollama ? 'offline' : 'online');
       setSelectedModel(modelConfig.current_model);
+      setUseSpeech(modelConfig.use_speech_output);
     }
   }, [modelConfig]);
 
@@ -41,16 +43,22 @@ const ModelSelector = ({ onClose }) => {
     setSubmitSuccess(null);
   };
 
+  const handleSpeechToggle = () => {
+    setUseSpeech(prev => !prev);
+    setSubmitError(null);
+    setSubmitSuccess(null);
+  };
+
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
       setSubmitError(null);
       setSubmitSuccess(null);
       
-      const result = await switchModel(selectedMode === 'offline', selectedModel);
+      const result = await switchModel(selectedMode === 'offline', selectedModel, useSpeech);
       
       // Show success message
-      setSubmitSuccess(result.message || "Model switched successfully!");
+      setSubmitSuccess(result.message || "Settings updated successfully!");
       
       // Close after a delay to show the success message
       setTimeout(() => {
@@ -105,6 +113,7 @@ const ModelSelector = ({ onClose }) => {
         
         <div className="current-model">
           <p>Currently using: <strong>{currentModelName}</strong></p>
+          <p>Speech Output: <strong>{modelConfig?.use_speech_output ? 'Enabled' : 'Disabled'}</strong></p>
         </div>
         
         <div className="model-selector-section">
@@ -163,6 +172,25 @@ const ModelSelector = ({ onClose }) => {
           )}
         </div>
         
+        {/* New section for Speech Toggle */}
+        <div className="model-selector-section">
+          <h3>Speech Settings</h3>
+          <div className="speech-toggle">
+            <div className={`toggle-switch ${useSpeech ? 'active' : ''}`} onClick={handleSpeechToggle}>
+              <div className="toggle-slider"></div>
+            </div>
+            <span>{useSpeech ? 'Speech Output Enabled' : 'Speech Output Disabled'}</span>
+          </div>
+          
+          <div className="mode-description">
+            <p>
+              {useSpeech
+                ? "Speech output converts AI responses to audio. Disable to improve performance."
+                : "Speech output is disabled. The AI will respond with text only."}
+            </p>
+          </div>
+        </div>
+        
         {submitError && (
           <div className="error-message">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
@@ -195,14 +223,14 @@ const ModelSelector = ({ onClose }) => {
             onClick={handleSubmit}
             disabled={isChanging}
           >
-            {isChanging ? 'Switching...' : 'Apply Changes'}
+            {isChanging ? 'Applying...' : 'Apply Changes'}
           </button>
         </div>
         
         {isChanging && (
           <div className="switching-message">
             <div className="loading-spinner"></div>
-            <p>Switching models, please wait...</p>
+            <p>Updating settings, please wait...</p>
           </div>
         )}
       </div>

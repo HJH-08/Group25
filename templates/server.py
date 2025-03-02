@@ -68,6 +68,7 @@ class UserInput(BaseModel):
 class ModelConfig(BaseModel):
     use_ollama: bool
     model_id: str = "phi3.5:latest"  # Default to Phi3
+    use_speech: bool = True  # New field for speech toggle
 
 @app.post("/api/chat")
 async def chat(input_data: UserInput):
@@ -84,7 +85,8 @@ async def get_config():
         "available_models": {
             "offline": list(config.AVAILABLE_OLLAMA_MODELS.items()),
             "online": [config.AZURE_DEPLOYMENT_NAME]
-        }
+        },
+        "use_speech_output": config.USE_SPEECH_OUTPUT  # Add speech config to response
     }
 
 @app.post("/api/config")
@@ -94,8 +96,10 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
         # Update configuration values
         old_config = config.USE_OLLAMA
         old_model = config.OLLAMA_MODEL_ID if config.USE_OLLAMA else config.AZURE_DEPLOYMENT_NAME
+        old_speech = config.USE_SPEECH_OUTPUT
         
         config.USE_OLLAMA = model_config.use_ollama
+        config.USE_SPEECH_OUTPUT = model_config.use_speech  # Update speech config
 
         if model_config.use_ollama:
             # Validate that the model is in our available models list
@@ -113,22 +117,27 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
         # Determine mode/message for response
         mode = "Offline" if model_config.use_ollama else "Online"
         model_name = model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME
+        speech_status = "enabled" if model_config.use_speech else "disabled"
         
-        # Check if we're changing mode or just model within the same mode
-        needs_reinitialization = old_config != model_config.use_ollama or old_model != (model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME)
+        # Check if we're changing mode, model, or speech settings
+        needs_reinitialization = (
+            old_config != model_config.use_ollama or 
+            old_model != (model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME) or
+            old_speech != model_config.use_speech
+        )
 
         if needs_reinitialization:
             # Schedule reinitialization in background to allow response to be sent first
             background_tasks.add_task(initialize_chatbot)
             return {
                 "status": "success", 
-                "message": f"Configuration updated, switching to {model_name} ({mode} mode)"
+                "message": f"Configuration updated: {model_name} ({mode} mode), speech {speech_status}"
             }
         else:
             # If no change, don't reinitialize
             return {
                 "status": "info", 
-                "message": f"No change needed, already using {model_name} ({mode} mode)"
+                "message": f"No change needed, using {model_name} ({mode} mode), speech {speech_status}"
             }
     except Exception as e:
         return {
@@ -141,20 +150,44 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
 async def convert_text_to_speech(input_data: UserInput):
     """Convert text to speech and return audio bytes"""
     try:
+        # Check if speech is disabled in settings
+        if not config.USE_SPEECH_OUTPUT:
+            print("Speech output is disabled in settings, returning empty audio")
+            from fastapi.responses import Response
+            return Response(content=b"", media_type="audio/wav")
+        
+        # Validate input
+        if not input_data or not input_data.message or not input_data.message.strip():
+            print("Empty message received for text-to-speech")
+            from fastapi.responses import Response
+            return Response(content=b"", media_type="audio/wav")
+        
         # Generate audio from text - use current config value
         current_use_ollama = config.USE_OLLAMA
+        audio_bytes = None
         
-        if current_use_ollama:
-            print("Using OLLAMA for text-to-speech")
-            audio_bytes = speak_text_to_bytes(input_data.message)
-        else:
-            print("Using Azure for text-to-speech")
-            audio_bytes = text_to_speech_to_bytes(input_data.message)
-        
-        if not audio_bytes or len(audio_bytes) < 100:
-            print(f"Warning: Audio output is empty or very small ({len(audio_bytes) if audio_bytes else 0} bytes)")
+        try:
+            if current_use_ollama:
+                print("Using OLLAMA for text-to-speech")
+                audio_bytes = speak_text_to_bytes(input_data.message)
+            else:
+                print("Using Azure for text-to-speech")
+                audio_bytes = text_to_speech_to_bytes(input_data.message)
+                
+            # Make absolutely sure we have valid audio data
+            if not audio_bytes:
+                print("Warning: Audio output is empty")
+                audio_bytes = b""  # Ensure we have at least empty bytes
+            elif len(audio_bytes) < 100:
+                print(f"Warning: Audio output is very small ({len(audio_bytes)} bytes)")
+                # But we'll still return it
+        except Exception as tts_error:
+            print(f"Error generating speech: {str(tts_error)}")
+            import traceback
+            traceback.print_exc()
+            audio_bytes = b""  # Return empty audio on failure
             
-        # Return audio as a regular response instead of streaming
+        # Return audio as a regular response
         from fastapi.responses import Response
         return Response(
             content=audio_bytes,
@@ -164,4 +197,11 @@ async def convert_text_to_speech(input_data: UserInput):
         print(f"Error in text-to-speech endpoint: {str(e)}")
         import traceback
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        
+        # Return empty audio rather than an error response
+        from fastapi.responses import Response
+        return Response(
+            content=b"",
+            media_type="audio/wav" 
+        )
+

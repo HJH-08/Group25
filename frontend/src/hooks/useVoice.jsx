@@ -1,4 +1,5 @@
 import { useState, createContext, useContext, useCallback, useEffect } from 'react';
+import { useModel } from './useModel';
 
 const VoiceContext = createContext();
 
@@ -18,6 +19,9 @@ export const VoiceProvider = ({ children }) => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [currentAudio, setCurrentAudio] = useState(null);
+  
+  // Get model config to check if speech is enabled
+  const { modelConfig } = useModel();
   
   // Define stopRecording with useCallback to memoize it
   const stopRecording = useCallback(() => {
@@ -75,7 +79,7 @@ export const VoiceProvider = ({ children }) => {
     }
   }, [currentAudio]);
 
-  // Updated speakText function
+  // Checks if speech is enabled
   const speakText = async (text) => {
     // Don't process empty text
     if (!text) return;
@@ -83,6 +87,32 @@ export const VoiceProvider = ({ children }) => {
     // Add a stronger guard against concurrent speech requests
     if (isSpeaking || currentAudio) {
       console.log("Already speaking, ignoring new speech request");
+      return;
+    }
+    
+    // First check if modelConfig is loaded
+    if (!modelConfig) {
+      console.log("Model config not loaded yet, checking server directly");
+      try {
+        // Try to fetch speech setting directly from server
+        const configResponse = await fetch('http://localhost:8000/api/config');
+        if (!configResponse.ok) {
+          throw new Error("Failed to check speech settings");
+        }
+        const serverConfig = await configResponse.json();
+        
+        // If speech is disabled on server, don't continue
+        if (serverConfig.use_speech_output === false) {
+          console.log("Speech output is disabled on server, skipping TTS");
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking speech settings:", error);
+        // Continue with speech anyway in case of error
+      }
+    } else if (modelConfig.use_speech_output === false) {
+      // If modelConfig and speech is disabled, don't continue
+      console.log("Speech output is disabled in settings, skipping TTS");
       return;
     }
     
