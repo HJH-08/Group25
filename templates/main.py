@@ -6,6 +6,9 @@ from kernel_manager import setup_kernel  # Import the function, not model_name d
 from config import AVAILABLE_OLLAMA_MODELS, USE_OLLAMA, OLLAMA_MODEL_ID
 import config
 
+# Enable CLI mode
+config.RUNNING_AS_SERVER = False
+
 def select_ollama_model():
     """Prompt user to select between Phi3 and IBM Granite when using Ollama."""
     if USE_OLLAMA:

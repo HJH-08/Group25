@@ -10,6 +10,9 @@ USE_SPEECH_INPUT = False
 USE_SPEECH_OUTPUT = False
 USER_ID = "123"
 
+# Runtime mode flag
+RUNNING_AS_SERVER = False  # Default to CLI mode
+
 # Ollama Settings - Allowing Selection Between Phi3 and IBM Granite
 OLLAMA_BASE_URL = "http://localhost:11434/v1"
 OLLAMA_MODEL_ID = os.getenv("OLLAMA_MODEL_ID", "phi3.5:latest")  # Default to Phi3

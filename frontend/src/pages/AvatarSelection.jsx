@@ -50,6 +50,10 @@ const AvatarSelection = () => {
         navigate("/interaction-mode");
     };
 
+    const handle3DTest = () => {
+        navigate("/3DUI");
+    };
+
     return (
         <div style={styles.container}>
             {/* 🔥 Topbar with "Companio" aligned to the left */}
@@ -71,6 +75,12 @@ const AvatarSelection = () => {
                     ))}
                 </Slider>
             </div>
+            <button 
+                onClick={handle3DTest} 
+                style={{ marginTop: "20px", padding: "10px 20px", fontSize: "16px", cursor: "pointer" }}
+            >
+                3D Avatar Test
+            </button>
         </div>
     );
 };

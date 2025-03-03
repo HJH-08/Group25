@@ -4,6 +4,7 @@ import torch
 import torchaudio
 import logging
 from TTS.api import TTS
+import io
 
 # Reduce logging noise
 logging.getLogger("TTS").setLevel(logging.ERROR)
@@ -36,6 +37,23 @@ def speak_text(text):
 
     # Clean up temp file
     os.remove("temp_audio.wav")
+
+def speak_text_to_bytes(text):
+    """Convert text to speech and return audio bytes"""
+    if not text.strip():
+        return bytes()
+
+    # Generate speech (returns NumPy array)
+    audio_data = tts_model.tts(text=text)
+
+    # Convert to bytes in WAV format
+    buffer = io.BytesIO()
+    sample_rate = 22050
+    audio_tensor = torch.tensor(audio_data).unsqueeze(0)
+    torchaudio.save(buffer, audio_tensor, sample_rate, format="wav")
+    buffer.seek(0)
+    
+    return buffer.read()
 
 # Example usage
 if __name__ == "__main__":

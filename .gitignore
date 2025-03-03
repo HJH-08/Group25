@@ -1,7 +1,8 @@
-*.json
+.json
 *.venv
 qdrant_storage/
 .DS_Store
-node_modules
 frontend/public/videos/
 *.mp4
+app.py
+__pycache__

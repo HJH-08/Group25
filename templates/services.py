@@ -10,8 +10,9 @@ from granite_embedding_service import GraniteEmbeddingService
 from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import VectorParams, Distance, models
 from data_model import ElderlyUserMemory
+import config
 from config import (
-    USE_OLLAMA, OLLAMA_BASE_URL, OLLAMA_MODEL_ID, AZURE_API_KEY, AZURE_ENDPOINT, AZURE_DEPLOYMENT_NAME,
+    OLLAMA_BASE_URL, AZURE_API_KEY, AZURE_ENDPOINT, AZURE_DEPLOYMENT_NAME,
     AZURE_AI_SEARCH_INDEX, AZURE_AI_SEARCH_ENDPOINT, AZURE_AI_SEARCH_KEY,
     AZURE_OPENAI_EMBEDDING_API_KEY, AZURE_OPENAI_EMBEDDING_ENDPOINT, AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
     QDRANT_COLLECTION, QDRANT_HOST, QDRANT_PORT, DENSE_VECTOR_SIZE, LATE_INTERACTION_VECTOR_SIZE, SPARSE_EMBEDDING_MODEL_NAME, LATE_INTERACTION_EMBEDDING_MODEL_NAME,
@@ -21,7 +22,7 @@ from fastembed import LateInteractionTextEmbedding, SparseTextEmbedding
 async def initialize_ai_service(kernel: Kernel):
     """Initializes AI services in the Kernel dynamically."""
     
-    if USE_OLLAMA:
+    if config.USE_OLLAMA:
         service_id = "local-gpt"
         openAIClient = AsyncOpenAI(
             api_key="key",  # Fake key, required for compatibility
@@ -30,11 +31,11 @@ async def initialize_ai_service(kernel: Kernel):
         kernel.add_service(
             OpenAIChatCompletion(
                 service_id=service_id,
-                ai_model_id=OLLAMA_MODEL_ID,
+                ai_model_id=config.OLLAMA_MODEL_ID,
                 async_client=openAIClient,
             )
         )
-        model_name = f"Ollama Model: {OLLAMA_MODEL_ID}"
+        model_name = f"Ollama Model: {config.OLLAMA_MODEL_ID}"
 
         # Initialize Dense Embedding Model
         dense_embedding_model = GraniteEmbeddingService(

@@ -1,69 +1,207 @@
-# backend/server.py
-import os
-import asyncio
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+import config
+
+# Set the server flag to True
+config.RUNNING_AS_SERVER = True
+
+from fastapi import FastAPI, BackgroundTasks, UploadFile, File
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-import uvicorn
+from fastapi import HTTPException
+import aiohttp
+from contextlib import asynccontextmanager
 
+# Import the chatbot functionality
+from chatbot import initialize_chatbot, process_message, reset_chatbot_state
 
-from chatbot import initialize_chatbot, chat_function, chat_history
-from kernel_manager import setup_kernel
-from semantic_kernel.functions import KernelArguments
+# Import only text-to-speech functionality
+from offline_text_to_speech import speak_text_to_bytes
+try:
+    from azure_text_to_speech import text_to_speech_to_bytes
+except ImportError:
+    print("Azure speech modules not available. Only offline speech will work.")
 
-app = FastAPI()
+# Add session management 
+_http_client = None
+
+def get_http_client():
+    global _http_client
+    if _http_client is None or _http_client.closed:
+        _http_client = aiohttp.ClientSession()
+    return _http_client
+
+@asynccontextmanager
+async def lifespan(app):
+    # Startup: Initialize resources
+    print("Starting up server...")
+    
+    # Create any shared resources here
+    await initialize_chatbot()
+    
+    yield
+    
+    # Shutdown: Clean up resources when server stops
+    print("Shutting down server, cleaning up resources...")
+    
+    # Close the HTTP client if it exists
+    global _http_client
+    if _http_client is not None and not _http_client.closed:
+        await _http_client.close()
+        _http_client = None
+    
+    # Close any other resources
+    print("Resources cleaned up successfully")
+
+# Create the app with lifespan manager
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+class UserInput(BaseModel):
+    message: str
 
-kernel = None
-
-@app.on_event("startup")
-async def startup_event():
-    global kernel
-    kernel, chat_function, chat_history, model_name = await setup_kernel()
-    print(f"Chatbot backend is initialized using {model_name}.")
+class ModelConfig(BaseModel):
+    use_ollama: bool
+    model_id: str = "phi3.5:latest"  # Default to Phi3
+    use_speech: bool = True  # New field for speech toggle
 
 @app.post("/api/chat")
-async def chat_endpoint(request: Request):
-    data = await request.json()
-    user_input = data.get("message", "")
-    if not user_input:
-        return JSONResponse({"error": "No input provided"}, status_code=400)
+async def chat(input_data: UserInput):
+    # Process the user message through the chatbot
+    response = await process_message(input_data.message)
+    return {"response": response}
 
-    response_text = ""
+@app.get("/api/config")
+async def get_config():
+    """Get current configuration"""
+    return {
+        "use_ollama": config.USE_OLLAMA,
+        "current_model": config.OLLAMA_MODEL_ID if config.USE_OLLAMA else config.AZURE_DEPLOYMENT_NAME,
+        "available_models": {
+            "offline": list(config.AVAILABLE_OLLAMA_MODELS.items()),
+            "online": [config.AZURE_DEPLOYMENT_NAME]
+        },
+        "use_speech_output": config.USE_SPEECH_OUTPUT  # Add speech config to response
+    }
+
+@app.post("/api/config")
+async def update_config(model_config: ModelConfig, background_tasks: BackgroundTasks):
+    """Update model configuration and reinitialize the chatbot"""
     try:
-        async for chunk in kernel.invoke_stream(
-            chat_function,
-            KernelArguments(chat_history=chat_history, user_input=user_input)
-        ):
-            if not isinstance(chunk, list):
-                continue
-            for msg in chunk:
-                if not (hasattr(msg, "items") and msg.items):
-                    continue
-                response_text += msg.items[0].text
+        # Update configuration values
+        old_config = config.USE_OLLAMA
+        old_model = config.OLLAMA_MODEL_ID if config.USE_OLLAMA else config.AZURE_DEPLOYMENT_NAME
+        old_speech = config.USE_SPEECH_OUTPUT
+        
+        config.USE_OLLAMA = model_config.use_ollama
+        config.USE_SPEECH_OUTPUT = model_config.use_speech  # Update speech config
+
+        if model_config.use_ollama:
+            # Validate that the model is in our available models list
+            valid_models = [model for _, model in config.AVAILABLE_OLLAMA_MODELS.items()]
+            if model_config.model_id not in valid_models:
+                return {
+                    "status": "error", 
+                    "message": f"Invalid model: {model_config.model_id}. Available offline models: {', '.join(valid_models)}"
+                }
+            config.OLLAMA_MODEL_ID = model_config.model_id
+
+        # Reset chatbot internal state
+        reset_chatbot_state()
+
+        # Determine mode/message for response
+        mode = "Offline" if model_config.use_ollama else "Online"
+        model_name = model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME
+        speech_status = "enabled" if model_config.use_speech else "disabled"
+        
+        # Check if we're changing mode, model, or speech settings
+        needs_reinitialization = (
+            old_config != model_config.use_ollama or 
+            old_model != (model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME) or
+            old_speech != model_config.use_speech
+        )
+
+        if needs_reinitialization:
+            # Schedule reinitialization in background to allow response to be sent first
+            background_tasks.add_task(initialize_chatbot)
+            return {
+                "status": "success", 
+                "message": f"Configuration updated: {model_name} ({mode} mode), speech {speech_status}"
+            }
+        else:
+            # If no change, don't reinitialize
+            return {
+                "status": "info", 
+                "message": f"No change needed, using {model_name} ({mode} mode), speech {speech_status}"
+            }
     except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+        return {
+            "status": "error",
+            "message": f"Error updating configuration: {str(e)}"
+        }
 
-    return {"response": response_text}
+# For text-to-speech
+@app.post("/api/text-to-speech")
+async def convert_text_to_speech(input_data: UserInput):
+    """Convert text to speech and return audio bytes"""
+    try:
+        # Check if speech is disabled in settings
+        if not config.USE_SPEECH_OUTPUT:
+            print("Speech output is disabled in settings, returning empty audio")
+            from fastapi.responses import Response
+            return Response(content=b"", media_type="audio/wav")
+        
+        # Validate input
+        if not input_data or not input_data.message or not input_data.message.strip():
+            print("Empty message received for text-to-speech")
+            from fastapi.responses import Response
+            return Response(content=b"", media_type="audio/wav")
+        
+        # Generate audio from text - use current config value
+        current_use_ollama = config.USE_OLLAMA
+        audio_bytes = None
+        
+        try:
+            if current_use_ollama:
+                print("Using OLLAMA for text-to-speech")
+                audio_bytes = speak_text_to_bytes(input_data.message)
+            else:
+                print("Using Azure for text-to-speech")
+                audio_bytes = text_to_speech_to_bytes(input_data.message)
+                
+            # Make absolutely sure we have valid audio data
+            if not audio_bytes:
+                print("Warning: Audio output is empty")
+                audio_bytes = b""  # Ensure we have at least empty bytes
+            elif len(audio_bytes) < 100:
+                print(f"Warning: Audio output is very small ({len(audio_bytes)} bytes)")
+                # But we'll still return it
+        except Exception as tts_error:
+            print(f"Error generating speech: {str(tts_error)}")
+            import traceback
+            traceback.print_exc()
+            audio_bytes = b""  # Return empty audio on failure
+            
+        # Return audio as a regular response
+        from fastapi.responses import Response
+        return Response(
+            content=audio_bytes,
+            media_type="audio/wav"
+        )
+    except Exception as e:
+        print(f"Error in text-to-speech endpoint: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        # Return empty audio rather than an error response
+        from fastapi.responses import Response
+        return Response(
+            content=b"",
+            media_type="audio/wav" 
+        )
 
-
-frontend_build_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "frontend", "build")
-if os.path.exists(frontend_build_path):
-    app.mount("/", StaticFiles(directory=frontend_build_path, html=True), name="static")
-    print("Serving static frontend from:", frontend_build_path)
-else:
-    @app.get("/")
-    def read_root():
-        return {"message": "Backend is running. Frontend build not found."}
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
