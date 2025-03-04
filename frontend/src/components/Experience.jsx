@@ -118,6 +118,10 @@ const backgroundConfigs = {
 
 export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
   const cameraControls = useRef();
+  // Add ref for communication with Avatar component
+  const avatarRef = useRef();
+  // State to track avatar click
+  const [clickedAvatar, setClickedAvatar] = useState(false);
   
   useEffect(() => {
     if (cameraControls.current) {
@@ -141,6 +145,20 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
       }
     }
   }, [cameraZoomed]);
+
+  // Handle avatar click - this will be passed to the invisible mesh
+  const handleAvatarClick = () => {
+    if (avatarRef.current && !avatarRef.current.isPlayingSpecialAnimation()) {
+      setClickedAvatar(true);
+    }
+  };
+
+  // Reset click state after it's been processed
+  useEffect(() => {
+    if (clickedAvatar) {
+      setClickedAvatar(false);
+    }
+  }, [clickedAvatar]);
 
   const bgConfig = backgroundConfigs[backgroundType];
 
@@ -197,7 +215,15 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
         <Dots position-y={1.9} position-x={-0.1} />
       </Suspense>
       
-      <Avatar rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]} />
+      {/* Add invisible clickable area for the avatar */}
+      <AvatarClickArea onAvatarClick={handleAvatarClick} cameraZoomed={cameraZoomed} />
+      
+      <Avatar 
+        ref={avatarRef} 
+        rotation={[-Math.PI / 2, 0, 0]} 
+        position={[0, -0.001, 0]} 
+        triggerRandomAnimation={clickedAvatar}
+      />
       
       <EnhancedFloor />
       
@@ -210,5 +236,32 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
         color="#000000" 
       />
     </>
+  );
+};
+
+// New component for the invisible clickable area
+const AvatarClickArea = ({ onAvatarClick, cameraZoomed }) => {
+  // Cylinder to represent avatar's body
+  const radius = 0.3;  // Width of the invisible mesh
+  const height = cameraZoomed ? 3 : 3.5;  // Height based on zoom
+  const yPosition = cameraZoomed ? 1.5 : 1.75;  // Center position based on zoom
+  
+  return (
+    <mesh 
+      position={[0, yPosition, 0]} 
+      onClick={(e) => {
+        e.stopPropagation();
+        onAvatarClick();
+      }}
+      onPointerOver={(e) => {
+        document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={(e) => {
+        document.body.style.cursor = 'auto';
+      }}
+    >
+      <cylinderGeometry args={[radius, radius, height, 16]} />
+      <meshBasicMaterial visible={false} />
+    </mesh>
   );
 };

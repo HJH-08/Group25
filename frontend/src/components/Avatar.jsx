@@ -1,10 +1,10 @@
 import { useAnimations, useGLTF, useFBX } from "@react-three/drei";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import { useChat } from "../hooks/useChat";
 import { useVoice } from "../hooks/useVoice";
 import { useModel } from "../hooks/useModel";
 
-export function Avatar(props) {
+export const Avatar = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF("/models/glasses_assistant.glb");
   const { messages } = useChat();
   const { isSpeaking } = useVoice();
@@ -13,6 +13,7 @@ export function Avatar(props) {
   const [localIsSpeaking, setLocalIsSpeaking] = useState(false);
   const group = useRef();
   const [animation, setAnimation] = useState("Idle");
+  const [isPlayingRandomAnimation, setIsPlayingRandomAnimation] = useState(false);
   const lastMessageRef = useRef(null);
 
   // Animation constants
@@ -51,6 +52,75 @@ export function Avatar(props) {
     ? messages[messages.length - 1] 
     : null;
 
+  // Expose methods to parent components through ref
+  useImperativeHandle(ref, () => ({
+    // Method to check if avatar is currently playing a special animation
+    isPlayingSpecialAnimation: () => {
+      return effectivelySpeaking || isFirstGreeting || isPlayingRandomAnimation;
+    },
+  }));
+
+  // Compute effective speaking state from either real speech or simulated speech
+  const effectivelySpeaking = isSpeaking || localIsSpeaking;
+  
+  // Move playRandomAnimation into useCallback to stabilize its reference
+  const playRandomAnimation = useCallback(() => {
+    const animationOptions = [
+      "DefaultGreeting",
+      "AlternativeGreeting",
+      "DefaultTalking",
+      "AlternativeTalking",
+      "Idle" // We'll actually do something special for idle
+    ];
+    
+    // Pick a random animation, excluding the current one
+    let availableOptions = animationOptions.filter(anim => anim !== animation);
+    const randomAnimation = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+    
+    console.log(`Playing random animation: ${randomAnimation}`);
+    setIsPlayingRandomAnimation(true);
+    
+    // Special case for "Idle" - do a small head movement
+    if (randomAnimation === "Idle") {
+      // We'll just do a brief head nod or movement
+      const currentSmileValue = nodes.Wolf3D_Head?.morphTargetInfluences?.[nodes.Wolf3D_Head.morphTargetDictionary?.["mouthSmile"]] || 0;
+      
+      // Increase the smile temporarily
+      if (nodes.Wolf3D_Head?.morphTargetInfluences && nodes.Wolf3D_Head.morphTargetDictionary?.["mouthSmile"] !== undefined) {
+        nodes.Wolf3D_Head.morphTargetInfluences[nodes.Wolf3D_Head.morphTargetDictionary["mouthSmile"]] = 1.0;
+        
+        setTimeout(() => {
+          if (nodes.Wolf3D_Head?.morphTargetInfluences && nodes.Wolf3D_Head.morphTargetDictionary?.["mouthSmile"] !== undefined) {
+            nodes.Wolf3D_Head.morphTargetInfluences[nodes.Wolf3D_Head.morphTargetDictionary["mouthSmile"]] = currentSmileValue;
+          }
+          setIsPlayingRandomAnimation(false);
+        }, 1000);
+      }
+    } else {
+      setAnimation(randomAnimation);
+      
+      // Get the duration of the animation
+      const animationDuration = actions[randomAnimation]?.getClip().duration * 1000 || 2000;
+      
+      // Return to idle after the animation completes
+      setTimeout(() => {
+        setAnimation("Idle");
+        setIsPlayingRandomAnimation(false);
+      }, animationDuration);
+    }
+  }, [animation, actions, nodes?.Wolf3D_Head?.morphTargetDictionary, nodes?.Wolf3D_Head?.morphTargetInfluences]);
+
+  // Handle random animation trigger from prop
+  useEffect(() => {
+    // Only trigger if not already speaking or greeting
+    if (props.triggerRandomAnimation && 
+        !effectivelySpeaking && 
+        !isFirstGreeting && 
+        !isPlayingRandomAnimation) {
+      playRandomAnimation();
+    }
+  }, [props.triggerRandomAnimation, effectivelySpeaking, isFirstGreeting, isPlayingRandomAnimation, playRandomAnimation]);
+
   // Monitor last message changes to trigger animation in speech disabled mode
   useEffect(() => {
     if (!lastMessage) return;
@@ -74,9 +144,6 @@ export function Avatar(props) {
     }
   }, [lastMessage, modelConfig]);
   
-  // Compute effective speaking state from either real speech or simulated speech
-  const effectivelySpeaking = isSpeaking || localIsSpeaking;
-
   // Handle animation transitions based on state
   useEffect(() => {
     // Ensure morphTarget dictionaries exist before accessing
@@ -115,6 +182,11 @@ export function Avatar(props) {
     let talkingTimeout;
     let animationSwitchInterval;
     
+    // Don't override random animations that are being played
+    if (isPlayingRandomAnimation) {
+      return;
+    }
+    
     // Switch to talking animation when speaking
     if (effectivelySpeaking && lastMessage?.sender === 'ai') {
       console.log("Avatar is now speaking - activating talking animation");
@@ -148,7 +220,7 @@ export function Avatar(props) {
         }
       }, MOUTH_UPDATE_INTERVAL);
       
-    } else if (!effectivelySpeaking) {
+    } else if (!effectivelySpeaking && !isPlayingRandomAnimation) {
       // Message is complete or not speaking, return to idle
       clearInterval(mouthAnimationInterval);
       clearTimeout(talkingTimeout);
@@ -198,7 +270,7 @@ export function Avatar(props) {
       clearTimeout(talkingTimeout);
       clearInterval(animationSwitchInterval);
     };
-  }, [effectivelySpeaking, lastMessage, isFirstGreeting, actions, animation, nodes]);
+  }, [effectivelySpeaking, lastMessage, isFirstGreeting, actions, animation, nodes, isPlayingRandomAnimation]);
 
   // Switch animation when animation state changes
   useEffect(() => {
@@ -284,6 +356,6 @@ export function Avatar(props) {
       />
     </group>
   );
-}
+});
 
 useGLTF.preload("/models/glasses_assistant.glb");
