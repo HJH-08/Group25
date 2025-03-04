@@ -7,3 +7,6 @@ __pycache__/
 test*
 ./qdrant_storage/*
 models
+
+# Qdrant
+qdrant/

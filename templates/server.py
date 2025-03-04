@@ -1,27 +1,31 @@
 import config
-
-# Set the server flag to True
-config.RUNNING_AS_SERVER = True
-
-from fastapi import FastAPI, BackgroundTasks, UploadFile, File
+import os
+import sys
+import aiohttp
+from fastapi import FastAPI, BackgroundTasks
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi import HTTPException
-import aiohttp
 from contextlib import asynccontextmanager
 
 # Import the chatbot functionality
 from chatbot import initialize_chatbot, process_message, reset_chatbot_state
 
-# Import only text-to-speech functionality
+# Import Qdrant manager
+from qdrant_manager import QdrantManager
+
+# Import text-to-speech functionality
 from offline_text_to_speech import speak_text_to_bytes
 try:
     from azure_text_to_speech import text_to_speech_to_bytes
 except ImportError:
     print("Azure speech modules not available. Only offline speech will work.")
 
+# Set the server flag to True
+config.RUNNING_AS_SERVER = True
+
 # Add session management 
 _http_client = None
+_qdrant_manager = QdrantManager()
 
 def get_http_client():
     global _http_client
@@ -34,7 +38,11 @@ async def lifespan(app):
     # Startup: Initialize resources
     print("Starting up server...")
     
-    # Create any shared resources here
+    # Start Qdrant server first
+    if not _qdrant_manager.start_server():
+        print("Warning: Failed to start Qdrant server. Vector search may not work.")
+    
+    # Initialize the chatbot after Qdrant is ready
     await initialize_chatbot()
     
     yield
@@ -47,6 +55,9 @@ async def lifespan(app):
     if _http_client is not None and not _http_client.closed:
         await _http_client.close()
         _http_client = None
+    
+    # Terminate Qdrant server if running
+    _qdrant_manager.stop_server()
     
     # Close any other resources
     print("Resources cleaned up successfully")

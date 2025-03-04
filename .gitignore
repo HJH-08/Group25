@@ -1,8 +1,8 @@
 .json
 *.venv
-qdrant_storage/
+
 .DS_Store
 frontend/public/videos/
 *.mp4
-app.py
+app_mock.py
 __pycache__
