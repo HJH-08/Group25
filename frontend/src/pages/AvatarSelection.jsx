@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAvatar } from "../context/AvatarContext";  // Import Global Context
+import "../styles/AvatarSelection.css";  // Import external CSS
+
 
 const AvatarSelection = () => {
     const navigate = useNavigate();
@@ -20,28 +22,13 @@ const AvatarSelection = () => {
     };
 
     return (
-        <div style={{ textAlign: "center", padding: "20px" }}>
+        <div className="avatar-selection-container">
             <h1>Please choose your avatar for today!</h1>
-            <div style={{ display: "flex", justifyContent: "center", gap: "20px", flexWrap: "wrap", marginTop: "20px" }}>
+            <div className="avatar-grid">
                 {avatars.map((avatar) => (
-                    <div
-                        key={avatar.id}
-                        onClick={() => handleAvatarSelection(avatar)}
-                        style={{
-                            cursor: "pointer",
-                            border: "1px solid #ccc",
-                            borderRadius: "10px",
-                            padding: "10px",
-                            textAlign: "center",
-                            width: "150px",
-                        }}
-                    >
-                        <img
-                            src={avatar.image}
-                            alt={avatar.name}
-                            style={{ width: "100%", height: "auto", borderRadius: "8px" }}
-                        />
-                        <p style={{ marginTop: "10px" }}>{avatar.name}</p>
+                    <div key={avatar.id} className="avatar-card" onClick={() => handleAvatarSelection(avatar)}>
+                        <img src={avatar.image} alt={avatar.name} className="avatar-image" />
+                        <p className="avatar-name">{avatar.name}</p>
                     </div>
                 ))}
             </div>
