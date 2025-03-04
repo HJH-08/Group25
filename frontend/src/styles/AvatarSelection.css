@@ -1,0 +1,49 @@
+
+.avatar-selection-container {
+    text-align: center;
+    padding: 30px;
+}
+
+
+.avatar-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;  /* 🔥 More spacing */
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+.avatar-card {
+    cursor: pointer;
+    border: 3px solid #ccc; /* 🔥 Thicker border */
+    border-radius: 15px;
+    padding: 20px;  /* 🔥 Increased padding */
+    text-align: center;
+    width: 220px;  /* 🔥 Bigger frame */
+    height: 280px; /* 🔥 Taller to fit larger image & text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease-in-out;
+}
+
+.avatar-card:hover {
+    transform: scale(1.07);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-image {
+    width: 200px; /* 🔥 Bigger image */
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.avatar-name {
+    margin-top: 12px;
+    font-size: 20px; /* 🔥 Bigger font */
+    font-weight: bold;
+}
