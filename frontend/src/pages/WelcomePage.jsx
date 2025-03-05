@@ -1,126 +1,110 @@
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState, useEffect, Suspense } from "react";
+import { Canvas } from "@react-three/fiber";
+import { CameraControls, ContactShadows } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
+import { Avatar } from "../components/Avatar";
+import BackgroundScene from "../components/BackgroundScene";
+import { ModelProvider } from "../hooks/useModel";  // ModelProvider should be at the top
+import { VoiceProvider } from "../hooks/useVoice";
+import { ChatProvider } from "../hooks/useChat";
+import "../styles/WelcomePage.css";
 
 const WelcomePage = () => {
-    const navigate = useNavigate();
-    const [randomVideo, setRandomVideo] = useState("");
+  const navigate = useNavigate();
+  const avatarRef = useRef();
+  const cameraControls = useRef();
+  const [clickedAvatar, setClickedAvatar] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
-    useEffect(() => {
-        const videoList = [
-            "/videos/dog-video.mp4",
-            "/videos/goldfish-video.mp4",
-            "/videos/parrot-video.mp4",
-            "/videos/cat-video.mp4",
-        ];
-        const randomIndex = Math.floor(Math.random() * videoList.length);
-        setRandomVideo(videoList[randomIndex]);
+  const handleStartClick = () => {
+    if (cameraControls.current) {
+      setIsTransitioning(true); // Start fade effect
+  
+      // Smoothly move camera to original position
+      cameraControls.current.setLookAt(0, 0.3, 7, 0, 0, 0, true); 
+  
+      setTimeout(() => {
+        setFadeOut(true); // Start fade effect
+        setTimeout(() => {
+          navigate("/3DUI"); // Navigate after fade completes
+        }, 1000); // Reduce pause duration to 1s
+      }, 100); // Reduce initial wait time before fade
+    }
+  };
+  
+  useEffect(() => {
+    if (cameraControls.current) {
+      cameraControls.current.minDistance = 3;
+      cameraControls.current.maxDistance = 6;
+      cameraControls.current.setLookAt(0, 0.3, 4.5, 0, 1.5, 0);
+    }
+  }, []);
 
-        document.body.style.margin = "0";
-        document.body.style.padding = "0";
-        document.body.style.overflow = "hidden";
-    }, []);
+  const handleAvatarClick = () => {
+    if (avatarRef.current && !avatarRef.current.isPlayingSpecialAnimation()) {
+      setClickedAvatar(true);
+    }
+  };
 
-    return (
-        <div style={styles.container}>
-            <div style={styles.left}>
-                <div style={styles.textContainer}>
-                    <h1 style={styles.heading}>
-                        <span>Welcome to</span>
-                        <br />
-                        <span style={styles.brand}>Companio</span>
-                    </h1>
-                    <p style={styles.subText}>Your buddy is ready and waiting for you!</p>
-                </div>
-                <button
-                    onClick={() => navigate("/choose-avatar")}
-                    style={styles.button}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#0056b3")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "#007bff")}
-                >
-                    Get Started!
-                </button>
+  useEffect(() => {
+    if (clickedAvatar) {
+      setClickedAvatar(false);
+    }
+  }, [clickedAvatar]);
+
+  return (
+    <ModelProvider> {/* ModelProvider must be outside VoiceProvider */}
+      <VoiceProvider>
+        <ChatProvider>
+          <div className="welcome-container">
+            <div className={`fade-overlay ${fadeOut ? "fade-out" : ""}`} />
+            {/* 3D Canvas with background and avatar */}
+            <Canvas shadows camera={{ position: [0, 0.3, 5], fov: 40 }}>
+              <Suspense fallback={null}>
+                <CameraControls ref={cameraControls} />
+                <BackgroundScene />
+                <Avatar 
+                  ref={avatarRef} 
+                  rotation={[-Math.PI / 2.1, 0, 0.03]} 
+                  position={[0, -1, 0]} 
+                  triggerRandomAnimation={clickedAvatar}
+                />
+                <AvatarClickArea onAvatarClick={handleAvatarClick} />
+                <ContactShadows opacity={0.7} scale={10} blur={1.5} far={10} resolution={256} color="#000000" position={[0, -1, 0]}/>
+              </Suspense>
+            </Canvas>
+
+            {/* UI Overlay with Navigation Button */}
+            <div className="welcome-overlay">
+              <h1 className="welcome-heading">Welcome to <span>Companio</span></h1>
+              <button className={`start-button ${isTransitioning ? "fade-out" : ""}`} onClick={handleStartClick}>
+                Get Started
+              </button>
             </div>
-
-            <div style={styles.right}>
-                {randomVideo && (
-                    <video autoPlay loop muted style={styles.video}>
-                        <source src={randomVideo} type="video/mp4" />
-                        Your browser does not support the video tag.
-                    </video>
-                )}
-            </div>
-        </div>
-    );
+          </div>
+        </ChatProvider>
+      </VoiceProvider>
+    </ModelProvider>
+  );
 };
 
-// Styles
-const styles = {
-    container: {
-        display: "flex",
-        width: "100vw",
-        height: "100vh",
-        margin: "0",
-        padding: "0",
-        overflow: "hidden",
-        boxSizing: "border-box",
-    },
-    left: {
-        width: "40vw",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start", // Push content higher
-        alignItems: "center",
-        textAlign: "center",
-        backgroundColor: "#f8f9fa",
-        padding: "40px",
-        paddingTop: "15vh", // Moved text higher
-    },
-    textContainer: {
-        marginBottom: "20px",
-    },
-    heading: {
-        fontSize: "2.5rem", // Bigger text
-        fontWeight: "bold",
-        lineHeight: "1.1",
-        marginBottom: "20vh",
-        alignItems: "left",
-        textAlign: "left",
-    },
-    brand: {
-        fontSize: "10rem", // Even bigger for "Companio"
-        color: "#007bff",
-    },
-    subText: {
-        fontSize: "1.8rem",
-        color: "#555",
-        marginTop: "5px",
-    },
-    button: {
-        padding: "18px 36px",
-        fontSize: "1.8rem",
-        cursor: "pointer",
-        borderRadius: "12px",
-        border: "none",
-        backgroundColor: "#007bff",
-        color: "#fff",
-        boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.2)",
-        transition: "background-color 0.3s, transform 0.2s",
-        marginTop: "-20px", // Raised button higher
-    },
-    right: {
-        width: "60vw",
-        height: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        overflow: "hidden",
-    },
-    video: {
-        width: "100%",
-        height: "100vh",
-        objectFit: "cover",
-    },
+// Invisible click area for triggering avatar animations
+const AvatarClickArea = ({ onAvatarClick }) => {
+  return (
+    <mesh 
+      position={[0, 0.5, 0]} // Centered around the avatar
+      onClick={(e) => {
+        e.stopPropagation();
+        onAvatarClick();
+      }}
+      onPointerOver={() => (document.body.style.cursor = "pointer")}
+      onPointerOut={() => (document.body.style.cursor = "auto")}
+    >
+      <cylinderGeometry args={[0.3, 0.3, 3, 16]} />
+      <meshBasicMaterial visible={false} />
+    </mesh>
+  );
 };
 
 export default WelcomePage;
