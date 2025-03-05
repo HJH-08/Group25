@@ -98,3 +98,20 @@
     box-shadow: none;
   }
   
+  .fade-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black; /* Dim the screen */
+    opacity: 0; /* Initially invisible */
+    transition: opacity 1s ease-in-out; /* Smooth fade effect */
+    pointer-events: none; /* Allow clicks to pass through */
+    z-index: 999;
+  }
+  
+  
+  .fade-out {
+    opacity: 1;
+  }

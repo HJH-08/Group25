@@ -14,12 +14,30 @@ const WelcomePage = () => {
   const avatarRef = useRef();
   const cameraControls = useRef();
   const [clickedAvatar, setClickedAvatar] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
 
+  const handleStartClick = () => {
+    if (cameraControls.current) {
+      setIsTransitioning(true); // Start fade effect
+  
+      // Smoothly move camera to original position
+      cameraControls.current.setLookAt(0, 0.3, 7, 0, 0, 0, true); 
+  
+      setTimeout(() => {
+        setFadeOut(true); // Start fade effect
+        setTimeout(() => {
+          navigate("/3DUI"); // Navigate after fade completes
+        }, 1000); // Reduce pause duration to 1s
+      }, 100); // Reduce initial wait time before fade
+    }
+  };
+  
   useEffect(() => {
     if (cameraControls.current) {
       cameraControls.current.minDistance = 3;
       cameraControls.current.maxDistance = 6;
-      cameraControls.current.setLookAt(0, 2, 4.5, 0, 1.5, 0);
+      cameraControls.current.setLookAt(0, 0.3, 4.5, 0, 1.5, 0);
     }
   }, []);
 
@@ -40,6 +58,7 @@ const WelcomePage = () => {
       <VoiceProvider>
         <ChatProvider>
           <div className="welcome-container">
+            <div className={`fade-overlay ${fadeOut ? "fade-out" : ""}`} />
             {/* 3D Canvas with background and avatar */}
             <Canvas shadows camera={{ position: [0, 0.3, 5], fov: 40 }}>
               <Suspense fallback={null}>
@@ -59,7 +78,7 @@ const WelcomePage = () => {
             {/* UI Overlay with Navigation Button */}
             <div className="welcome-overlay">
               <h1 className="welcome-heading">Welcome to <span>Companio</span></h1>
-              <button className="start-button" onClick={() => navigate("/3DUI")}>
+              <button className={`start-button ${isTransitioning ? "fade-out" : ""}`} onClick={handleStartClick}>
                 Get Started
               </button>
             </div>
