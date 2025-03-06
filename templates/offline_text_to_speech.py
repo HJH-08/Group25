@@ -9,21 +9,31 @@ import io
 # Reduce logging noise
 logging.getLogger("TTS").setLevel(logging.ERROR)
 
-# Load the Coqui TTS model (offline)
-tts_model = TTS("tts_models/en/ljspeech/tacotron2-DDC", progress_bar=False).to("cpu")
+# Load a multi-speaker, multi-lingual TTS model
+tts_model = TTS("tts_models/en/vctk/vits", progress_bar=False).to("cpu")
 
-def speak_text(text):
+# Speaker ID mapping for gender (update based on model's available speakers)
+voice_mapping = {
+    "male": "p229",
+    "female": "p240"
+}
+
+def speak_text(text, gender="male"):
     """
     Converts text to speech using Coqui TTS and plays the generated audio.
-
+    
     Args:
         text (str): The text to synthesize.
+        gender (str): The voice gender ('male' or 'female').
     """
     if not text.strip():
         return
+    
+    # Select speaker ID based on gender
+    speaker = voice_mapping.get(gender, "p240")  # Default to female
 
     # Generate speech (returns NumPy array)
-    audio_data = tts_model.tts(text=text)
+    audio_data = tts_model.tts(text=text, speaker=speaker)
 
     # Convert to tensor and play with torchaudio
     sample_rate = 22050
@@ -38,13 +48,25 @@ def speak_text(text):
     # Clean up temp file
     os.remove("temp_audio.wav")
 
-def speak_text_to_bytes(text):
-    """Convert text to speech and return audio bytes"""
+def speak_text_to_bytes(text, gender="male"):
+    """
+    Convert text to speech and return audio bytes.
+    
+    Args:
+        text (str): The text to synthesize.
+        gender (str): The voice gender ('male' or 'female').
+
+    Returns:
+        bytes: The generated audio in WAV format.
+    """
     if not text.strip():
         return bytes()
 
+    # Select speaker ID based on gender
+    speaker = voice_mapping.get(gender, "p240")  # Default to female
+
     # Generate speech (returns NumPy array)
-    audio_data = tts_model.tts(text=text)
+    audio_data = tts_model.tts(text=text, speaker=speaker)
 
     # Convert to bytes in WAV format
     buffer = io.BytesIO()
@@ -54,7 +76,3 @@ def speak_text_to_bytes(text):
     buffer.seek(0)
     
     return buffer.read()
-
-# Example usage
-if __name__ == "__main__":
-    speak_text("Hello, my name is Jun. Nice to meet you.")

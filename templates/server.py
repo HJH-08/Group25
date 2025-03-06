@@ -75,6 +75,7 @@ app.add_middleware(
 
 class UserInput(BaseModel):
     message: str
+    gender: str = "male"
 
 class ModelConfig(BaseModel):
     use_ollama: bool
@@ -173,6 +174,9 @@ async def convert_text_to_speech(input_data: UserInput):
             from fastapi.responses import Response
             return Response(content=b"", media_type="audio/wav")
         
+        # Ensure gender is strictly "male" or "female", defaulting to "female"
+        gender = input_data.gender if input_data.gender in ["male", "female"] else "female"
+
         # Generate audio from text - use current config value
         current_use_ollama = config.USE_OLLAMA
         audio_bytes = None
@@ -180,10 +184,10 @@ async def convert_text_to_speech(input_data: UserInput):
         try:
             if current_use_ollama:
                 print("Using OLLAMA for text-to-speech")
-                audio_bytes = speak_text_to_bytes(input_data.message)
+                audio_bytes = speak_text_to_bytes(input_data.message, gender=gender)
             else:
                 print("Using Azure for text-to-speech")
-                audio_bytes = text_to_speech_to_bytes(input_data.message)
+                audio_bytes = text_to_speech_to_bytes(input_data.message, gender=gender)
                 
             # Make absolutely sure we have valid audio data
             if not audio_bytes:
