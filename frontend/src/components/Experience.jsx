@@ -8,9 +8,9 @@ import {
   Text,
 } from "@react-three/drei";
 import { useChat } from "../hooks/useChat";
-// import { Avatar } from "./Avatar";
+import { Avatar } from "./Avatar"; // Re-enable this import
 import { AvatarFemale } from "./AvatarFemale";
-
+import { useModel } from "../hooks/useModel";
 
 const Dots = ({ ...props }) => {
   const { loading } = useChat();
@@ -119,12 +119,11 @@ const backgroundConfigs = {
 };
 
 export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
+  const { modelConfig } = useModel();
   const cameraControls = useRef();
   const avatarRef = useRef();
   const [clickedAvatar, setClickedAvatar] = useState(false);
 
-
-  
   useEffect(() => {
     if (cameraControls.current) {
       // Increased minimum distance to prevent zooming inside avatar
@@ -220,12 +219,21 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
       {/* Add invisible clickable area for the avatar */}
       <AvatarClickArea onAvatarClick={handleAvatarClick} cameraZoomed={cameraZoomed} />
       
-      {/* Conditionally render male or female avatar based on modelConfig */}
-      <AvatarFemale
-        ref={avatarRef}
-        position={[0, -0.001, 0]} 
-        triggerRandomAnimation={clickedAvatar}
-      />
+      {/* Conditionally render avatar based on selected type */}
+      {(modelConfig?.avatar_type === "female") ? (
+        <AvatarFemale
+          ref={avatarRef}
+          position={[0, -0.001, 0]} 
+          triggerRandomAnimation={clickedAvatar}
+        />
+      ) : (
+        <Avatar
+          ref={avatarRef}
+          position={[0, -0.001, 0]} 
+          rotation={[-Math.PI / 2, 0, 0]}
+          triggerRandomAnimation={clickedAvatar}
+        />
+      )}
       
       <EnhancedFloor />
       

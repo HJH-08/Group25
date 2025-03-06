@@ -22,6 +22,9 @@ AVAILABLE_OLLAMA_MODELS = {
     "2": "granite3.1-dense:2b"
 }
 
+# Avatar Settings
+AVATAR_TYPE = "male"
+
 # Qdrant Settings
 QDRANT_HOST = "http://localhost"
 QDRANT_PORT = 6333

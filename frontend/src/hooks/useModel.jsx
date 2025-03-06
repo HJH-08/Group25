@@ -3,10 +3,11 @@ import { useState, useEffect, useCallback, createContext, useContext } from 'rea
 const ModelContext = createContext();
 
 export const ModelProvider = ({ children }) => {
-  const modelHook = useModelHook();
+  // Use the hook to get all model functionality
+  const modelState = useModelHook();
   
   return (
-    <ModelContext.Provider value={modelHook}>
+    <ModelContext.Provider value={modelState}>
       {children}
     </ModelContext.Provider>
   );
@@ -20,12 +21,23 @@ export const useModel = () => {
   return context;
 };
 
-// Rename the main hook function (all the existing logic goes here)
+// Main hook function with all the logic
 const useModelHook = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [modelConfig, setModelConfig] = useState(null);
   const [switchingModel, setSwitchingModel] = useState(false);
+  
+  // Function for avatar selection
+  const setConfigValue = useCallback((key, value) => {
+    setModelConfig(prev => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        [key]: value
+      };
+    });
+  }, []);
   
   // Helper function to get friendly names for models
   const getFriendlyModelName = useCallback((modelId) => {
@@ -34,6 +46,8 @@ const useModelHook = () => {
         return 'Phi 3.5';
       case 'granite3.1-dense:2b':
         return 'IBM Granite';
+      case 'gpt-4':
+        return 'GPT-4';
       default:
         return modelId;
     }
@@ -81,10 +95,12 @@ const useModelHook = () => {
         }
       }
       
+      // Add avatar_type to the model config if it doesn't exist
       setModelConfig({
         ...data,
         current_model_name: getFriendlyModelName(data.current_model),
-        use_speech_output: data.use_speech_output !== undefined ? data.use_speech_output : true
+        use_speech_output: data.use_speech_output !== undefined ? data.use_speech_output : true,
+        avatar_type: data.avatar_type || "male" // Default avatar is male
       });
     } catch (err) {
       console.error("Error fetching model config:", err);
@@ -100,18 +116,12 @@ const useModelHook = () => {
   }, [fetchModelConfig]);
   
   // Function to switch models
-  const switchModel = useCallback(async (useOllama, modelId, useSpeech) => {
+  const switchModel = useCallback(async (useOllama, modelId, useSpeech, avatarType = 'male') => {
     try {
       setSwitchingModel(true);
       setError(null);
       
-      console.log(`Switching to ${useOllama ? 'offline' : 'online'} model: ${modelId}, speech: ${useSpeech ? 'on' : 'off'}`);
-      
-      // Update local state immediately for UI responsiveness
-      setModelConfig(prev => prev ? {
-        ...prev,
-        use_speech_output: useSpeech
-      } : null);
+      console.log(`Switching to ${useOllama ? 'offline' : 'online'} model: ${modelId}, speech: ${useSpeech ? 'on' : 'off'}, avatar: ${avatarType}`);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for model switching
@@ -124,7 +134,8 @@ const useModelHook = () => {
         body: JSON.stringify({
           use_ollama: useOllama,
           model_id: modelId,
-          use_speech: useSpeech
+          use_speech: useSpeech,
+          avatar_type: avatarType 
         }),
         signal: controller.signal
       });
@@ -156,6 +167,7 @@ const useModelHook = () => {
     }
   }, [fetchModelConfig]);
   
+  // Return everything needed including the new setConfigValue
   return {
     modelConfig,
     loading,
@@ -163,6 +175,7 @@ const useModelHook = () => {
     switchingModel,
     fetchModelConfig,
     switchModel,
-    getFriendlyModelName
+    getFriendlyModelName,
+    setConfigValue
   };
 };
