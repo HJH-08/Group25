@@ -1,10 +1,23 @@
 import azure.cognitiveservices.speech as speechsdk
 from config import AZURE_SPEECH_KEY, AZURE_SPEECH_REGION
 
-def text_to_speech(text):
-    """Converts text to speech using Azure Cognitive Services."""
+def text_to_speech(text, gender="male"):
+    """Converts text to speech using Azure Cognitive Services, selecting a voice based on gender."""
+    if not text or not text.strip():
+        print("Empty text provided to text_to_speech")
+        return
+    
+    # Voice selection based on gender
+    voice_mapping = {
+        "male": "en-US-GuyNeural",
+        "female": "en-US-JennyNeural"
+    }
+
+    # Default to female if gender is invalid
+    selected_voice = voice_mapping.get(gender, "en-US-GuyNeural")
+
     speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_SPEECH_REGION)
-    speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"  # Choose your preferred voice
+    speech_config.speech_synthesis_voice_name = selected_voice
 
     # For direct playback, explicitly use default speaker
     audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
@@ -17,7 +30,8 @@ def text_to_speech(text):
     else:
         print(f"❌ Speech synthesis failed: {result.reason}")
 
-def text_to_speech_to_bytes(text):
+
+def text_to_speech_to_bytes(text, gender="male"):
     """Converts text to speech and returns the audio as bytes."""
     if not text or not text.strip():
         print("Empty text provided to text_to_speech_to_bytes")
@@ -26,6 +40,15 @@ def text_to_speech_to_bytes(text):
     if not AZURE_SPEECH_KEY or not AZURE_SPEECH_REGION:
         print("Azure Speech credentials not configured")
         return bytes()
+    
+    # Voice selection based on gender
+    voice_mapping = {
+        "male": "en-US-GuyNeural",
+        "female": "en-US-JennyNeural"
+    }
+    
+    # Default to female if gender is invalid
+    selected_voice = voice_mapping.get(gender, "en-US-GuyNeural")
     
     try:
         # Create a temporary file for storing the output
@@ -42,7 +65,7 @@ def text_to_speech_to_bytes(text):
                 subscription=AZURE_SPEECH_KEY, 
                 region=AZURE_SPEECH_REGION
             )
-            speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"
+            speech_config.speech_synthesis_voice_name = selected_voice
             
             # Configure audio output to file
             audio_config = speechsdk.audio.AudioOutputConfig(filename=temp_file_path)
@@ -93,14 +116,23 @@ def text_to_speech_to_bytes(text):
         except Exception as cleanup_error:
             print(f"Error cleaning up temp file: {str(cleanup_error)}")
 
-def text_to_speech_to_file(text, file_path="output.wav"):
-    """Converts text to speech and saves to a file."""
+def text_to_speech_to_file(text, file_path="output.wav", gender="male"):
+    """Converts text to speech and saves to a file, selecting a voice based on gender."""
     if not text or not text.strip():
         print("Empty text provided to text_to_speech_to_file")
         return False
         
+    # Voice selection based on gender
+    voice_mapping = {
+        "male": "en-US-GuyNeural",
+        "female": "en-US-JennyNeural"
+    }
+    
+    # Default to female if gender is invalid
+    selected_voice = voice_mapping.get(gender, "en-US-GuyNeural")
+
     speech_config = speechsdk.SpeechConfig(subscription=AZURE_SPEECH_KEY, region=AZURE_SPEECH_REGION)
-    speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"
+    speech_config.speech_synthesis_voice_name = selected_voice
     
     audio_config = speechsdk.audio.AudioOutputConfig(filename=file_path)
     synthesizer = speechsdk.SpeechSynthesizer(
@@ -113,3 +145,4 @@ def text_to_speech_to_file(text, file_path="output.wav"):
     else:
         print(f"❌ Speech synthesis failed: {result.reason}")
         return False
+
