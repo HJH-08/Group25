@@ -79,7 +79,8 @@ class UserInput(BaseModel):
 class ModelConfig(BaseModel):
     use_ollama: bool
     model_id: str = "phi3.5:latest"  # Default to Phi3
-    use_speech: bool = True  # New field for speech toggle
+    use_speech: bool = True  # Field for speech toggle
+    avatar_type: str = "male"  # New field for avatar selection
 
 @app.post("/api/chat")
 async def chat(input_data: UserInput):
@@ -97,7 +98,8 @@ async def get_config():
             "offline": list(config.AVAILABLE_OLLAMA_MODELS.items()),
             "online": [config.AZURE_DEPLOYMENT_NAME]
         },
-        "use_speech_output": config.USE_SPEECH_OUTPUT  # Add speech config to response
+        "use_speech_output": config.USE_SPEECH_OUTPUT,
+        "avatar_type": getattr(config, 'AVATAR_TYPE', 'male')  # Add avatar type to response
     }
 
 @app.post("/api/config")
@@ -108,9 +110,14 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
         old_config = config.USE_OLLAMA
         old_model = config.OLLAMA_MODEL_ID if config.USE_OLLAMA else config.AZURE_DEPLOYMENT_NAME
         old_speech = config.USE_SPEECH_OUTPUT
+        old_avatar = getattr(config, 'AVATAR_TYPE', 'male')
         
+        # Update settings
         config.USE_OLLAMA = model_config.use_ollama
-        config.USE_SPEECH_OUTPUT = model_config.use_speech  # Update speech config
+        config.USE_SPEECH_OUTPUT = model_config.use_speech
+        
+        # Add support for avatar_type
+        config.AVATAR_TYPE = model_config.avatar_type
 
         if model_config.use_ollama:
             # Validate that the model is in our available models list
@@ -129,6 +136,7 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
         mode = "Offline" if model_config.use_ollama else "Online"
         model_name = model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME
         speech_status = "enabled" if model_config.use_speech else "disabled"
+        avatar_type = model_config.avatar_type
         
         # Check if we're changing mode, model, or speech settings
         needs_reinitialization = (
@@ -137,19 +145,30 @@ async def update_config(model_config: ModelConfig, background_tasks: BackgroundT
             old_speech != model_config.use_speech
         )
 
+        # Add info about avatar change to response
+        avatar_changed = old_avatar != model_config.avatar_type
+        avatar_message = f", avatar changed to {avatar_type}" if avatar_changed else ""
+
         if needs_reinitialization:
             # Schedule reinitialization in background to allow response to be sent first
             background_tasks.add_task(initialize_chatbot)
             return {
                 "status": "success", 
-                "message": f"Configuration updated: {model_name} ({mode} mode), speech {speech_status}"
+                "message": f"Configuration updated: {model_name} ({mode} mode), speech {speech_status}{avatar_message}"
             }
         else:
-            # If no change, don't reinitialize
-            return {
-                "status": "info", 
-                "message": f"No change needed, using {model_name} ({mode} mode), speech {speech_status}"
-            }
+            # Even if only avatar changed, we don't need to reinitialize the chatbot
+            if avatar_changed:
+                return {
+                    "status": "success", 
+                    "message": f"Avatar updated to {avatar_type}, using {model_name} ({mode} mode)"
+                }
+            else:
+                # If no change at all
+                return {
+                    "status": "info", 
+                    "message": f"No change needed, using {model_name} ({mode} mode), speech {speech_status}"
+                }
     except Exception as e:
         return {
             "status": "error",
