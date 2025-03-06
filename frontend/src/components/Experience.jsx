@@ -8,7 +8,9 @@ import {
   Text,
 } from "@react-three/drei";
 import { useChat } from "../hooks/useChat";
-import { Avatar } from "./Avatar";
+// import { Avatar } from "./Avatar";
+import { AvatarFemale } from "./AvatarFemale";
+
 
 const Dots = ({ ...props }) => {
   const { loading } = useChat();
@@ -118,10 +120,10 @@ const backgroundConfigs = {
 
 export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
   const cameraControls = useRef();
-  // Add ref for communication with Avatar component
   const avatarRef = useRef();
-  // State to track avatar click
   const [clickedAvatar, setClickedAvatar] = useState(false);
+
+
   
   useEffect(() => {
     if (cameraControls.current) {
@@ -146,7 +148,7 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
     }
   }, [cameraZoomed]);
 
-  // Handle avatar click - this will be passed to the invisible mesh
+  // Handle avatar click
   const handleAvatarClick = () => {
     if (avatarRef.current && !avatarRef.current.isPlayingSpecialAnimation()) {
       setClickedAvatar(true);
@@ -166,7 +168,7 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
     <>
       <CameraControls ref={cameraControls} />
       
-      {/* Enhanced dynamic background */}
+      {/* Background elements */}
       <color attach="background" args={[bgConfig.skyColor]} />
       <Sky 
         sunPosition={bgConfig.sunPosition} 
@@ -183,7 +185,7 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
         fade 
       />
       
-      {/* Dynamic lighting based on selected background */}
+      {/* Lighting setup */}
       <ambientLight intensity={bgConfig.ambientLightIntensity} />
       <directionalLight 
         position={[10, 10, 5]} 
@@ -218,9 +220,9 @@ export const Experience = ({ cameraZoomed, backgroundType = 'default' }) => {
       {/* Add invisible clickable area for the avatar */}
       <AvatarClickArea onAvatarClick={handleAvatarClick} cameraZoomed={cameraZoomed} />
       
-      <Avatar 
-        ref={avatarRef} 
-        rotation={[-Math.PI / 2, 0, 0]} 
+      {/* Conditionally render male or female avatar based on modelConfig */}
+      <AvatarFemale
+        ref={avatarRef}
         position={[0, -0.001, 0]} 
         triggerRandomAnimation={clickedAvatar}
       />
