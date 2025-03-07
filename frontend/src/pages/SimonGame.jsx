@@ -383,7 +383,7 @@ function SimonGame() {
                     <h1>Simon Game</h1>
                     <p>Test your memory! Follow the pattern of lights and sounds.</p>
                     <p className="high-score">High Score: {highScore}</p>
-                    <button className="start-button" onClick={startGame}>
+                    <button className="simon-start-button" onClick={startGame}>
                         Start Game
                     </button>
                     <button 

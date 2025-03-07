@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 // Third party imports
 import { Canvas } from "@react-three/fiber";
 import { Loader } from "@react-three/drei";
+import { useNavigate } from "react-router-dom";
 // Local imports
 import { ChatProvider, useChat } from "../hooks/useChat";
 import { VoiceProvider, useVoice } from "../hooks/useVoice";
@@ -16,9 +17,12 @@ import { ModelProvider,useModel } from "../hooks/useModel";
 import "../styles/3DUI.css";
 
 const ThreeDimensionalContent = () => { 
+  // Add navigate for redirection
+  const navigate = useNavigate();
+  
   // State management
   const { chat, messages, loading } = useChat();
-  const { speakText, isSpeaking } = useVoice();
+  const { speakText, isSpeaking, isMuted, toggleMute } = useVoice(); 
   const [userInput, setUserInput] = useState("");
   const [cameraZoomed, setCameraZoomed] = useState(true);
   const [chatExpanded, setChatExpanded] = useState(false);
@@ -28,7 +32,6 @@ const ThreeDimensionalContent = () => {
   const [showModelSelector, setShowModelSelector] = useState(false);
   const { refreshConnection } = useChat();
   const [spokenMessageIds, setSpokenMessageIds] = useState(new Set());
-  // Add speech config state
   const { modelConfig } = useModel();
 
    // Refs constants
@@ -177,6 +180,12 @@ const ThreeDimensionalContent = () => {
     }
   }, [messages, loading, speakText, isSpeaking, spokenMessageIds, modelConfig]);
 
+  
+  // Navigate to home page
+  const navigateToHome = () => {
+    navigate('/');
+  };
+
   return (
     <>
       <Loader />
@@ -185,6 +194,32 @@ const ThreeDimensionalContent = () => {
         <h1>Welcome to Companio</h1>
         <p>Your interactive 3D companion</p>
       </div>
+      
+      <button 
+        onClick={navigateToHome}
+        className="home-button"
+        aria-label="Return to Home"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+        </svg>
+      </button>
+      
+      <button
+        onClick={toggleMute}
+        className="mute-button"
+        aria-label={isMuted ? "Unmute" : "Mute"}
+      >
+        {isMuted ? (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 9.75L19.5 12m0 0l2.25 2.25M19.5 12l2.25-2.25M19.5 12l-2.25 2.25m-10.5-6l4.72-4.72a.75.75 0 011.28.531V19.94a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.506-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.395C2.806 8.757 3.63 8.25 4.51 8.25H6.75z" />
+          </svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+          </svg>
+        )}
+      </button>
       
       <Canvas
         shadows

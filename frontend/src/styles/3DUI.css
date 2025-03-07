@@ -551,3 +551,63 @@ canvas {
   height: 26px;
   color: #3498db;
 }
+
+.home-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+}
+
+.home-button:hover {
+  transform: scale(1.05);
+  background-color: white;
+}
+
+.home-button svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}
+
+/* Mute button positioned at bottom center */
+.mute-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 100;
+  transition: all 0.2s ease;
+}
+
+.mute-button:hover {
+  transform: translateX(-50%) scale(1.05);
+  background-color: white;
+}
+
+.mute-button svg {
+  width: 24px;
+  height: 24px;
+  color: #333;
+}

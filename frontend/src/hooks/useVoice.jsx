@@ -17,12 +17,67 @@ if (recognition) {
 export const VoiceProvider = ({ children }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isMuted, setIsMuted] = useState(false); // Add mute state
   const [recognizedText, setRecognizedText] = useState('');
   const [currentAudio, setCurrentAudio] = useState(null);
   
   // Get model config to check if speech is enabled
   const { modelConfig } = useModel();
   
+  // Load mute preference on component mount
+  useEffect(() => {
+    const savedMuteState = localStorage.getItem('companioMuted') === 'true';
+    if (savedMuteState) {
+      setIsMuted(true);
+      
+      // Apply mute setting to all media elements
+      document.querySelectorAll('audio, video').forEach(media => {
+        media.muted = true;
+      });
+      
+      // Suspend audio context if available
+      if (typeof window !== 'undefined' && window.audioContext) {
+        try {
+          window.audioContext.suspend();
+        } catch (e) {
+          console.error("Could not suspend audio context:", e);
+        }
+      }
+    }
+  }, []);
+  
+  // Toggle mute function
+  const toggleMute = useCallback(() => {
+    const newMuteState = !isMuted;
+    setIsMuted(newMuteState);
+    
+    // Set muted state on current audio rather than stopping it
+    if (currentAudio) {
+      currentAudio.muted = newMuteState;
+    }
+    
+    // Mute/unmute all HTML audio and video elements
+    document.querySelectorAll('audio, video').forEach(media => {
+      media.muted = newMuteState;
+    });
+    
+    // For Web Audio API
+    if (typeof window !== 'undefined' && window.audioContext) {
+      try {
+        if (newMuteState) {
+          window.audioContext.suspend();
+        } else {
+          window.audioContext.resume();
+        }
+      } catch (e) {
+        console.error("Could not control audio context:", e);
+      }
+    }
+    
+    // Store preference
+    localStorage.setItem('companioMuted', newMuteState);
+  }, [isMuted, currentAudio]);
+
   // Define stopRecording with useCallback to memoize it
   const stopRecording = useCallback(() => {
     if (recognition && isRecording) {
@@ -76,11 +131,18 @@ export const VoiceProvider = ({ children }) => {
       currentAudio.src = "";
       URL.revokeObjectURL(currentAudio.src);
       setCurrentAudio(null);
+      setIsSpeaking(false);
     }
   }, [currentAudio]);
 
-  // Checks if speech is enabled
+  // Checks if speech is enabled and not muted
   const speakText = async (text) => {
+    // Don't speak if muted
+    if (isMuted) {
+      console.log("Audio is muted, skipping speech");
+      return;
+    }
+    
     // Don't process empty text
     if (!text) return;
     
@@ -202,14 +264,21 @@ export const VoiceProvider = ({ children }) => {
       value={{
         isRecording,
         isSpeaking, 
+        isMuted,
         recognizedText,
         setRecognizedText,
         startRecording,
         stopRecording,
-        speakText
+        speakText,
+        toggleMute,
+        stopCurrentAudio
       }}
     >
       {children}
+      <audio 
+        style={{ display: 'none' }} 
+        onEnded={() => setIsSpeaking(false)}
+      />
     </VoiceContext.Provider>
   );
 };
