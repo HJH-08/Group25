@@ -90,7 +90,7 @@ html, body {
   font-size: 1.2rem;
 }
 
-.start-button {
+.simon-start-button {
   background-color: #4A90E2;
   color: white;
   border: none;
@@ -103,7 +103,7 @@ html, body {
   box-shadow: 0 4px 6px rgba(74, 144, 226, 0.2);
 }
 
-.start-button:hover {
+.simon-start-button:hover {
   background-color: #357ABD;
   transform: translateY(-3px);
   box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);

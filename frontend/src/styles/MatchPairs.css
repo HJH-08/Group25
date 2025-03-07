@@ -134,7 +134,7 @@ html, body {
     border-color: #4A90E2;
   }
   
-  .start-button {
+  .match-start-button {
     background-color: #4A90E2;
     color: white;
     border: none;
@@ -149,7 +149,7 @@ html, body {
     margin: 0 auto;
   }
   
-  .start-button:hover {
+  .match-start-button:hover {
     background-color: #357ABD;
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(74, 144, 226, 0.3);
