@@ -301,7 +301,7 @@ const MatchPairs = () => {
             </div>
           </div>
           
-          <button className="start-button" onClick={initializeGame}>
+          <button className="match-start-button" onClick={initializeGame}>
             Start Game
           </button>
           <button 
