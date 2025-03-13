@@ -20,33 +20,44 @@ Companio is your advanced AI assistant, built to connect with lifelike avatars. 
 
 ### Steps
 1. Clone the repository:
-   ```bash
-git clone <repository-url>
-Install frontend dependencies:
+```
+git clone https://github.com/HJH-08/Group25.git
+```
+2. Install frontend dependencies:
+```
 cd frontend
 npm install  # or yarn install
+```
 
-Install backend dependencies:
-pip install -r templates_templates_requirements.txt
-Start the backend server:
+3. Install backend dependencies:
+```
+pip install -r templates_requirements.txt
+```
+4. Start the backend server:
+```
 python templates/app.py
-Start the frontend application:
+```
+5. Start the frontend application:
+```
 npm start  # or yarn start
-Usage
+```
 
-Launch the application.
-Grant necessary permissions for microphone access when prompted.
-Use the wake word "Companio" or click the microphone button to start a conversation.
-Speak naturally to interact with the assistant.
+## Usage
 
-# Commands
+- Launch the application at http://localhost:3000.
+- Grant necessary permissions for microphone access when prompted.
+- Use the chatbox to speak to your new assistant.
+- Speak naturally to interact with the assistant.
 
-Use the navigation buttons in the UI to navigate to the model selection settings, background selector, chatbox, and games menu.
+## Commands
+
+### Use the navigation buttons in the UI to navigate to the model selection settings, background selector, chatbox, and games menu.
 
 
-Development
+## Development
 
-Project Structure
+### Project Structure
+```
 companio/
 ├── frontend/         
 │   ├── public/
@@ -57,3 +68,4 @@ companio/
 │   ├── models/
 │   └── app.py
 └── README.md
+```
