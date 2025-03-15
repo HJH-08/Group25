@@ -40,7 +40,7 @@ function createWindow() {
           "script-src 'self' blob: 'unsafe-eval' 'wasm-unsafe-eval'; " +
           "style-src 'self' 'unsafe-inline'; " +
           "worker-src blob: 'self'; " +
-          "connect-src 'self' blob: http://localhost:8000 ws://localhost:8000; " + // Add backend API and WebSocket
+          "connect-src 'self' blob: http://localhost:8000 ws://localhost:8000 wss://*.speech.microsoft.com *.microsoft.com; " + 
           "img-src 'self' data: blob:;"
         ]
       }

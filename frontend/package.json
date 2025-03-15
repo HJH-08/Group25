@@ -23,6 +23,7 @@
     "electron": "^35.0.0",
     "fs-extra": "^11.3.0",
     "leva": "^0.9.35",
+    "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hooks": "^1.0.1",

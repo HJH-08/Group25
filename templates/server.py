@@ -188,3 +188,12 @@ async def convert_text_to_speech(input_data: UserInput):
         from fastapi.responses import Response
         return Response(content=b"", media_type="audio/wav")
 
+# Add this route to your FastAPI application
+
+@app.get("/api/azure-credentials")
+async def get_azure_credentials():
+    return {
+        "subscriptionKey": os.environ.get("AZURE_SPEECH_KEY"),
+        "region": os.environ.get("AZURE_SPEECH_REGION")
+    }
+
