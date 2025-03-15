@@ -3,9 +3,27 @@ import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, us
 import { useChat } from "../hooks/useChat";
 import { useVoice } from "../hooks/useVoice";
 import { useModel } from "../hooks/useModel";
+import { getAssetPath } from '../utils/assetPaths'; // Fixed import path
 
 export const Avatar = forwardRef((props, ref) => {
-  const { nodes, materials } = useGLTF("/models/glasses_assistant.glb");
+  const modelName = "glasses_assistant";
+  const modelPath = getAssetPath(`/models/${modelName}.glb`);
+  
+  // Also update animation paths
+  const idleAnimationPath = getAssetPath("/animations/idle_breathing.fbx");
+  const greetingDefaultPath = getAssetPath("/animations/informal_bow.fbx");
+  const greetingAltPath = getAssetPath("/animations/feminine_hello.fbx");
+  const talkingDefaultPath = getAssetPath("/animations/talking_main.fbx");
+  const talkingAltPath = getAssetPath("/animations/talking_explain.fbx");
+
+  // Load animations with correct paths
+  const { animations: idleAnimation } = useFBX(idleAnimationPath);
+  const { animations: greetingAnimationDefault } = useFBX(greetingDefaultPath);
+  const { animations: greetingAnimationAlternative } = useFBX(greetingAltPath);
+  const { animations: talkingDefault } = useFBX(talkingDefaultPath);
+  const { animations: talkingAlternative } = useFBX(talkingAltPath);
+
+  const { nodes, materials } = useGLTF(modelPath);
   const { messages } = useChat();
   const { isSpeaking } = useVoice();
   const { modelConfig } = useModel();
@@ -23,12 +41,6 @@ export const Avatar = forwardRef((props, ref) => {
   const ANIMATION_SWITCH_INTERVAL = 2500; // 2.5 seconds between animation switches
 
   // Load and name animations
-  const { animations: idleAnimation } = useFBX("/animations/idle_breathing.fbx");
-  const { animations: greetingAnimationDefault } = useFBX("/animations/informal_bow.fbx");
-  const { animations: greetingAnimationAlternative } = useFBX("/animations/feminine_hello.fbx");
-  const { animations: talkingDefault } = useFBX("/animations/talking_main.fbx");
-  const { animations: talkingAlternative } = useFBX("/animations/talking_explain.fbx");
-
   idleAnimation[0].name = "Idle";
   greetingAnimationDefault[0].name = "DefaultGreeting";
   greetingAnimationAlternative[0].name = "AlternativeGreeting";
@@ -358,4 +370,4 @@ export const Avatar = forwardRef((props, ref) => {
   );
 });
 
-useGLTF.preload("/models/glasses_assistant.glb");
+useGLTF.preload(getAssetPath("/models/glasses_assistant.glb"));
