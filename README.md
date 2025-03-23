@@ -218,6 +218,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgements
 - Thanks to all contributors who have helped shape Companio
 - Built with support from UCL, Avanade, and IBM
-- Avatar models adapted from CGTrader under royalty-free license: [Male Avatar](https://www.cgtrader.com/products/casual-man-rigged) and [Female Avatar](https://www.cgtrader.com/products/woman-brown-skirt) 
+- Avatar models adapted from CGTrader under royalty-free license: [Male Avatar](https://www.cgtrader.com/products/casual-man-rigged) and [Female Avatar](https://www.cgtrader.com/products/woman-brown-skirt)
+- Avatar animations adapted from [Mixamo](https://www.mixamo.com)
 
 
