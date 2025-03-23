@@ -1,6 +1,7 @@
 import config
 import os
 import sys
+import time
 import aiohttp
 from fastapi import FastAPI, BackgroundTasks
 from pydantic import BaseModel
@@ -17,6 +18,13 @@ except ImportError:
 
 config.RUNNING_AS_SERVER = True
 
+def debug_print(message):
+    """Print a timestamped debug message"""
+    print(f"DEBUG [{time.time()}]: {message}")
+    sys.stdout.flush()  # Force the output to be displayed immediately
+
+debug_print("Server module imported")
+
 _http_client = None
 _qdrant_manager = QdrantManager()
 
@@ -30,9 +38,12 @@ def get_http_client():
 async def lifespan(app):
     print("Starting up server...")
     
+    debug_print("About to initialize Qdrant")
     if not _qdrant_manager.start_server():
         print("Warning: Failed to start Qdrant server. Vector search may not work.")
+    debug_print("Qdrant initialization complete")
     
+    debug_print("About to initialize AI services")
     await initialize_chatbot()
     
     yield
@@ -46,6 +57,7 @@ async def lifespan(app):
     
     _qdrant_manager.stop_server()
 
+debug_print("About to create FastAPI app")
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
@@ -196,4 +208,13 @@ async def get_azure_credentials():
         "subscriptionKey": os.environ.get("AZURE_SPEECH_KEY"),
         "region": os.environ.get("AZURE_SPEECH_REGION")
     }
+
+# Add this endpoint near your other route definitions
+
+@app.get("/health")
+def health_check():
+    """Health check endpoint to verify the server is running"""
+    return {"status": "ok"}
+
+debug_print("About to start Uvicorn server")
 

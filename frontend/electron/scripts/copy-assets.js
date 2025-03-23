@@ -5,8 +5,8 @@ try {
   console.log('Copying assets for Electron build...');
 
   // Define source and destination paths
-  const publicDir = path.join(__dirname, 'public');
-  const buildDir = path.join(__dirname, 'build');
+  const publicDir = path.join(__dirname, '..', '..', 'public');
+  const buildDir = path.join(__dirname, '..', '..', 'build');
   
   // Array of folders to copy
   const folders = ['animations', 'beeps', 'images', 'videos', 'models'];
@@ -30,13 +30,8 @@ try {
     
     console.log(`Copying ${folder} from ${srcDir} to ${destDir}`);
     
-    // Only copy non-vosk files
-    fs.copySync(srcDir, destDir, {
-      filter: (src) => {
-        const fileName = path.basename(src);
-        return !fileName.includes('vosk');
-      }
-    });
+    // Copy all files 
+    fs.copySync(srcDir, destDir);
     
     console.log(`${folder} copied successfully!`);
   });

@@ -1,17 +1,20 @@
 {
-  "name": "companio-frontend",
+  "name": "companio",
   "version": "0.1.0",
+  "description": "Companio - An AI companion application",
+  "author": "Group25",
   "homepage": "./",
   "private": true,
-  "main": "main.js",
+  "main": "build/electron.js",
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && node copy-assets.js && node fix-paths.js",
+    "build": "react-scripts build && node electron/scripts/copy-assets.js && node electron/scripts/fix-paths.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
     "electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "electron-build": "npm run build && electron-builder"
+    "preelectron-build": "npm run build",
+    "electron-build": "electron-builder --config.asar=true"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.9",
@@ -20,7 +23,6 @@
     "@react-three/fiber": "8.13.3",
     "@react-three/xr": "^5.7.1",
     "@types/three": "0.152.1",
-    "electron": "^35.0.0",
     "fs-extra": "^11.3.0",
     "leva": "^0.9.35",
     "microsoft-cognitiveservices-speech-sdk": "^1.42.0",
@@ -32,6 +34,7 @@
     "react-slick": "^0.30.3",
     "slick-carousel": "^1.8.1",
     "three": "0.153.0",
+    "tree-kill": "^1.2.2",
     "zustand": "^5.0.3"
   },
   "eslintConfig": {
@@ -57,6 +60,7 @@
     "@types/react-dom": "^18.0.10",
     "autoprefixer": "^10.4.14",
     "concurrently": "^8.2.2",
+    "electron": "^35.0.0",
     "electron-builder": "^24.13.1",
     "postcss": "^8.4.24",
     "tailwindcss": "^3.3.3",
@@ -64,36 +68,62 @@
     "wait-on": "^7.2.0"
   },
   "build": {
-    "appId": "com.yourapp.id",
+    "appId": "com.group25.companio",
     "files": [
       "build/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
     "asarUnpack": [
-      "build/models/**/*"
+      "build/models/**/*",
+      "build/animations/**/*",
+      "backend/**/*"
     ],
     "extraResources": [
       {
         "from": "build/models",
-        "to": "app.asar.unpacked/build/models",
+        "to": "models",
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "build/animations",
+        "to": "animations",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../dist/Companio-Backend",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "../templates/.env",
+        "to": "backend/templates/.env"
       }
     ],
     "mac": {
+      "icon": "electron/assets/icon.icns",
       "hardenedRuntime": true,
-      "entitlements": "build/entitlements.mac.plist",
-      "entitlementsInherit": "build/entitlements.mac.plist",
+      "entitlements": "config/entitlements.mac.plist",
+      "entitlementsInherit": "config/entitlements.mac.plist",
       "gatekeeperAssess": false,
+      "identity": null,
       "extendInfo": {
         "NSMicrophoneUsageDescription": "Companio needs access to your microphone for voice recognition and conversation.",
         "NSCameraUseContinuityCameraDeviceType": true
-      }
+      },
+      "target": "dir"
     },
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "electron/assets",
+      "output": "/Applications"
+    },
+    "extraMetadata": {
+      "main": "build/electron.js"
     }
   }
 }

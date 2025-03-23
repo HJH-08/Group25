@@ -19,3 +19,5 @@ azure.search
 azure.search.documents
 huggingface-hub==0.27.1
 azure-cognitiveservices-speech==1.42.0
+pyinstaller==6.12.0
+pyinstaller-hooks-contrib==2025.1
