@@ -4,9 +4,13 @@ import { useFrame } from "@react-three/fiber";
 import { useChat } from "../hooks/useChat";
 import { useVoice } from "../hooks/useVoice";
 import { useModel } from "../hooks/useModel";
+import { getAssetPath } from '../utils/assetPaths'; // Add this import
 
 export const AvatarFemale = forwardRef((props, ref) => {
-  const { nodes, materials } = useGLTF("/models/female_avatar.glb");
+  // Use the getAssetPath utility for model path
+  const modelPath = getAssetPath("/models/female_avatar.glb");
+  const { nodes, materials } = useGLTF(modelPath);
+  
   const group = useRef();
   const rootBoneRef = useRef();
   const { messages } = useChat();
@@ -22,11 +26,17 @@ export const AvatarFemale = forwardRef((props, ref) => {
   const [rootBoneOriginalPosition, setRootBoneOriginalPosition] = useState(null);
   const [rootBoneOriginalQuaternion, setRootBoneOriginalQuaternion] = useState(null);
   
-  // Load all animations
-  const { animations: idleAnimations } = useFBX("animations/female_avatar_animations/idle.fbx");
-  const { animations: greetingAnimations } = useFBX("animations/female_avatar_animations/greeting.fbx");
-  const { animations: talkingAnimations } = useFBX("animations/female_avatar_animations/talking.fbx");
-  const { animations: talkingAltAnimations } = useFBX("animations/female_avatar_animations/talking_alternative.fbx");
+  // Also update all animation paths
+  const idlePath = getAssetPath("animations/female_avatar_animations/idle.fbx");
+  const greetingPath = getAssetPath("animations/female_avatar_animations/greeting.fbx");
+  const talkingPath = getAssetPath("animations/female_avatar_animations/talking.fbx");
+  const talkingAltPath = getAssetPath("animations/female_avatar_animations/talking_alternative.fbx");
+  
+  // Load animations with correct paths
+  const { animations: idleAnimations } = useFBX(idlePath);
+  const { animations: greetingAnimations } = useFBX(greetingPath);
+  const { animations: talkingAnimations } = useFBX(talkingPath);
+  const { animations: talkingAltAnimations } = useFBX(talkingAltPath);
   
   // Name the animations
   idleAnimations[0].name = "Idle";
@@ -842,4 +852,4 @@ export const AvatarFemale = forwardRef((props, ref) => {
   );
 });
 
-useGLTF.preload('/models/female_avatar.glb');
+useGLTF.preload(getAssetPath('/models/female_avatar.glb'));
