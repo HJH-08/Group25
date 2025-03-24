@@ -1,5 +1,6 @@
 # Companio - AI Desktop Assistant
 
+
 ## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -78,10 +79,12 @@ Companio is an advanced AI desktop assistant. It provides voice recognition, int
 ### Steps
 
 ### Installing dependencies
+
 1. Clone the repository:
 ```
 git clone https://github.com/HJH-08/Group25.git
 ```
+
 2. Create a .env file in the templates directory to store API keys:
 ```
 # --------------- Azure OpenAI Settings ---------------
@@ -103,6 +106,7 @@ AZURE_SPEECH_REGION = "your_azure_speech_region"
 ```
 
 3. Install frontend dependencies:
+
 ```
 cd frontend
 npm install  # or yarn install
@@ -146,6 +150,7 @@ For custom install destination, run:
 cd frontend
 npm run electron-build -- --dir=your/custom/path/here # or use yarn
 ```
+
 
 ## Usage
 
@@ -208,9 +213,12 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 - Thanks to all contributors who have helped shape Companio
 - Built with support from UCL, Avanade, and IBM
-- Avatar models adapted from CGTrader under royalty-free license: [Male Avatar](https://www.cgtrader.com/products/casual-man-rigged) and [Female Avatar](https://www.cgtrader.com/products/woman-brown-skirt) 
+- Avatar models adapted from CGTrader under royalty-free license: [Male Avatar](https://www.cgtrader.com/products/casual-man-rigged) and [Female Avatar](https://www.cgtrader.com/products/woman-brown-skirt)
+- Avatar animations adapted from [Mixamo](https://www.mixamo.com)
+
+
