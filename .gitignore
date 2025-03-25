@@ -2,11 +2,8 @@
 *.venv
 
 .DS_Store
-frontend/public/videos/
-*.mp4
 app_mock.py
 __pycache__
-frontend/public/models/female_avatar.glb
 
 templates/build/
 templates/dist/
