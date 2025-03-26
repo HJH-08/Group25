@@ -194,7 +194,32 @@
         
             <p>The actual mechanics of memory storage and retrieval (using Azure AI Search or <code>Qdrant</code>) are discussed in detail in the RAG Memory System section of this report.</p>
         </section>
-  
+        <section id="model-switching" class="section">
+          <h4>Dynamic Model Switching</h4>
+          <p>A key deliverable in our project is dynamic switching between the online and offline models. This allows users to efficiently switch between the two modes within our application. This is achieved through the <code>/api/config</code> FastAPI endpoint which is called when the frontend sends new chatbot settings, such as model type (online or offline), speech output preference, or avatar type. It processes these settings and updates the backend configuration accordingly.</p>
+
+          <p>Initially it stores the the current configuration values:</p>
+
+          <pre><code class="language-python">old_config = config.USE_OLLAMA
+        old_model = config.OLLAMA_MODEL_ID if config.USE_OLLAMA else config.AZURE_DEPLOYMENT_NAME
+        old_speech = config.USE_SPEECH_OUTPUT</code></pre>
+
+          <p>Then it determines if reinitialization is needed based on configuration changes:</p>
+
+          <pre><code class="language-python">needs_reinitialization = (
+          old_config != model_config.use_ollama or 
+          old_model != (model_config.model_id if model_config.use_ollama else config.AZURE_DEPLOYMENT_NAME) or
+          old_speech != model_config.use_speech
+        )
+
+        if needs_reinitialization:
+          print(f"Configuration changed, reinitializing chatbot: {model_name} ({mode})")
+          background_tasks.add_task(initialize_chatbot)
+          return {
+            "status": "success",
+            "message": f"Configuration updated: {model_name} ({mode} mode), speech {speech_status}{avatar_message}"
+          }</code></pre>
+        </section>
         <section id="rag" class="section">
             <h4>Retrieval-Augmented Generation (RAG) Memory System</h4>
             <p>This feature implements a long-term memory system for conversational AI using both online and offline approaches. The system is built in Python and leverages key tools and frameworks:</p>
@@ -424,10 +449,257 @@
             <p>With support for both cloud-based and offline text-to-speech, this feature provides a smooth, engaging experience for users. The flexibility in choosing between natural-sounding Azure voices or fully local Coqui synthesis makes the application suitable for both accessibility-focused use cases and resource-constrained environments.</p>
           </section>
           
+        <section id="prompt-engineering" class="section">
+  <h4>Prompt Engineering</h4>
+  <p>Prompt engineering forms a key part of how our assistant understands and responds to user input. A well-crafted prompt ensures that the chatbot remains contextually aware, aligns with our intended tone, and produces reliable and relevant responses. Without comprehensive prompting, our goals of preserving chat history continuity, minimising hallucinations, and maintaining instructional accuracy are severely compromised.</p>
+
+  <p>Our prompt achieves our goal with four main practices. First, the assistant's persona is clearly defined as a kind AI companion, anchoring its tone and behaviour for sensitive, human-centric interactions. This is followed by including the ten most recent chat history with <code>truncation_reducer</code> to maintain continuity, which is essential for conversations to flow more naturally with the chatbot. Finally, Retrieval-Augmented Generation (RAG) is integrated via <code>past_memory</code>, allowing the assistant to access long-term context for an enriched response. Strict instructions serve as safeguards against hallucination, topic blending, or over-association–problems common during our initial testing phase with the chatbot. By constraining the assistant to only respond to the user message and limiting output length, we make conversations clearer and easier to follow. This approach creates a stable, natural experience, just like talking with a friend!</p>
+
+  <pre><code class="language-python">"""
+&lt;&lt;INSTRUCTIONS&gt;&gt;
+This is a conversation between you, a kind AI companion, and a user.
+A description of who you are and how you should behave:
+{{ $system_message }}
+
+Use the chat history to maintain context and provide relevant responses:
+{{ $truncation_reducer }}
+
+Use past memory to recall relevant past conversation, only use when necessary and related to the current conversation:
+{{ $past_memory }}
+
+**STRICT INSTRUCTION:** 
+- **DO NOT assume relationships between unrelated topics unless the user explicitly requests a connection.** 
+- **DO NOT blend or mix topics from past memory or chat history unless directly relevant.** 
+- **If the user switches topics, treat it as a new, separate conversation.** 
+- **Only respond to the user message and nothing else. DO NOT create information unless from past memory or chat history.**
+- **Keep responses 2-3 sentences max unless asked for more.**
+&lt;&lt;END INSTUCTIONS&gt;&gt;
+
+Current user message:
+{{ $user_input }}
+
+**Your Response:** 
+"""</code></pre>
+
+  <p>The <code>SYSTEM_MESSAGE</code> variable defines the core personality and behavior of our chatbot:</p>
+
+  <pre><code class="language-python">SYSTEM_MESSAGE = 
+"""
+You are a kind and caring chatbot designed to provide companionship and support for elderly users, including those experiencing memory issues or dementia.
+Your name is Companio, and you have one goal: to bring warmth, understanding, and gentle companionship to those who need it.
+You are patient, empathetic, and adapt your responses to make conversations easy and enjoyable.
+Speak in a simple, warm tone and always make the user feel valued and understood.
+"""</code></pre>
+</section>
+
         <!-- frontend -->
         <section id="frontend" class="section">
             <h2>Frontend Implementation</h2>
-            <p>How the frontend was developed...</p>
+            
+            <h4>Avatar Interface</h4>
+            <p>The frontend interface features two predefined selectable avatars which bring Companio to life. Both avatar components utilise 3D model rendering, animation handling, and dynamic facial expressions to provide a natural experience for the user. The avatars are structured using React Three Fiber and utilise <code>useGLTF</code>, <code>useFBX</code>, and <code>useAnimations</code> from <code>@react-three/drei</code> to load and animate the assistants. Both avatars share similar logic for animation startup, voice detection and facial expression, and animation playback depending on the relevant action.</p>
+            
+            <p>Initially, multiple FBX animations are loaded and renamed for simplicity:</p>
+            
+            <pre><code class="language-js">const { animations: idleAnimation } = useFBX(idleAnimationPath);
+const { animations: greetingAnimationDefault } = useFBX(greetingDefaultPath);
+// ...other animations...</code></pre>
+            
+            <p>These are then passed to <code>useAnimations()</code> alongside a reference to the model group:</p>
+            
+            <pre><code class="language-js">const { actions } = useAnimations(
+[
+  idleAnimation[0],
+  greetingAnimationDefault[0],
+  greetingAnimationAlternative[0],
+  talkingDefault[0],
+  talkingAlternative[0]
+],
+group
+);</code></pre>
+            
+            <p>The avatar also listens to hooks from <code>useVoice</code> and <code>useChat</code> to determine if the speaking animation should be played. If Companio is actively speaking, the avatar will play talking animations continuously until the hook sets the <code>isSpeaking</code> state to false. The avatar will also perform the relevant facial expressions for talking. As specific morph targets for mouth movements are unsupported in both avatars, random movements of the mouth and lips are done to simulate talking:</p>
+            
+            <pre><code class="language-js">if (effectivelySpeaking && lastMessage?.sender === 'ai') {
+const initialAnimation = Math.random() > 0.5 ? "DefaultTalking" : "AlternativeTalking";
+setAnimation(initialAnimation);
+
+clearInterval(mouthAnimationInterval);
+clearTimeout(talkingTimeout);
+clearInterval(animationSwitchInterval);
+
+animationSwitchInterval = setInterval(() => {
+  setAnimation(prev =>
+    prev === "DefaultTalking" ? "AlternativeTalking" : "DefaultTalking"
+  );
+}, ANIMATION_SWITCH_INTERVAL);
+
+// Create an interval that changes mouth movements continuously
+mouthAnimationInterval = setInterval(() => {
+  const mouthOpenValue = Math.random() * 0.5 + 0.5; 
+  const mouthSmileValue = mouthOpenValue * 0.3 + 0.3;</code></pre>
+            
+            <p>If text-to-speech is disabled, the avatar simulates speaking for a set number of time:</p>
+            
+            <pre><code class="language-js">if (modelConfig && modelConfig.use_speech_output === false) {
+setLocalIsSpeaking(true);
+
+const timer = setTimeout(() => {
+  setLocalIsSpeaking(false);
+}, FALLBACK_SPEAKING_DURATION); // 3 seconds
+
+return () => clearTimeout(timer);
+}</code></pre>
+            
+            <p>The facial expressions are controlled via morph target influences. For example, when speaking:</p>
+            
+            <pre><code class="language-js">if (nodes.Wolf3D_Head?.morphTargetInfluences) {
+nodes.Wolf3D_Head.morphTargetInfluences[mouthOpenIndex] = mouthOpenValue;
+nodes.Wolf3D_Head.morphTargetInfluences[mouthSmileIndex] = mouthSmileValue;
+}
+}, MOUTH_UPDATE_INTERVAL);</code></pre>
+            
+            <p>There is also a randomAnimation variable which plays a random animation from the pool of animations before reverting to idle after completion:</p>
+            
+            <pre><code class="language-js">const randomAnimation = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+setAnimation(randomAnimation);</code></pre>
+            
+            <p>These random animations are then passed to the Experience component to play random animations if the avatar is clicked. This is achieved by placing an invisible 3D mesh over the avatar. Upon clicking, <code>triggerRandomAnimation</code> will play out random animations.</p>
+            
+            <p>Avatar click area:</p>
+            
+            <pre><code class="language-js">const AvatarClickArea = ({ onAvatarClick, cameraZoomed }) => {
+// Cylinder to represent avatar's body
+const radius = 0.3;
+const height = cameraZoomed ? 3 : 3.5;
+const yPosition = cameraZoomed ? 1.5 : 1.75;</code></pre>
+            
+            <p>The avatar will also greet the user during first render:</p>
+            
+            <pre><code class="language-js">if (isFirstGreeting) {
+setAnimation("AlternativeGreeting");
+setDefaultSmile();
+
+const greetingDuration = actions["AlternativeGreeting"]?.getClip().duration * 500 || 3000;
+setTimeout(() => {
+  setIsFirstGreeting(false);
+  setAnimation("Idle");
+}, greetingDuration);
+return;
+}</code></pre>
+            
+            <p>The female avatar generally follows the same logic for animation rendering and facial expressions. However, there is also an added feature of periodical blinking for a natural feel to the avatar. This is achieved by opening and closing the eye periodically every 2-6 seconds.</p>
+
+            <h4>Memory Games</h4>
+            <p>The frontend interface also features two self-contained mini games designed to be fun, engaging, and a great way to give your brain a workout. These games offer a lighthearted break from chatting while still helping to sharpen your memory and focus. The games are fully built with React as a web page and share similar frameworks. Both games manage game state and user interactions using <code>useState</code>, timers with <code>useRef</code>, and side effects like countdown and cleanup via <code>useEffect</code>. They also include interface modals and routing navigation, and implement visual celebrations and animations to enhance the gameplay experience.</p>
+
+            <h5>Match Pairs</h5>
+            <code>initializeGame()</code> creates a shuffled deck of paired cards based on difficulty:</p>
+
+            <pre><code class="language-js">const cardPairs = [...cardsToUse, ...cardsToUse].map((card, index) => ({
+              ...card,
+              uniqueId: index,
+              isFlipped: false,
+              isMatched: false,
+            }));
+
+            const shuffledCards = shuffleArray([...cardPairs]);
+            setCards(shuffledCards);</code></pre>
+
+            <p><code>handleCardClick()</code> manages the matching logic by checking the flipped cards for matched pairs and handling mismatches:</p>
+
+            <pre><code class="language-js">if (firstCard.id === secondCard.id) {
+              updatedCards[firstCardIndex].isMatched = true;
+              updatedCards[secondCardIndex].isMatched = true;
+
+              setLastMatchedPair(firstCard.id);
+              setTimeout(() => setLastMatchedPair(null), 1500);
+              
+              const newMatchedPairs = [...matchedPairs, firstCard.id];
+              setMatchedPairs(newMatchedPairs);
+              setFlippedCards([]);
+
+            } else {
+              setTimeout(() => {
+                updatedCards[firstCardIndex].isFlipped = false;
+                updatedCards[secondCardIndex].isFlipped = false;
+                setCards([...updatedCards]);
+                setFlippedCards([]);
+              }, 1000);
+            }</code></pre>
+
+            <p>The <code>useEffect</code> handles timer tracking by starting and stopping the game on completion:</p>
+
+            <pre><code class="language-js">useEffect(() => {
+              if (gameStarted && !gameCompleted) {
+                timerRef.current = setInterval(() => {
+                  setTimer(prevTimer => prevTimer + 1);
+                }, 1000);
+                
+                return () => {
+                  clearInterval(timerRef.current);
+                };
+              }
+            }, [gameStarted, gameCompleted]);</code></pre>
+
+            <p>When all pairs are matched, the game state is set to completed and a congratulatory animation will play. The confetti is styled using CSS.</p>
+
+            <pre><code class="language-js">if (newMatchedPairs.length === (
+              difficulty === 'easy' ? 3 :
+              difficulty === 'medium' ? 6 : 8
+            )) {
+              setGameCompleted(true);
+              setShowConfetti(true);
+              clearInterval(timerRef.current);
+            }</code></pre>
+
+            <h5>Simon Game</h5>
+            <p><code>playPattern()</code> handles the main game logic where it appends a new random pad to the sequence during each round and replays it using timed callbacks:</p>
+
+            <pre><code class="language-js">const playPattern = (patternToPlay) => {
+              setIsPlayingPattern(true);
+              setUserPattern([]);
+              
+              patternTimers.current.forEach(timer => clearTimeout(timer));
+              patternTimers.current = [];
+              
+              patternToPlay.forEach((pad, index) => {
+                const timer = setTimeout(() => {
+                  activatePad(pad);
+                  
+                  if (index === patternToPlay.length - 1) {
+                    const endTimer = setTimeout(() => {
+                      setIsPlayingPattern(false);
+                    }, 700);
+                    patternTimers.current.push(endTimer);
+                  }
+                }, index * 700);
+                patternTimers.current.push(timer);
+              });
+            };</code></pre>
+
+            <p><code>handlePadClick()</code> checks if the user's input follows the pattern set by <code>playPattern</code>:</p>
+
+            <pre><code class="language-js">if (pattern[currentIndex] !== newUserPattern[currentIndex]) {
+              handleGameOver();
+              return;
+            }
+
+            if (newUserPattern.length === pattern.length) {
+              // User completed the pattern
+              handleSuccess();
+            }</code></pre>
+
+            <p>A <code>useEffect()</code> tracks high scores by saving and retrieving scores via localStorage:</p>
+
+            <pre><code class="language-js">useEffect(() => {
+              const savedScore = localStorage.getItem('simonHighScore');
+              if (savedScore) {
+                setHighScore(parseInt(savedScore, 10));
+              }
+            }, []);</code></pre>
+
+            <p>The game also utilises the same logic for confetti celebration and plays the animation after every 5 rounds.</p>
         </section>
     </div>
 

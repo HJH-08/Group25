@@ -120,7 +120,7 @@
     },
     "directories": {
       "buildResources": "electron/assets",
-      "output": "/Applications"
+      "output": "/Applications/Companio"
     },
     "extraMetadata": {
       "main": "build/electron.js"
