@@ -215,6 +215,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+See [LICENSES.md](LICENSES.md) for license information on all tools and dependencies.
+
+
 ## Acknowledgements
 - Thanks to all contributors who have helped shape Companio
 - Built with support from UCL, Avanade, and IBM
