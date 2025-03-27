@@ -42,7 +42,7 @@ Companio was built with strong attention to data protection and legal compliance
 
 - **Online Mode Data Processing**: When using online features (e.g., Azure OpenAI, Azure AI Search, Azure Speech Services), user inputs are processed through Microsoft Azure services, which may involve temporary transfers of data outside the UK/EU region depending on deployment.
 
-- **Contractual Use with Avanade**: Use of Azure APIs is permitted under a valid enterprise developer contract with **Avanade**, authenticated via corporate credentials (`zcabyeg@avaemtech.onmicrosoft.com`). This enables access to Microsoft’s responsible AI infrastructure and encryption compliance.
+- **Contractual Use with Avanade**: Use of Azure APIs is permitted under a valid enterprise developer contract with **Avanade**, authenticated via corporate credentials. This enables access to Microsoft’s responsible AI infrastructure and encryption compliance.
 
 - **Speech & Health Conversations**: Some features (e.g., medication reminders, wellbeing check-ins) may involve user-initiated sharing of health-related inputs. No clinical diagnosis or treatment is inferred or stored.
 
