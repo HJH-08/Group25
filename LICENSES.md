@@ -28,8 +28,6 @@ This document outlines the licensing and privacy considerations for the Companio
 | FastEmbed              | Apache-2.0                   | Used for offline hybrid RAG embeddings                   |
 | Qdrant                 | Apache-2.0                   | Vector database for local memory storage                 |
 | Azure AI Search        | Microsoft Commercial         | Vector + keyword search in online mode                   |
-| Pandas                 | BSD-3-Clause                 | Used in data handling/logging                            |
-| Torchaudio             | BSD-3-Clause                 | Audio input/output streaming in offline STT              |
 | Web Speech API         | Browser-native / MPL-2.0     | Fallback STT in offline browser mode                     |
 
 ---
