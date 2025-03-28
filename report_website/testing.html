@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Testing - Companio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -33,6 +33,7 @@
                         <li><a class="dropdown-item" href="requirements.html#project-goal">Project Goal</a></li>
                         <li><a class="dropdown-item" href="requirements.html#user-interviews">User Interviews</a></li>
                         <li><a class="dropdown-item" href="requirements.html#personas">Personas</a></li>
+                        <li><a class="dropdown-item" href="requirements.html#Use Cases">Use Cases</a></li>
                         <li><a class="dropdown-item" href="requirements.html#moscow">MoSCoW List</a></li>
                     </ul>
                 </li>
@@ -48,8 +49,31 @@
                 <li class="nav-item"><a class="nav-link" href="hci.html">HCI</a></li>
                 <li class="nav-item"><a class="nav-link" href="design.html">Design</a></li>
                 <li class="nav-item"><a class="nav-link" href="implementation.html">Implementation</a></li>
-                <li class="nav-item"><a class="nav-link" href="testing.html">Testing</a></li>
-                <li class="nav-item"><a class="nav-link" href="evaluation.html">Evaluation</a></li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="testing.html" id="testingDropdown" role="button" data-bs-toggle="dropdown">Testing</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="testing.html#testing-strategy">Testing Strategy</a></li>
+                      <li><a class="dropdown-item" href="testing.html#unit-testing">Unit Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#integration-testing">Integration Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#uat">User Acceptance Testing</a></li>
+
+                    </ul>
+                  </li>
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="evaluation.html" id="evaluationDropdown" role="button" data-bs-toggle="dropdown">
+                      Evaluation
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="evaluation.html#moscow-achievement">MoSCoW Achievement Table</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#known-bugs">List of Known Bugs</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#individual-contribution">Individual Contribution</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#critical-evaluation">Critical Evaluation</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#future-work">Future Work</a></li>
+                    </ul>
+                  </li>
+                  
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="appendicesDropdown" role="button" data-bs-toggle="dropdown">Appendices</a>
                     <ul class="dropdown-menu">
@@ -69,17 +93,272 @@
     <div class="container mt-5 pt-5">
         <h1 class="text-center">Testing</h1>
 
-        <!-- unit_test -->
+        <!-- test strategy -->
+        <section id="testing-strategy" class="section">
+            <h2>Testing Strategy</h2>
+            <p>
+              Our approach combined automated testing and real-world user evaluations.
+              Unit tests were employed to ensure the accuracy of core backend functions, while integration tests validated seamless interactions between memory retrieval, speech synthesis and mode switching through our API. 
+              Beyond automated testing, we also conducted User Acceptance Testing, which plays a crucial role in evaluating and refining the system to meet both technical requirements and human-centered design goals.
+            </p>
+          </section>
+          
+
+
+
+        <!-- unit testing -->
         <section id="unit-testing" class="section">
             <h2>Unit Testing</h2>
-            <p>Details about unit tests...</p>
+            <p>
+              We implemented unit testing for two core components of our backend system to verify that individual parts (chatbot response and audio synthesis) work as expected across both online and offline configurations, thereby ensuring reliable performance and user-friendly experience for all users.
+            </p>
+          
+            <h3><em>Chatbot Response</em></h3>
+            <p>
+              Our aim is to verify that the chatbot generates relevant responses.
+              We decided to test on <code>process_message()</code>. This is a function that handles user input and generates appropriate AI responses.
+            </p>
+            <img src="Test.jpg" alt="Chatbot response test code" class="img-fluid my-3">
+            
+            <p>
+              We tested both the online and offline model configurations. The model is determined by a flag in <code>config.py</code> file:
+            </p>
+            <pre><code>USE_OLLAMA = True   # Activates offline mode (using Phi-3 or IBM Granite models)
+          USE_OLLAMA = False  # Activates online mode (using Azure GPT)</code></pre>
+          
+            <p>
+              By toggling this flag, we were able to run the same test cases. This ensures consistent chatbot behavior across both configurations.
+            </p>
+            <img src="test2.jpg" alt="Model toggle test code" class="img-fluid my-3">
+          
+            <p>
+              <strong>Test Duration:</strong> ~1.9s (Offline Model), ~2.3s (Online Model)<br>
+              <strong>Result:</strong> Passed in both configurations
+            </p>
+            <p>
+              Upon greeting, we verified that the returned message contained at least one of the following key phrases: ?hello?, ?I?m here?, ?ready to chat?, or ?doing well?. This confirms that the response is appropriate in both models.
+            </p>
+          
+            <h3><em>Text-to-Speech Output</em></h3>
+            <p>
+              Our aim is to verify that Azure Speech Services successfully convert text into audio.
+              We decided to test on <code>text_to_speech_to_bytes()</code>. This function converts AI-generated text into spoken audio using Azure Text-to-Speech (TTS) services.
+            </p>
+            <img src="test3.jpg" alt="TTS function code" class="img-fluid my-3">
+          
+            <p>
+              This helps ensure that the function returns a non-empty audio file in bytes format.
+            </p>
+            <img src="test4.jpg" alt="Audio response verification" class="img-fluid my-3">
+          
+            <p>
+              This confirms that audio responses are generated by backend and it can be played by frontend.
+            </p>
+          </section>
+          
+
+
+
+
+        <!-- integration testing -->
+                
+        <section id="integration-testing" class="section">
+            <h2>Integration Testing</h2>
+        
+            <h4><em>Frontend-to-Backend Chat Integration</em></h4>
+            <p>This test essentially validates the real-time interaction between frontend input and backend processing.</p>
+            <img src="int-1.jpg" alt="Frontend to Backend Chat Integration Test" class="img-fluid mb-3">
+            <p><strong>By testing the live <code>/api/chat</code> endpoint, we ensured that the backend returns a properly formatted JSON response and that FastAPI routing and request handling function correctly.</strong></p>
+        
+            <h4><em>Mode Switching to Offline Mode with Phi-3</em></h4>
+            <p>This test ensures that users can switch between lightweight offline models and more powerful online models.</p>
+            <img src="int-2.jpg"Mode Switching to Offline Mode Test" class="img-fluid mb-3">
+            <p><strong>A successful API call indicates that the chatbot has been reinitialized and the mode switch has been successfully. It also confirms that speech settings and avatar configuration are updated without restarting the server.</strong></p>
+        </section>
+        
+
+
+
+        <!-- uat -->
+        <section id="User Acceptance Testing" class = "section">
+            <h2>User Acceptance Testing</h2>
+            <p>
+                We collected feedback from a diverse group of testers which include students, working profession and an elderly user.
+            </p>
+
+            <table class="table table-bordered mt-4">
+                <thead class="table-light">
+                  <tr>
+                    <th>Tester</th>
+                    <th>Age</th>
+                    <th>Background</th>
+                    <th>Tech Familiarity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Louis</td>
+                    <td>19</td>
+                    <td>UCL Philosophy Undergraduate, Avid reader, Enjoys computer games</td>
+                    <td>Medium</td>
+                  </tr>
+                  <tr>
+                    <td>Lina Lee</td>
+                    <td>24</td>
+                    <td>UCL MSc Computer Science Student, Great passion with technology, Tech-savvy</td>
+                    <td>High</td>
+                  </tr>
+                  <tr>
+                    <td>Michael</td>
+                    <td>40</td>
+                    <td>Professional Photographer, Loves travelling, tools and automation</td>
+                    <td>Medium-High</td>
+                  </tr>
+                  <tr>
+                    <td>Dorothy</td>
+                    <td>72</td>
+                    <td>Retired, lives alone, Curious about AI, inspired by household robot</td>
+                    <td>Low</td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+              <h5 class="mt-5">User Acceptance Testing Table</h5>
+              <table class="table table-bordered mt-3">
+                <thead class="table-light">
+                  <tr>
+                    <th>Theme</th>
+                    <th>Test Case</th>
+                    <th>Feedback</th>
+                    <th>Testers</th>
+                    <th>Ratings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td rowspan="2">Launch and Initial Interaction</td>
+                    <td>Greeting on startup</td>
+                    <td>No automatic greeting other than waving; users had to say 'hello' first to trigger text interaction.</td>
+                    <td>Dorothy, Louis, Michael</td>
+                    <td>&#10003&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Navigation on first use</td>
+                    <td>All testers found buttons intuitive. Dorothy needed brief help but could navigate confidently afterward.</td>
+                    <td>Lina, Dorothy, Louis</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2">Speech Accessibility</td>
+                    <td>Speech-to-Text Accuracy</td>
+                    <td>Speech features are easy to access. System could easily capture words, high accuracy.</td>
+                    <td>Dorothy, Louis</td>
+                    <td>&#10003&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Text-to-Speech audio clarity</td>
+                    <td>Clear voice output, helped comprehension.</td>
+                    <td>Dorothy, Lina</td>
+                    <td>&#10003&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2">Conversational Clarity</td>
+                    <td>Basic chat flows</td>
+                    <td>Bot consistently responded warmly.</td>
+                    <td>Louis, Michael, Lina</td>
+                    <td>&#10003&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Interpret Users Correctly</td>
+                    <td>Minor errors in understanding long sentences but could be clarified.</td>
+                    <td>Michael, Lina</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2">Mode Switching</td>
+                    <td>Switch to offline mode</td>
+                    <td>Dorothy could not switch modes independently. Needed assistance from another user. Other testers managed fine.</td>
+                    <td>Dorothy, Louis, Michael, Lina</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Switch to online mode</td>
+                    <td>Managed fine. Slight note: settings were hidden under a menu.</td>
+                    <td>Louis, Michael, Lina</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2">Memory and Personalization</td>
+                    <td>Memory retrieval</td>
+                    <td>Bot remembered tone preferences and users' hobbies. It improves conversational depth.</td>
+                    <td>Louis, Michael</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Avatar personalization</td>
+                    <td>Only male/female avatars available. Animations repeated. A variety of avatar selection and dynamic expression may be good.</td>
+                    <td>Dorothy, Lina</td>
+                    <td>&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="2">User Interface and Accessibility</td>
+                    <td>Font and layout</td>
+                    <td>Clean layout with well-contrasted fonts made reading easy. Buttons were clearly labeled, easy to distinguish.</td>
+                    <td>Dorothy, Lina, Michael, Louis</td>
+                    <td>&#10003&#10003&#10003&#10003</td>
+                  </tr>
+                  <tr>
+                    <td>Response on Clicks</td>
+                    <td>Most actions gave instant feedback. Slight delay with avatar animations on some laptops.</td>
+                    <td>Lina, Louis</td>
+                    <td>&#10003&#10003&#10003</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+
+
+            <h5 class="mt-4">Overall Acceptance Testings</h5>
+                <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                    <th>Category</th>
+                    <th>Score (Out of 4)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Launch and Initial Interaction</td><td>3.5</td></tr>
+                    <tr><td>Speech features</td><td>4.0</td></tr>
+                    <tr><td>Conversation Quality</td><td>3.75</td></tr>
+                    <tr><td>Mode Switching</td><td>3.0</td></tr>
+                    <tr><td>Memory and Personalization</td><td>2.5</td></tr>
+                    <tr><td>UI and Accessibility</td><td>3.75</td></tr>
+                </tbody>
+                </table>
+                <p><strong>Overall Score:</strong> 3.5 / 4.0</p>
+
+
         </section>
 
-        <!-- user_test -->
-        <section id="user-testing" class="section">
-            <h2>User Testing</h2>
-            <p>How we tested with real users...</p>
-        </section>
+
+        
+          
+
+
+
+
+
+
+        <!-- User Acceptance Testing Conclusion -->
+        <section id="uat-conclusion" class="section conclusion-highlight">
+            <h2>Conclusion</h2>
+            <p>
+              We are glad to see that our test users responded positively and enthusiastically while interacting with <strong>Companio</strong>. The feedback on both strengths and areas for improvement has been incredibly valuable. These insights have guided and will continue to guide us as we refine <strong>Companio</strong> into a more thoughtful, accessible, and supportive companion. We hope to provide a warm and intuitive AI experience especially for elderly users.
+            </p>
+          </section>
+          
+  
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

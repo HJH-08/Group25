@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Requirements - Companio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -33,6 +33,7 @@
                         <li><a class="dropdown-item" href="requirements.html#project-goal">Project Goal</a></li>
                         <li><a class="dropdown-item" href="requirements.html#user-interviews">User Interviews</a></li>
                         <li><a class="dropdown-item" href="requirements.html#personas">Personas</a></li>
+                        <li><a class="dropdown-item" href="requirements.html#Use Cases">Use Cases</a></li>
                         <li><a class="dropdown-item" href="requirements.html#moscow">MoSCoW List</a></li>
                     </ul>
                 </li>
@@ -48,8 +49,34 @@
                 <li class="nav-item"><a class="nav-link" href="hci.html">HCI</a></li>
                 <li class="nav-item"><a class="nav-link" href="design.html">Design</a></li>
                 <li class="nav-item"><a class="nav-link" href="implementation.html">Implementation</a></li>
-                <li class="nav-item"><a class="nav-link" href="testing.html">Testing</a></li>
-                <li class="nav-item"><a class="nav-link" href="evaluation.html">Evaluation</a></li>
+
+
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="testing.html" id="testingDropdown" role="button" data-bs-toggle="dropdown">Testing</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="testing.html#testing-strategy">Testing Strategy</a></li>
+                      <li><a class="dropdown-item" href="testing.html#unit-testing">Unit Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#integration-testing">Integration Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#uat">User Acceptance Testing</a></li>
+
+                    </ul>
+                  </li>
+
+
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="evaluation.html" id="evaluationDropdown" role="button" data-bs-toggle="dropdown">
+                      Evaluation
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="evaluation.html#moscow-achievement">MoSCoW Achievement Table</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#known-bugs">List of Known Bugs</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#individual-contribution">Individual Contribution</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#critical-evaluation">Critical Evaluation</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#future-work">Future Work</a></li>
+                    </ul>
+                  </li>
+                  
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="appendicesDropdown" role="button" data-bs-toggle="dropdown">Appendices</a>
                     <ul class="dropdown-menu">
@@ -66,45 +93,200 @@
 
 
     <!-- Page Content-->
+
     <div class="container mt-5 pt-5">
         <h1 class="text-center">Requirements</h1>
 
+
+
         <!--project backend -->
-        <section id="project-background" class="section">
+        <div id="project-background" class="anchor-offset"></div>
+        <section  class="section">
             <h2>Project Background</h2>
-            <p>Challenges and solutions...</p>
+            <p>Avanade, a joint venture between Microsoft and Accenture, specializes in AI-driven enterprise solutions using Microsoft technologies. Through this collaboration, we leveraged Azure AI Search and cloud-based AI services to enhance chatbot capabilities, focusing on memory retention and intelligent responses. IBM, a leader in AI and enterprise technology, is exploring use cases for its Granite LLM in conversational AI. This project integrates IBM?s LLM to improve long-term memory and user engagement in AI-driven interactions.
+ 
+                In today?s world, increasing loneliness and cognitive decline, particularly among the elderly, highlight the need for AI companionship. Many struggle with forgetfulness, from recalling past conversations to remembering medication schedules. AI-driven solutions have the potential to provide meaningful support, but existing models often lack continuity, making interactions feel impersonal and repetitive. While short-term memory in AI can be managed with reference frames, long-term retention remains a challenge due to context window limitations, making it impractical to store every conversation.
+                 
+                This project explores long-term AI memory in conversational AI, comparing cloud-based solutions like Azure AI Search with local device storage using machine learning. Additionally, we integrate avatar-driven chatbot interfaces to make AI more engaging, particularly for elderly users. The solution offers both a powerful online version with highly efficient RAG-based memory and a free offline version that provides a lightweight yet functional alternative. By incorporating text-to-speech, speech-to-text, cognitive games for memory improvement, and a customizable UI, Companio aims to improve mental well-being, provide companionship, and redefine AI?s role in healthcare and cognitive support.
+                </p>
         </section>
 
         <!-- clients requirements -->
-        <section id="client-requirements" class="section">
+        <section id="client-requirements" class="section anchor-target">
             <h2>Client Requirements</h2>
-            <p>Details of client requirements...</p>
+            <p>
+                Based on clients? discussion, Companio must include these core features to enhance user experience and functionality:</p>
+                <ul>
+                    <li><strong>Data Privacy:</strong> Clients? data should be kept privately and securely.</li>
+                    <li><strong>Long-Term Memory:</strong> The online version of Companio should retain chat history to provide contextual continuity.</li>
+                    <li><strong>Accessibility:</strong> The interface must be user-friendly and barrier-free to accommodate all user demographics.</li>
+                    <li><strong>Avatar Interaction:</strong> Users should be able to interact with the AI through a visual avatar interface.</li>
+                    <li><strong>Offline Functionality:</strong> The system must work without requiring internet access for the basic version.</li>
+                    <li><strong>Online Functionality:</strong> A paid version should be available with enhanced capabilities via the internet.</li>
+                    <li><strong>Voice Interaction:</strong> Both voice and text input/output should be supported for flexibility in communication.</li>
+                </ul>
         </section>
 
         <!-- project goal -->
-        <section id="project-goal" class="section">
+        <div id="project-goal" class="anchor-offset"></div>
+        <section  class="section ">
             <h2>Project Goal</h2>
-            <p>Project objectives...</p>
+        <p>
+            Our <strong>Companio</strong> chatbot is designed to support elderly users through intelligent conversation, memory assistance, and engaging interactions. 
+            The system enhances daily life by combining speech-based input/output, customizable avatars, and stable offline capabilities ? ensuring accessibility 
+            even in environments with limited connectivity.
+        </p>
+        <p>
+            Built with a user-first approach, our solution uses a <strong>Retrieval-Augmented Generation (RAG)</strong> system to bring context-awareness to conversations 
+            and deliver meaningful responses based on past chat history. This results in a more personal and helpful experience that adapts over time.
+        </p>
+        <p>
+            The application is designed to run as a lightweight, offline desktop solution with an optional online upgrade path for advanced AI capabilities. 
+            With extensive testing, modular design, and support for deployment across major operating systems, the chatbot is both reliable and scalable for future growth.
+        </p>
+
+            <h4>--Benefit Matrix</h4>
+                <table class="table table-bordered mt-3">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Productivity</th>
+                    <th>Competencies</th>
+                     <th>Functionality</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><strong>+</strong></td>
+                    <td>Personal reminders</td>
+                    <td>Memory-aware interaction</td>
+                    <td>Seamless voice + text input</td>
+                </tr>
+                <tr>
+                    <td><strong>-</strong></td>
+                    <td>Manual note-taking</td>
+                    <td>Lack of personalization in UX</td>
+                    <td>Cost</td>
+                </tr>
+                </tbody>
+            </table>
         </section>
 
         <!-- user interviews -->
-        <section id="user-interviews" class="section">
+        <div id="user-interviews" class="anchor-offset"></div>
+        <section class="section ">
             <h2>User Interviews</h2>
-            <p>We conducted 2 interviews: one with ... and one with...</p>
+            <p><strong>Q: Do you think AI could help you in daily life?</strong><br>
+                <em>A:</em> I think so, yes. Sometimes I forget to take my pills, and my daughter always worries. If there?s something that could remind me, that would be great. Also, I live alone, so having someone?or something?to talk to would make me feel less lonely.</p>
+              
+                <p><strong>Q: Do you have any concerns about using AI?</strong><br>
+                <em>A:</em> I?m not very good with new devices. I get confused if there are too many steps. And I don?t want my private things to be shared. If the AI remembers what I say, I want to know it?s safe and just for me.</p>
+              
+                <p><strong>Q: What features would you like the AI to have?</strong><br>
+                <em>A:</em> It should be simple. I?d like to just talk to it and have it remind me when to take my medicine. Maybe it can also help me remember what I talked about before. If it has a friendly face or voice, I think I?d enjoy using it more.</p>
         </section>
 
         <!-- personas-->
-        <section id="personas" class="section">
+        <div id="personas" class="anchor-offset"></div>
+        <section class="section ">
             <h2>Personas</h2>
-            <p>We created personas to understand user needs...</p>
+            <p>
+                <strong>We built personas and scenarios to make us better understand our users' needs by using the information gained from the interviews. </strong>
+            </p>
+
+            <img src="Persona.jpg" alt="User Persona" class="img-fluid rounded shadow" style="max-width: 600px; margin-top: 20px;">
+            
+           
         </section>
 
+        <!-- Use cases-->
+        <div id="Use Cases" class="anchor-offset"></div>
+        <section  class="section ">
+            <h2>Use Cases</h2>
+            <p>
+                <strong>Based on the views gathered from users, we developed a use case to demonstrate the practical application of our AI agent system.</strong>
+            </p>
+            <img src="Image.jpg" alt="User Persona" class="img-fluid rounded shadow" style="max-width: 600px; margin-top: 20px;">
+        </section>
+
+
+        
         <!-- MoSCoW List -->
+        <div id="moscow" class="anchor-offset"></div>
         <section id="moscow" class="section">
             <h2>MoSCoW List</h2>
-            <p>Must have, should have, could have...</p>
-        </section>
-    </div>
+          
+            <div class="ms-3">
+              <h3>Functional Requirements</h3>
+              <p>Functional requirements define the core capabilities the system must deliver to ensure a consistent and engaging user experience...</p>
+          
+              <div class="ms-4">
+                <h4>Must Haves</h4>
+                <ul>
+                  <li>The program must have an avatar-driven chatbot interface.</li>
+                  <li>The software must implement a Retrieval-Augmented Generation (RAG) system on past chat history to enrich the current conversation.</li>
+                  <li>The user must be able to use the chatbot offline with full basic functionality.</li>
+                  <li>The user must be able to upgrade to an online mode with enhanced capabilities via subscription.</li>
+                  <li>The chatbot must support natural conversation through both text input and voice input/output.</li>
+                </ul>
+          
+                <h4>Should Haves</h4>
+                <ul>
+                  <li>The software should feature 3D avatars.</li>
+                  <li>The chatbot should allow speech-to-text (STT) and text-to-speech (TTS).</li>
+                  <li>Model switching should be available without restarting.</li>
+                </ul>
+          
+                <h4>Could Haves</h4>
+                <ul>
+                  <li>UI customization such as themes and avatars.</li>
+                  <li>Mini games to improve memory strength.</li>
+                </ul>
+          
+                <h4>Won't Haves</h4>
+                <ul>
+                  <li>No Augmented Reality-driven UI.</li>
+                  <li>No 3D pet avatars.</li>
+                </ul>
+              </div>
+          
+              <h3>Non-functional Requirements</h3>
+              <p>In a project like ours?an AI-powered companion chatbot designed for accessibility and support, particularly for elderly users?non-functional requirements (NFRs) play a critical role...</p>
+          
+              <div class="ms-4">
+                <h4>Must Haves</h4>
+                <ul>
+                  <li>Usability: The interface must be intuitive and simple to use, especially for elderly users who may not be digitally literate.</li>
+                  <li>Accessibility: Must support both text and voice interaction, with mute and gendered voice support.</li>
+                  <li>Reliability: No crashes or hangs; fallbacks for TTS/STT failure.</li>
+                  <li>Offline Support: Local models with memory storage (e.g., Qdrant).</li>
+                  <li>Security: No data leaks; protect API keys.</li>
+                </ul>
+          
+                <h4>Should Haves</h4>
+                <ul>
+                  <li>Customizability: Avatar, model, and speech setting selection.</li>
+                  <li>Portability: Easy to install (e.g., packaged executable).</li>
+                  <li>Modular Design: Swap out services like Azure or Coqui easily.</li>
+                  <li>Recoverability: Graceful error recovery.</li>
+                </ul>
+          
+                <h4>Could Haves</h4>
+                <ul>
+                  <li>Cloud Sync: In online mode, sync user settings or chat history to the cloud for seamless use across devices.</li>
+                  <li>Logging and Debugging Support: Meaningful logs should help developers diagnose errors, especially in speech and AI components.</li>
+                  <li>3D Avatar Integration: Advanced interface enhancements using Three.js or augmented reality.</li>
+                  <li>User Onboarding Flow: A tutorial or first-time user guide to help users understand how to use the chatbot.</li>
+                </ul>
+          
+                <h4>Won't Haves</h4>
+                <ul>
+                  <li>Cross-platform Compatibility: The application must run on both Windows and macOS machines as a desktop application.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+          
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>

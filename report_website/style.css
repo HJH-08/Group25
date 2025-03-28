@@ -5,8 +5,13 @@ body {
 
 
 .navbar {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease-in-out;
 }
+
+.navbar.scrolled {
+    background-color: rgba(0, 0, 0, 0.8); 
+}
+
 
 
 .section {
@@ -15,16 +20,92 @@ body {
 }
 
 h1 {
-    margin-bottom: 30px;
     font-size: 2.5rem;
     font-weight: bold;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
 h2 {
-    margin-top: 20px;
     font-size: 2rem;
-    color: #007bff;
-    border-bottom: 3px solid #007bff;
-    padding-bottom: 5px;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ff9800; 
+}
+
+.btn-custom {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.btn-custom:hover {
+    transform: scale(1.05); 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+}
+
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+body {
+    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+}
+
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1; 
+    pointer-events: none; 
+}
+
+.container {
+    text-align: center;
+    margin-top: 100px; 
+}
+
+.anchor-offset {
+    position: relative;
+    top: -100px;
+    height: 0;
+    display: block;
+    visibility: hidden;
+  }
+  
+  .conclusion-highlight {
+    background-color: #fff9ed;
+    padding: 30px;
+    border-left: 6px solid #ffb347;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin-top: 30px;
+}
+.conclusion-highlight h2 {
+    color: #e07a00;
 }
