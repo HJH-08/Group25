@@ -523,3 +523,33 @@
       font-size: 1.8rem;
     }
   }
+  
+  /* Footer Styling */
+  body footer.bg-dark {
+    background-color: var(--primary) !important;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    margin-top: 3rem;
+}
+
+footer.bg-dark h5 {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: white !important;
+}
+
+footer.bg-dark .nav-link {
+    transition: var(--transition);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    color: white !important;
+}
+
+footer.bg-dark .nav-link:hover {
+    background-color: var(--secondary) !important;
+    transform: translateY(-2px);
+    color: white !important;
+}
+
+footer.bg-dark .small {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
