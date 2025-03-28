@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research - Companio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
@@ -32,6 +32,7 @@
                           <li><a class="dropdown-item" href="requirements.html#project-goal">Project Goal</a></li>
                           <li><a class="dropdown-item" href="requirements.html#user-interviews">User Interviews</a></li>
                           <li><a class="dropdown-item" href="requirements.html#personas">Personas</a></li>
+                          <li><a class="dropdown-item" href="requirements.html#Use Cases">Use Cases</a></li>
                           <li><a class="dropdown-item" href="requirements.html#moscow">MoSCoW List</a></li>
                       </ul>
                   </li>
@@ -46,8 +47,33 @@
                   <li class="nav-item"><a class="nav-link" href="hci.html">HCI</a></li>
                   <li class="nav-item"><a class="nav-link" href="design.html">Design</a></li>
                   <li class="nav-item"><a class="nav-link" href="implementation.html">Implementation</a></li>
-                  <li class="nav-item"><a class="nav-link" href="testing.html">Testing</a></li>
-                  <li class="nav-item"><a class="nav-link" href="evaluation.html">Evaluation</a></li>
+
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="testing.html" id="testingDropdown" role="button" data-bs-toggle="dropdown">Testing</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="testing.html#testing-strategy">Testing Strategy</a></li>
+                      <li><a class="dropdown-item" href="testing.html#unit-testing">Unit Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#integration-testing">Integration Testing</a></li>
+                      <li><a class="dropdown-item" href="testing.html#uat">User Acceptance Testing</a></li>
+
+                    </ul>
+                  </li>
+
+
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="evaluation.html" id="evaluationDropdown" role="button" data-bs-toggle="dropdown">
+                      Evaluation
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="evaluation.html#moscow-achievement">MoSCoW Achievement Table</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#known-bugs">List of Known Bugs</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#individual-contribution">Individual Contribution</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#critical-evaluation">Critical Evaluation</a></li>
+                      <li><a class="dropdown-item" href="evaluation.html#future-work">Future Work</a></li>
+                    </ul>
+                  </li>
+                  
                   <li class="nav-item dropdown">
                       <a class="nav-link dropdown-toggle" href="#" id="appendicesDropdown" role="button" data-bs-toggle="dropdown">Appendices</a>
                       <ul class="dropdown-menu">
@@ -69,14 +95,173 @@
         <!-- project research-->
         <section id="project-research" class="section">
             <h2>Project Research</h2>
-            <p>Research details about the project...</p>
+                        <h4>Stakeholder Insights</h4>
+            <p>
+                This project was developed in collaboration with Avanade and supported by insights from the NHS. From early-stage stakeholder interviews, we identified several key expectations:
+            </p>
+            <ul>
+                <li>Long-term memory retention via Retrieval-Augmented Generation (RAG) (Lewis et al., 2020)</li>
+                <li>A simplified, avatar-based interface suitable for elderly users</li>
+                <li>Voice input and output for accessibility</li>
+                <li>A privacy-respecting offline mode for local use</li>
+                <li>Avoiding hallucinations in healthcare-related conversations</li>
+            </ul>
+            <p>
+                These requirements helped shape our system architecture and informed both technical and design decisions throughout development.
+            </p>
+            <p>
+                Recent studies suggest that Al-based conversational agents can play a significant role in supporting mental health and reducing loneliness among users. Fitzpatrick et al. (2017)demonstrate that automated conversational agents, such as Woebot, can effectively deliver cognitive behavioral therapy, significantly reducing symptoms of depression and anxiety.Inspired by these findings, Companio incorporates emotional empathy and cognitive assistance features, aiming to provide similar psychological benefits to elderly users and those experiencing loneliness.
+            </p>
+
+            <h4>Existing Solution Evaluation</h4>
+            <p>During development, we iterated on multiple approaches and tested several tools:</p>
+            <ul>
+                <li>F5-TTS offered realistic voice synthesis but was too heavy for offline deployment.</li>
+                <li>React was selected for its flexibility and performance with dynamic interfaces.</li>
+                <li>Qdrant was compared against traditional databases and chosen for its RAG performance locally.</li>
+                <li>We refactored our initial backend into modular services, applying proven software patterns like Strategy, Adapter, and Singleton to maintain code clarity.</li>
+            </ul>
+            <p>Through these trials, we ensured the system could scale while staying maintainable and accessible across various user environments.</p>
+
+            <h4>Design Decisions Informed by Research</h4>
+            <ul>
+                <li>Simple navigation and large visual elements for accessibility</li>
+                <li>Clear voice/text feedback with minimal cognitive load</li>
+                <li>Avatar interaction for a personal, warm experience</li>
+            </ul>
+            <p>
+                We applied Nielsen?s Ten Usability Heuristics in UI design (Nielsen, J. ,1994), conducted a heuristic evaluation, and evolved our wireframes accordingly. Real-world testing (e.g., school demos, internal showcases) confirmed our choices, especially the addition of memory games, chat history, and multi-modal interaction.
+            </p>
         </section>
 
         <!-- technology research -->
         <section id="technology-research" class="section">
-            <h2>Technology Research</h2>
-            <p>Information about the technologies used...</p>
-        </section>
+            <h2>Technology Research & Selection</h2>
+            <p>
+              To support both performance and accessibility, we evaluated a range of technologies before finalizing our stack:
+            </p>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Technology Used</th>
+                    <th>Reason for Choice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>AI Model (Online)</td>
+                    <td>Azure OpenAI (GPT)(Brown et al., 2020)</td>
+                    <td>High quality, reliable, and easy to integrate</td>
+                  </tr>
+                  <tr>
+                    <td>AI Model (Offline)</td>
+                    <td>IBM Granite / Microsoft Phi-3.5 (IBM Research, 2025)</td>
+                    <td>Lightweight, efficient, and suitable for local inference</td>
+                  </tr>
+                  <tr>
+                    <td>Vector DB (Online)</td>
+                    <td>Azure AI Search (Microsoft Azure, 2025, Cormack et al. 2009)</td>
+                    <td>Supports hybrid search (vector + keyword), scalable and cloud-based</td>
+                  </tr>
+                  <tr>
+                    <td>Vector DB (Offline)</td>
+                    <td>Qdrant (Qdrant, 2025) + FastEmbed (Docker Inc., 2025)</td>
+                    <td>Enables hybrid RAG locally, Docker-hosted and open-source</td>
+                  </tr>
+                  <tr>
+                    <td>Embedding Services</td>
+                    <td>AzureTextEmbedding (OpenAI, 2025), GraniteEmbeddingService</td>
+                    <td>Seamless integration with Semantic Kernel</td>
+                  </tr>
+                  <tr>
+                    <td>Orchestration</td>
+                    <td>Semantic Kernel (Microsoft) (Microsoft ? 2025)</td>
+                    <td>Modular, extensible AI integration framework</td>
+                  </tr>
+                  <tr>
+                    <td>Frontend Framework</td>
+                    <td>React + Three.js (Cabello, 2025)</td>
+                    <td>Dynamic, customizable avatar rendering</td>
+                  </tr>
+                  <tr>
+                    <td>TTS/STT (Online)</td>
+                    <td>Azure Speech Services (Microsoft Azure, 2025)</td>
+                    <td>High-quality cloud-based voice interaction</td>
+                  </tr>
+                  <tr>
+                    <td>TTS/STT (Offline)</td>
+                    <td>Coqui TTS (Coqui AI, 2025), browser STT (MDN, 2025)</td>
+                    <td>Lightweight, open-source, suitable for local usage</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>References</h3>
+            <ol>
+              <li>Lewis, P., et al. (2020). Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks. arXiv preprint arXiv:2005.11401. Available at: <br>
+                <a href="https://arxiv.org/abs/2005.11401" target="_blank">https://arxiv.org/abs/2005.11401</a>
+              </li>
+              <li>Nielsen, J. (1994). 10 Usability Heuristics for User Interface Design. Nielsen Norman Group. Available at: <br>
+                <a href="https://www.nngroup.com/articles/ten-usability-heuristics/" target="_blank">https://www.nngroup.com/articles/ten-usability-heuristics/</a>
+              </li>
+              <li>Brown, T.B., et al. (2020). Language Models are Few-Shot Learners. arXiv preprint arXiv:2005.14165. Available at: <br>
+                <a href="https://arxiv.org/abs/2005.14165" target="_blank">https://arxiv.org/abs/2005.14165</a>
+              </li>
+              <li>IBM (2025). IBM Granite. Available at: <br>
+                <a href="https://www.ibm.com/granite" target="_blank">https://www.ibm.com/granite</a>
+              </li>
+              <li>Microsoft (2025). Azure AI Search documentation. Available at: <br>
+                <a href="https://learn.microsoft.com/en-us/azure/search/" target="_blank">https://learn.microsoft.com/en-us/azure/search/</a>
+              </li>
+              <li>Qdrant (2025). Qdrant Documentation. Available at: <br>
+                <a href="https://qdrant.tech/documentation/" target="_blank">https://qdrant.tech/documentation/</a>
+              </li>
+              <li>OpenAI (2025). Vector embeddings. Available at: <br>
+                <a href="https://platform.openai.com/docs/guides/embeddings" target="_blank">https://platform.openai.com/docs/guides/embeddings</a>
+              </li>
+              <li>Microsoft (2025). Semantic Kernel Documentation. Available at: <br>
+                <a href="https://github.com/microsoft/semantic-kernel" target="_blank">https://github.com/microsoft/semantic-kernel</a>
+              </li>
+              <li>Meta (2025). React Documentation. Available at: <br>
+                <a href="https://react.dev" target="_blank">https://react.dev</a>
+              </li>
+              <li>Cabello, R. (2025). Three.js documentation. Available at: <br>
+                <a href="https://threejs.org" target="_blank">https://threejs.org</a>
+              </li>
+              <li>Microsoft Azure (2025). Azure Cognitive Speech Services. Available at: <br>
+                <a href="https://azure.microsoft.com/services/cognitive-services/speech-to-text/" target="_blank">https://azure.microsoft.com/services/cognitive-services/speech-to-text/</a>
+              </li>
+              <li>Coqui AI (2025). Coqui Text-to-Speech Documentation. Available at: <br>
+                <a href="https://coqui.ai" target="_blank">https://coqui.ai</a>
+              </li>
+              <li>Mozilla Developer Network (MDN) (2025). Web Speech API Documentation. Available at: <br>
+                <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API" target="_blank">https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API</a>
+              </li>
+              <li>Fitzpatrick, K.K., et al. (2017). Woebot RCT. Available at: <br>
+                <a href="https://mental.jmir.org/2017/2/e19/" target="_blank">https://mental.jmir.org/2017/2/e19/</a>
+              </li>
+              <li>Electron Documentation (2025). Electron Documentation. Available at: <br>
+                <a href="https://www.electronjs.org/docs" target="_blank">https://www.electronjs.org/docs</a>
+              </li>
+              <li>Ramirez, S. (2025). FastAPI documentation. Available at: <br>
+                <a href="https://fastapi.tiangolo.com" target="_blank">https://fastapi.tiangolo.com</a>
+              </li>
+              <li>Docker Inc. (2025). Docker Documentation. Available at: <br>
+                <a href="https://docs.docker.com" target="_blank">https://docs.docker.com</a>
+              </li>
+              <li>Cacioppo, J.T. & Hawkley, L.C. (2009). Social Isolation & Cognition. Available at: <br>
+                <a href="https://doi.org/10.1016/j.tics.2009.06.005" target="_blank">https://doi.org/10.1016/j.tics.2009.06.005</a>
+              </li>
+              <li>Cormack, G.V., et al. (2009). Reciprocal Rank Fusion. Available at: <br>
+                <a href="https://doi.org/10.1145/1571941.1572114" target="_blank">https://doi.org/10.1145/1571941.1572114</a>
+              </li>
+            </ol>
+            
+          </section>
+          
 
     </div>
 
