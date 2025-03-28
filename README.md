@@ -143,7 +143,7 @@ python3 build_backend.py
 cd frontend
 npm run electron-build # or yarn run electron-build
 ```
-Note: your application will be installed in /Applications
+Note: your application will be installed in /Applications/Companio
 
 For custom install destination, run:
 ```
