@@ -109,3 +109,23 @@ body {
 .conclusion-highlight h2 {
     color: #e07a00;
 }
+
+
+.email-icon {
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .email-icon img {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  
+
+  .email-icon:visited,
+  .email-icon:hover,
+  .email-icon:active,
+  .email-icon:link {
+    text-decoration: none;
+  }
+  

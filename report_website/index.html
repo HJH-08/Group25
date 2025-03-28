@@ -19,12 +19,16 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="index.html" id="homeDropdown" role="button" data-bs-toggle="dropdown">Home</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="index.html#abstract">Abstract</a></li>
+                            <li><a class="dropdown-item" href="index.html#Abstract">Abstract</a></li>
+                            <li><a class="dropdown-item" href="index.html#Video">Video</a></li>
+                            <li><a class="dropdown-item" href="index.html#Team Members">Team Members</a></li>
+                            <li><a class="dropdown-item" href="index.html#Project Timeline">Project Timeline</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -40,14 +44,35 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="research.html" id="researchDropdown" role="button" data-bs-toggle="dropdown">Research</a>
+                        <a class="nav-link dropdown-toggle " href="research.html" id="researchDropdown" role="button" data-bs-toggle="dropdown">Research</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="research.html#project-research">Project Research</a></li>
-                            <li><a class="dropdown-item" href="research.html#technology-research">Technology Research</a></li>
+                            <li><a class="dropdown-item" href="research.html#stakeholder-insights">Stakeholder Insights</a></li>
+                            <li><a class="dropdown-item" href="research.html#Technology Research & Selection">Technology Research & Selection</a></li>
+                            <li><a class="dropdown-item" href="research.html#RAG Algorithm">RAG Algorithm</a></li>
+                            <li><a class="dropdown-item" href="research.html#Memory Games">Memory Games</a></li>
+                            <li><a class="dropdown-item" href="research.html#Existing Solution Evaluation">Existing Solution Evaluation</a></li>
+                            <li><a class="dropdown-item" href="research.html#Design Decisions Informed by Research">Design Decisions Informed by Research</a></li>
                         </ul>
                     </li>
+
+
                     <li class="nav-item"><a class="nav-link" href="hci.html">HCI</a></li>
-                    <li class="nav-item"><a class="nav-link" href="design.html">Design</a></li>
+
+
+
+                    <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="design.html" id="designDropdown" role="button" data-bs-toggle="dropdown">Design</a>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="design.html#System Architecture">System Architecture</a></li>
+                      <li><a class="dropdown-item" href="design.html#Sequence Diagram">Sequence Diagram</a></li>
+                      <li><a class="dropdown-item" href="design.html#Design Patterns">Design Patterns</a></li>
+                      <li><a class="dropdown-item" href="design.html#Data Storage">Data Storage</a></li>
+                    </ul>
+                  </li>
+
+
+
+
                     <li class="nav-item"><a class="nav-link" href="implementation.html">Implementation</a></li>
 
 
@@ -81,6 +106,7 @@
                         <a class="nav-link dropdown-toggle" href="#" id="appendicesDropdown" role="button" data-bs-toggle="dropdown">Appendices</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="appendices.html#monthly-videos">Monthly Videos</a></li>
+                            <li><a class="dropdown-item" href="appendices.html#Bi-Weekly Blogs">Bi-Weekly Blogs</a></li>
                             <li><a class="dropdown-item" href="appendices.html#user-manual">User Manual</a></li>
                             <li><a class="dropdown-item" href="appendices.html#development-manual">Development Manual</a></li>
                             <li><a class="dropdown-item" href="appendices.html#privacy">Privacy of Data</a></li>
@@ -93,9 +119,11 @@
 
     <div class="container">
         <h1>Welcome to Companio</h1>
-        <section id="abstract">
-            <h2>Abstract</h2>
-            
+
+
+                    <!-- Abstract -->
+            <section id="Abstract" class="section mt-5">
+                <h2>Abstract</h2>
                 <p>
                     Many individuals, especially the elderly and those with cognitive impairments, struggle with memory retention and maintaining engaging interactions.
                     Loneliness is also a growing issue, and meaningful companionship can have a tangible impact on mental health.
@@ -116,8 +144,92 @@
                 </p>
             </section>
             
-        </section>
-    </div>
+            <!-- Video -->
+            <section id="video" class="section mt-5 text-center" style="background: linear-gradient(to bottom right, #6a11cb, #2575fc); padding: 50px 20px; color: white;" class = "section">
+                <h2 style="font-weight: bold;">~ Intro Videos ~</h2>
+                <p style="font-size: 1.1rem;">
+                  Here's an 8~min video showing you what we have done.
+                </p>
+              
+                <!-- Video 1 - 8 min full presentation -->
+                <div class="ratio ratio-16x9 my-4">
+                  <iframe src="https://www.youtube.com/embed/Lm7oDH89Bmw" 
+                          title="Full Presentation" allowfullscreen></iframe>
+                </div>
+              
+
+              </section>
+
+
+            
+            <!-- Team Members -->
+            <section id="team" class="section bg-light py-5">
+                <div class="container">
+                  <h2 class="text-center mb-5"> Meet the Team</h2>
+                  <div class="row justify-content-center text-center">
+              
+                    <!-- Eleanor Goh -->
+                    <div class="col-md-3">
+                      <img src="images/eleanor.jpg" alt="Eleanor Goh" class="mb-3 img-fluid" style="height: 220px; object-fit: cover;">
+                      <h5 class="fw-bold">Eleanor Goh</h5>
+                      <p><a href="mailto:yong.goh.23@ucl.ac.uk" class="email-icon">yong.goh.23@ucl.ac.uk"</a></p>
+                      
+                    </div>
+              
+                    <!-- Bin Nik Nahran -->
+                    <div class="col-md-3">
+                      <img src="Nik.jpg" alt="Bin Nik Nahran Nik Mohd Amir" class="mb-3 img-fluid" style="height: 220px; object-fit: cover;">
+                      <h5 class="fw-bold">Bin Nik Nahran Nik Mohd Amir</h5>
+                      <p><a href="mailto:nik.amir.23@ucl.ac.uk" class="email-icon">nik.amir.23@ucl.ac.uk</a></p>
+                    </div>
+              
+                    <!-- Ho Jun Han -->
+                    <div class="col-md-3">
+                      <img src="JunHan.jpg" alt="Ho Jun Han" class="mb-3 img-fluid" style="height: 220px; object-fit: cover;">
+                      <h5 class="fw-bold">Ho Jun Han</h5>
+                      <p><a href="mailto:jun.ho.23@ucl.ac.uk" class="email-icon">jun.ho.23@ucl.ac.uk</a></p>
+                    </div>
+              
+                    <!-- Shijun Zou -->
+                    <div class="col-md-3">
+                      <img src="Shijun.jpg" alt="Shijun Zou" class="mb-3 img-fluid" style="height: 220px; object-fit: cover;">
+                      <h5 class="fw-bold">Shijun Zou</h5>
+                      <p><a href="mailto:shijun.zou.23@ucl.ac.uk" class="email-icon">shijun.zou.23@ucl.ac.uk</a></p>
+                    </div>
+              
+                  </div>
+                </div>
+              </section>
+              
+              
+              
+              
+
+
+
+
+
+
+
+
+            
+            <!-- Project Timeline -->
+            <section id="Project Timeline" class="section mt-5">
+                <h2>Project Timeline</h2>
+                <p class="lead">
+                    This Gantt chart outlines our project timeline from <strong>October 21, 2024</strong> to <strong>March 28, 2025</strong>, including major development milestones across frontend, backend, research, and testing.
+                  </p>
+                  
+                  <div class="my-4">
+                    <img src="timeline.jpg" alt="Project Management Gantt Chart" class="img-fluid rounded shadow">
+                  </div>
+              
+                  <p class="text-muted fst-italic">
+                    Each task was scheduled to align with academic deadlines and stakeholder feedback cycles. We prioritized parallel development and iterative testing to ensure consistent progress throughout the project lifecycle.
+                  </p>
+                </div>
+            </section>
+  
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
