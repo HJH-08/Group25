@@ -34,15 +34,15 @@ This document outlines the licensing and privacy considerations for the Companio
 
 ## 🔐 Data Privacy and Protection
 
-Companio was built with strong attention to data protection and legal compliance, particularly in contexts involving health-related data, accessibility, and multi-region cloud infrastructure.
+Companio was built with strong attention to data protection and legal compliance, particularly in contexts involving health-related data and multi-region cloud infrastructure.
 
-- **No Persistent Storage of PII by Default**: While Companio does not intentionally collect personally identifiable information (PII), natural language input from users may occasionally contain such data.
+- **No Persistent Storage of PII by Default**: While Companio does not intentionally collect personally identifiable information (PII), input from users may occasionally contain such data.
 
-- **Online Mode Data Processing**: When using online features (e.g., Azure OpenAI, Azure AI Search, Azure Speech Services), user inputs are processed through Microsoft Azure services, which may involve temporary transfers of data outside the UK/EU region depending on deployment.
+- **Online Mode Data Processing**: When using online features (e.g., Azure OpenAI, Azure AI Search, Azure Speech Services), user inputs are processed through Microsoft Azure services. This may involve temporary transfers of data outside the UK/EU region depending on deployment.
 
 - **Contractual Use with Avanade**: Use of Azure APIs is permitted under a valid enterprise developer contract with **Avanade**, authenticated via corporate credentials. This enables access to Microsoft’s responsible AI infrastructure and encryption compliance.
 
-- **Speech & Health Conversations**: Some features (e.g., medication reminders, wellbeing check-ins) may involve user-initiated sharing of health-related inputs. No clinical diagnosis or treatment is inferred or stored.
+- **Speech and Health Conversations**: Some features (e.g., medication reminders, wellbeing check-ins) may involve user-initiated sharing of health-related inputs. No clinical diagnosis or treatment is inferred or stored.
 
 - **Offline Privacy Option**: Users can switch to offline mode (local LLM + `f5_tts`) at any time. In this mode, all processing occurs locally and avoids cloud-based transmission entirely.
 
@@ -50,3 +50,14 @@ Companio was built with strong attention to data protection and legal compliance
 
 - **Medical Disclaimer**:  
   _Companio is not a medical device and does not provide medical advice. It is intended for conversational companionship and general memory support only. Always consult a qualified healthcare professional for medical guidance._
+
+---
+
+## Avatar and Animation Licensing
+All external assests used by Companio have been carefully selected to ensure legal compliance with licensing terms. They are only used in ways permited by their respective providers.
+
+The avatar (male and female) models were obtained from CGTrader under a royalty-free license. These assets that we have chosen are provided free. We intehrated the avatars for better visualization and virtual assistants. No modication beyond animation integration has been applied. No redistributin of the original assets is performed. Attribution has been provided in accordance with the licensing requirements specified by the CGTrader authors.
+
+We adapted the avatar's movement using Mixamo, an Adobe service that offers motion capture animations. These assets are royalty-free and available for use by anyone with a valid Adobe account, in accordance with Adobe’s terms of service. The use of Mixamo assets is permitted for both commercial and non-commercial applications as long as it is not distributed in isolation.
+
+All assets are used within the context of this project only. No resale, standalone distribution, or commercial exploitation of the models or animations occurs beyond the scope of the Companio assistant.
