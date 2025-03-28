@@ -131,7 +131,7 @@
                     AI speech is used in both modes for voice input and text-to-speech conversion.
                   </p>
 
-                     <h3>--Online Mode</h3>
+                     <h3>Online Mode</h3>
                   <div class="text-center mb-3">
                     <img src="SA1.jpg" class="img-fluid" alt="Online system architecture">
                   </div>
@@ -139,7 +139,7 @@
                     In online mode, the web application connects to the Semantic Kernel, which manages long-term memory by retrieving stored conversation history from Azure AI Search Service. Each request is associated with a unique user ID, allowing the system to query the correct search index for personalized responses. After retrieving relevant past interactions and documentation, the Semantic Kernel forwards the processed request to the GPT API, which is hosted online. This ensures that responses are context-aware and personalized, overcoming the typical memory limitations of AI models. Additionally, Azure Speech Services provides text-to-speech capabilities, allowing users to engage with the chatbot using voice.
                   </p>
                 
-                    <h3>--Offline Mode</h3>
+                    <h3>Offline Mode</h3>
                   <div class="text-center mb-3">
                     <img src="SA2.jpg" class="img-fluid" alt="Offline system architecture">
                   </div>
@@ -169,7 +169,7 @@
                   </div>
 
                   <p>
-                    In offline mode, the chatbot processes user input through the web application, which communicates with the Semantic Kernel via FastAPI endpoints. If speech input is used, it is first converted into text using AI Speech. The web application sends a POST request to /api/chat. The Semantic Kernel then attempts to retrieve relevant past interactions stored locally in Qdrant, a vector database optimized for hybrid Retrieval-Augmented Generation (RAG). The system uses dense embeddings, sparse BM25 embeddings, and late interaction embeddings, enhancing retrieval accuracy by ranking relevant past conversations. If relevant memory exists, the Semantic Kernel appends it to the query and forwards the request to the selected AI model?either IBM Granite or Microsoft Phi-3.5?via a POST request to /api/generate-response, where the AI processes the input and returns a chatbot response. New memory is stored when the system performs an upsert operation to insert it into Qdrant. The web application then displays the response in the UI, and if text-to-speech (TTS) is enabled, a POST request is sent to /api/text-to-speech, where Coqui AI TTS synthesizes the text into speech audio bytes. The web application then plays the generated audio, completing the interaction loop. If Qdrant is unavailable, the system logs an error, skips contextual retrieval, and proceeds with only the AI model's response.
+                    In offline mode, the chatbot processes user input through the web application, which communicates with the Semantic Kernel via FastAPI endpoints. If speech input is used, it is first converted into text using AI Speech. The web application sends a POST request to /api/chat. The Semantic Kernel then attempts to retrieve relevant past interactions stored locally in Qdrant, a vector database optimized for hybrid Retrieval-Augmented Generation (RAG). The system uses dense embeddings, sparse BM25 embeddings, and late interaction embeddings, enhancing retrieval accuracy by ranking relevant past conversations. If relevant memory exists, the Semantic Kernel appends it to the query and forwards the request to the selected AI model—either IBM Granite or Microsoft Phi-3.5—via a POST request to /api/generate-response, where the AI processes the input and returns a chatbot response. New memory is stored when the system performs an upsert operation to insert it into Qdrant. The web application then displays the response in the UI, and if text-to-speech (TTS) is enabled, a POST request is sent to /api/text-to-speech, where Coqui AI TTS synthesizes the text into speech audio bytes. The web application then plays the generated audio, completing the interaction loop. If Qdrant is unavailable, the system logs an error, skips contextual retrieval, and proceeds with only the AI model's response.
                   </p>
                 </section>
             
@@ -196,7 +196,7 @@
                     </li>
                   </ol>
                   <p>
-                    Core <strong>design principles</strong> were followed closely. Each module adheres to the <strong>Single Responsibility Principle</strong>, with separate logic for memory storage, LLM interactions, and audio processing. The <strong>Don't Repeat Yourself (DRY) Principle</strong> was respected through shared utilities and configuration files, reducing redundancy. Code smells?like long functions, tight coupling, or "God objects"?were consciously avoided, especially through multiple refactorings of backend logic.
+                    Core <strong>design principles</strong> were followed closely. Each module adheres to the <strong>Single Responsibility Principle</strong>, with separate logic for memory storage, LLM interactions, and audio processing. The <strong>Don't Repeat Yourself (DRY) Principle</strong> was respected through shared utilities and configuration files, reducing redundancy. Code smells—like long functions, tight coupling, or "God objects"—were consciously avoided, especially through multiple refactorings of backend logic.
                   </p>
                 </section>
                 </section>
@@ -209,7 +209,7 @@
                   <ul>
                     <li>A unique ID</li>
                     <li>A text field (<code>memory_text</code>)</li>
-                    <li>A category (such as ?question? or ?preference?)</li>
+                    <li>A category (such as “question“ or “preference“)</li>
                     <li>A timestamp</li>
                   </ul>
                   <p>
@@ -221,7 +221,7 @@
                     In online mode, this structured memory is stored in <strong>Azure AI Search</strong>, which supports both full-text and vector-based retrieval. Each memory is upserted into a collection tied to a specific user ID, allowing our <strong>Retrieval-Augmented Generation (RAG)</strong> system to personalize results per individual.
                   </p>
                   <p>
-                    Embeddings are generated at runtime using a vectorizer service and attached to the record before storage. At retrieval time, both keyword search and semantic vector search are run in parallel, and the results are merged using a <strong>Rank Reciprocal Fusion (RRF)</strong> algorithm to ensure the most contextually relevant responses are used to ground the chatbot?s reply. This setup supports efficient long-term memory retention in a scalable and cloud-ready manner.
+                    Embeddings are generated at runtime using a vectorizer service and attached to the record before storage. At retrieval time, both keyword search and semantic vector search are run in parallel, and the results are merged using a <strong>Rank Reciprocal Fusion (RRF)</strong> algorithm to ensure the most contextually relevant responses are used to ground the chatbot's reply. This setup supports efficient long-term memory retention in a scalable and cloud-ready manner.
                   </p>
                 
                   <h4>Offline Mode</h4>
