@@ -205,7 +205,7 @@
                   <tr>
                     <td>Deployable to multiple platforms</td>
                     <td>SHOULD</td>
-                    <td>&#10003</td>
+                    <td></td>
                     <td>Nik, Jun Han</td>
                   </tr>
                   <tr>
@@ -222,6 +222,11 @@
                   </tr>
                   <tr>
                     <td>Augmented Reality/Virtual Reality</td>
+                    <td>WILL NOT HAVE</td>
+                    <td></td>
+                    <td></td>
+                  </tr><tr>
+                    <td>Pet Avatars</td>
                     <td>WILL NOT HAVE</td>
                     <td></td>
                     <td></td>
@@ -253,7 +258,7 @@
                     <td>MEDIUM</td>
                     <td>
                       This can happen if the backend is already running, ports are in use, or <code>espeak</code> isn't installed. Check
-                      <code>backend-launch.log</code> in Companio?s library folder to debug.
+                      <code>backend-launch.log</code> in Companio's library folder to debug.
                     </td>
                   </tr>
                   <tr>
@@ -327,31 +332,31 @@
 <section id="critical-evaluation" class="section">
     <h2>Critical Evaluation</h2>
   
-    <h3><strong>--User Interface / User Experience (UI/UX)</strong></h3>
+    <h3><strong>User Interface / User Experience (UI/UX)</strong></h3>
     <p>We placed significant emphasis on designing a user interface that was both accessible and engaging, particularly with elderly users in mind. Our frontend was built using React for its component-based flexibility and dynamic state handling. We incorporated a Three.js-based avatar interface to create a more personable and interactive experience. To ensure inclusivity, we designed the layout with high-contrast visuals, clear typography, and large, clickable buttons that can be easily navigated even by users with limited digital familiarity.</p>
     <p>We added customization options directly in the interface, allowing users to choose avatar type and toggle speech features, creating a more tailored and comfortable interaction. Throughout the development, we iterated on feedback from mentors, stakeholders and even friends who we consulted, continuously refining the experience to be warm, intuitive, and non-intimidating. Although earlier versions had minimal animation and static avatar behavior, we later upgraded this to include responsive avatars and smoother transitions between interface states, significantly improving the perceived fluidity and friendliness of the chatbot.</p>
   
-    <h3><strong>--Functionality</strong></h3>
+    <h3><strong>Functionality</strong></h3>
     <p>We successfully implemented all the initial requirements provided by Avanade and the NHS?an AI chatbot that can be used online or offline, a friendly interface, long-term memory via RAG, and support for voice interaction. Beyond that, we added functionalities like avatar personalization and memory games.</p>
     <p>Functionally, the chatbot operates in both online (Azure/OpenAI) and offline (Granite/Phi-3.5) modes, with seamless switching through a unified configuration panel. The integration of memory recall, contextual chat, and voice input/output ensures that the system achieves its purpose: acting as an empathetic, engaging, and responsive AI companion, especially useful for elderly users who may need medication reminders or social interaction.</p>
   
-    <h3><strong>--Stability</strong></h3>
-    <p>Stability was a major focus during development. We implemented integration and unit tests across both backend and frontend, and built in fallback handling for missing inputs, API failures, and service unavailability?ensuring the chatbot remains responsive even in suboptimal conditions. We also added safe checks for speech and memory modules so that the system never crashes unexpectedly.</p>
+    <h3><strong>Stability</strong></h3>
+    <p>Stability was a major focus during development. We implemented integration and unit tests across both backend and frontend, and built in fallback handling for missing inputs, API failures, and service unavailability—ensuring the chatbot remains responsive even in suboptimal conditions. We also added safe checks for speech and memory modules so that the system never crashes unexpectedly.</p>
     <p>However, due to the reliance on multiple external and local services running simultaneously (like Qdrant and Ollama), occasional startup conflicts or port issues can still occur if setup is not followed correctly.</p>
   
-    <h3><strong>--Efficiency</strong></h3>
+    <h3><strong>Efficiency</strong></h3>
     <p>We designed the system with performance in mind. Online mode leverages Azure?s fast and scalable infrastructure with streamed outputs, while offline mode uses efficient local models like Phi-3.5 for fast, lightweight inference. Hybrid RAG and RRF ensure memory retrieval remains both accurate and fast, even with growing data. Text-to-speech and speech recognition were carefully chosen and benchmarked for speed and quality.</p>
-    <p>That said, the offline setup?particularly running Qdrant, the model, and the server simultaneously?can be resource-intensive on lower-end machines, leading to slight delays or high CPU usage.</p>
+    <p>That said, the offline setup—particularly running Qdrant, the model, and the server simultaneously—can be resource-intensive on lower-end machines, leading to slight delays or high CPU usage.</p>
   
-    <h3><strong>--Compatibility</strong></h3>
+    <h3><strong>Compatibility</strong></h3>
     <p>We designed the application to be cross-platform and flexible for a variety of deployment environments. The frontend, built in React and packaged using Electron, supports both macOS and Windows, while the backend, written in Python with FastAPI, can run as a server or be packaged using PyInstaller into a self-contained executable folder. Users can switch between online and offline AI models through the interface, and the avatar and speech settings dynamically adjust based on configuration.</p>
     <p>That being said, the application has not been extensively tested on Windows due to limited access to Windows machines and the large scale of the app.</p>
   
-    <h3><strong>--Maintainability</strong></h3>
+    <h3><strong>Maintainability</strong></h3>
     <p>We prioritized maintainability throughout the project by applying strong software engineering principles and coding best practices. Each module has a single, well-defined responsibility, and the codebase is structured with clear separation between components such as speech, memory, chatbot logic, and UI. Services are dynamically injected into the Semantic Kernel, making it easy to swap or extend components like embedding models or storage providers. We avoided code duplication, magic numbers, and long methods, and made frequent refactors to improve readability and reduce complexity. Additionally, consistent naming, documentation, and configuration management make the codebase highly maintainable for future development.</p>
   
-    <h3><strong>--Project Management</strong></h3>
-    <p>Our project management approach was structured and collaborative from the start. We created a detailed Gantt chart to plan out each phase, from requirements gathering and prototyping to backend integration and final packaging. Tasks were divided according to interests and strengths?frontend, backend, research?and we maintained clear ownership over different components while ensuring smooth integration. Regular meetings with our TAs and client representatives helped us stay aligned with project goals, and we used GitHub for version control, code reviews, and issue tracking to keep progress transparent and manageable.</p>
+    <h3><strong>Project Management</strong></h3>
+    <p>Our project management approach was structured and collaborative from the start. We created a detailed Gantt chart to plan out each phase, from requirements gathering and prototyping to backend integration and final packaging. Tasks were divided according to interests and strengths—frontend, backend, research—and we maintained clear ownership over different components while ensuring smooth integration. Regular meetings with our TAs and client representatives helped us stay aligned with project goals, and we used GitHub for version control, code reviews, and issue tracking to keep progress transparent and manageable.</p>
   </section>
   
     </section>
@@ -366,17 +371,17 @@
             <ol>
             <li>
                 <strong>Personalisation: Customisable Avatar Appearance</strong><br>
-                Introducing deeper avatar customisation ? such as changing hair, clothing, accessories, and facial expressions ? would allow users to build a virtual companion that feels more familiar and personal, much like character creation in games. This sense of ownership and identity can strengthen emotional attachment and comfort, especially for elderly users who might benefit from familiarity. It also adds a fun and engaging layer to the experience, making daily interactions feel more meaningful and less robotic.
+                Introducing deeper avatar customisation—such as changing hair, clothing, accessories, and facial expressions—would allow users to build a virtual companion that feels more familiar and personal, much like character creation in games. This sense of ownership and identity can strengthen emotional attachment and comfort, especially for elderly users who might benefit from familiarity. It also adds a fun and engaging layer to the experience, making daily interactions feel more meaningful and less robotic.
             </li>
         
             <li class="mt-3">
                 <strong>Augmented Reality (AR) Integration</strong><br>
-                Using AR technology, the avatar could be projected into the user?s physical space via mobile devices or smart glasses, creating a more immersive and lifelike experience. This could make the companion feel present, which is especially powerful for users experiencing loneliness or cognitive decline. It opens the door for more natural, spatial interactions ? like pointing, waving, or guiding ? enhancing the sense of companionship.
+                Using AR technology, the avatar could be projected into the user's physical space via mobile devices or smart glasses, creating a more immersive and lifelike experience. This could make the companion feel present, which is especially powerful for users experiencing loneliness or cognitive decline. It opens the door for more natural, spatial interactions—like pointing, waving, or guiding—enhancing the sense of companionship.
             </li>
         
             <li class="mt-3">
                 <strong>Extensive Multilingual Support</strong><br>
-                Expanding support for multiple languages and real-time translation would make the chatbot more inclusive and accessible for non-English speakers. This feature could allow users to speak in their native language, while still receiving accurate, context-aware responses. It would also enable cross-lingual interaction ? for example, a caregiver setting prompts in one language while the user receives them in another ? breaking down language barriers within families or care environments.
+                Expanding support for multiple languages and real-time translation would make the chatbot more inclusive and accessible for non-English speakers. This feature could allow users to speak in their native language, while still receiving accurate, context-aware responses. It would also enable cross-lingual interaction—for example, a caregiver setting prompts in one language while the user receives them in another—breaking down language barriers within families or care environments.
             </li>
         
             <li class="mt-3">
