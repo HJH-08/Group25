@@ -12,3 +12,5 @@ build/
 dist/
 
 backend_build/torch_libs/
+
+application/
