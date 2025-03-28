@@ -19,3 +19,4 @@ azure.search
 azure.search.documents
 huggingface-hub==0.27.1
 azure-cognitiveservices-speech==1.42.0
+appdirs==1.4.4
