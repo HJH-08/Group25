@@ -1,4 +1,4 @@
-/* Modern Blue Theme for Companio Project */
+/* Modern Blue Theme */
 
 :root {
     --primary: #2c3e50;
@@ -21,7 +21,7 @@
     overflow-x: hidden;
   }
   
-  /* Navigation Styling - Improved */
+  /* Navigation Styling */
   .navbar {
     background-color: var(--primary) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -36,7 +36,7 @@
     color: white !important;
     letter-spacing: 0.5px;
     margin-right: 2rem;
-    padding-left: 0.5rem; /* Add left padding */
+    padding-left: 0.5rem; 
   }
   
   .navbar-dark .navbar-nav .nav-link {
@@ -379,8 +379,8 @@
     grid-template-columns: auto 1fr;
     align-items: center;
     justify-content: space-between;
-    padding-left: 0.5rem; /* Reduce container padding to shift content left */
-    margin-left: 0; /* Remove any margin */
+    padding-left: 0.5rem; 
+    margin-left: 0; 
   }
   
   .navbar-collapse {
@@ -389,8 +389,8 @@
     flex-grow: 1;
     align-items: center;
     justify-content: flex-end;
-    justify-content: flex-end; /* Keep nav items to the right */
-    margin-left: auto; /* Push to the right side */
+    justify-content: flex-end; 
+    margin-left: auto; 
     position: relative;
   }
   
@@ -470,7 +470,7 @@
     justify-content: flex-end;
     white-space: nowrap;
     height: 100%;
-    position: relative; /* Keep position */
+    position: relative; 
   }
   
   /* Container adjustments to help with positioning */
@@ -478,16 +478,16 @@
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
-    justify-content: flex-start; /* Align container content to start */
-    padding-left: 0; /* Reduce left padding */
+    justify-content: flex-start;
+    padding-left: 0; 
   }
   
   /* Position the navbar-collapse with more space */
   .navbar-collapse {
     justify-content: flex-start;
-    margin-left: 1rem; /* Add space after the brand */
-    position: relative; /* Keep the position */
-    left: 0; /* Don't move from original position */
+    margin-left: 1rem; 
+    position: relative; 
+    left: 0; 
   }
   
   /* Responsive Adjustments */
